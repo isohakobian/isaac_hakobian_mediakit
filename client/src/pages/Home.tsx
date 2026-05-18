@@ -22,7 +22,7 @@ const translations = {
     maleAudience: "Male Audience",
     primaryAgeGroup: "Primary Age Group",
     aboutBrand: "About the Brand",
-    aboutText: "I create cinematic lifestyle content that celebrates the philosophy of Quiet Luxury—understated elegance, premium quality, and authentic storytelling. My audience consists of discerning men aged 25-44 who value craftsmanship, personal development, and refined aesthetics. Every frame is intentional, every collaboration is strategic.",
+    aboutText: "I create cinematic lifestyle content that celebrates the philosophy of Quiet Luxury—understated elegance, premium quality, and authentic storytelling. My audience consists of discerning men aged 25-34 who value craftsmanship, personal development, and refined aesthetics. Every frame is intentional, every collaboration is strategic.",
     recentCollaborations: "Recent Collaborations",
     collaborationPackages: "Collaboration Packages",
     getInTouch: "Get in Touch",
@@ -38,6 +38,24 @@ const translations = {
     thankYou: "Thank you! I'll be in touch soon.",
     contact: "Contact",
     collaboration: "Collaboration",
+    month: "/month",
+    reel: "/reel",
+    brandLinkInProfile: "Brand link in profile bio",
+    monthlyReachValue: "3.5M+ monthly reach",
+    passiveTrafficGeneration: "Passive traffic generation",
+    professionalProduction: "Professional production",
+    authenticIntegration: "Authentic integration",
+    fullUsageRights: "Full usage rights",
+    linkInBioContent: "Link in bio + content",
+    reelsPerMonth: "4+ reels/month",
+    exclusivePartnership: "Exclusive partnership",
+    engagementRate: "Engagement Rate",
+    directInquiries: "Direct Inquiries",
+    linkCTR: "Bio Link CTR",
+    saves: "Saves",
+    onHillSport: "On Hill Sport",
+    keybell: "Keybell",
+    reboot: "Reboot",
   },
   ru: {
     tagline: "Создатель контента Quiet Luxury",
@@ -46,7 +64,7 @@ const translations = {
     maleAudience: "Мужская аудитория",
     primaryAgeGroup: "Основная возрастная группа",
     aboutBrand: "О бренде",
-    aboutText: "Я создаю кинематографический контент о стиле жизни, который отражает философию Quiet Luxury — сдержанную элегантность, премиальное качество и аутентичное повествование. Моя аудитория — требовательные мужчины в возрасте 25-44 лет, которые ценят мастерство, личное развитие и утонченную эстетику.",
+    aboutText: "Я создаю кинематографический контент о стиле жизни, который отражает философию Quiet Luxury — сдержанную элегантность, премиальное качество и аутентичное повествование. Моя аудитория — требовательные мужчины в возрасте 25-34 лет, которые ценят мастерство, личное развитие и утонченную эстетику.",
     recentCollaborations: "Недавние сотрудничества",
     collaborationPackages: "Пакеты сотрудничества",
     getInTouch: "Свяжитесь со мной",
@@ -62,6 +80,24 @@ const translations = {
     thankYou: "Спасибо! Я свяжусь с вами в ближайшее время.",
     contact: "Контакт",
     collaboration: "Сотрудничество",
+    month: "/месяц",
+    reel: "/рил",
+    brandLinkInProfile: "Ссылка на бренд в профиле",
+    monthlyReachValue: "3.5M+ месячный охват",
+    passiveTrafficGeneration: "Пассивная генерация трафика",
+    professionalProduction: "Профессиональное производство",
+    authenticIntegration: "Аутентичная интеграция",
+    fullUsageRights: "Полные права использования",
+    linkInBioContent: "Ссылка в профиле + контент",
+    reelsPerMonth: "4+ рилса/месяц",
+    exclusivePartnership: "Эксклюзивное партнерство",
+    engagementRate: "Engagement Rate",
+    directInquiries: "Прямые запросы",
+    linkCTR: "CTR ссылки в профиле",
+    saves: "Сохранения",
+    onHillSport: "On Hill Sport",
+    keybell: "Keybell",
+    reboot: "Reboot",
   },
   es: {
     tagline: "Creador de contenido Quiet Luxury",
@@ -70,7 +106,7 @@ const translations = {
     maleAudience: "Audiencia masculina",
     primaryAgeGroup: "Grupo de edad principal",
     aboutBrand: "Sobre la marca",
-    aboutText: "Creo contenido de estilo de vida cinematográfico que celebra la filosofía de Quiet Luxury: elegancia discreta, calidad premium e historias auténticas. Mi audiencia son hombres exigentes de 25-44 años que valoran la artesanía, el desarrollo personal y la estética refinada.",
+    aboutText: "Creo contenido de estilo de vida cinematográfico que celebra la filosofía de Quiet Luxury: elegancia discreta, calidad premium e historias auténticas. Mi audiencia son hombres exigentes de 25-34 años que valoran la artesanía, el desarrollo personal y la estética refinada.",
     recentCollaborations: "Colaboraciones recientes",
     collaborationPackages: "Paquetes de colaboración",
     getInTouch: "Ponte en contacto",
@@ -86,6 +122,24 @@ const translations = {
     thankYou: "¡Gracias! Me pondré en contacto pronto.",
     contact: "Contacto",
     collaboration: "Colaboración",
+    month: "/mes",
+    reel: "/reel",
+    brandLinkInProfile: "Enlace de marca en bio",
+    monthlyReachValue: "3.5M+ alcance mensual",
+    passiveTrafficGeneration: "Generación pasiva de tráfico",
+    professionalProduction: "Producción profesional",
+    authenticIntegration: "Integración auténtica",
+    fullUsageRights: "Derechos de uso completos",
+    linkInBioContent: "Enlace en bio + contenido",
+    reelsPerMonth: "4+ reels/mes",
+    exclusivePartnership: "Asociación exclusiva",
+    engagementRate: "Engagement Rate",
+    directInquiries: "Consultas directas",
+    linkCTR: "CTR del enlace en bio",
+    saves: "Guardados",
+    onHillSport: "On Hill Sport",
+    keybell: "Keybell",
+    reboot: "Reboot",
   },
   ar: {
     tagline: "منشئ محتوى Quiet Luxury",
@@ -94,7 +148,7 @@ const translations = {
     maleAudience: "الجمهور الذكوري",
     primaryAgeGroup: "المجموعة العمرية الأساسية",
     aboutBrand: "عن العلامة التجارية",
-    aboutText: "أنا أنشئ محتوى نمط حياة سينمائي يحتفل بفلسفة Quiet Luxury - الأناقة المتحفظة والجودة المتميزة والسرد الحقيقي. جمهوري يتكون من رجال متطلبين تتراوح أعمارهم بين 25-44 سنة يقدرون الحرفية والتطور الشخصي والجمالية المكررة.",
+    aboutText: "أنا أنشئ محتوى نمط حياة سينمائي يحتفل بفلسفة Quiet Luxury - الأناقة المتحفظة والجودة المتميزة والسرد الحقيقي. جمهوري يتكون من رجال متطلبين تتراوح أعمارهم بين 25-34 سنة يقدرون الحرفية والتطور الشخصي والجمالية المكررة.",
     recentCollaborations: "التعاونات الأخيرة",
     collaborationPackages: "حزم التعاون",
     getInTouch: "تواصل معي",
@@ -110,7 +164,50 @@ const translations = {
     thankYou: "شكراً! سأتواصل معك قريباً.",
     contact: "الاتصال",
     collaboration: "التعاون",
+    month: "/شهر",
+    reel: "/ريل",
+    brandLinkInProfile: "رابط العلامة التجارية في السيرة",
+    monthlyReachValue: "3.5M+ وصول شهري",
+    passiveTrafficGeneration: "توليد حركة مرور سلبية",
+    professionalProduction: "إنتاج احترافي",
+    authenticIntegration: "تكامل أصلي",
+    fullUsageRights: "حقوق الاستخدام الكاملة",
+    linkInBioContent: "رابط في السيرة + محتوى",
+    reelsPerMonth: "4+ ريلات/شهر",
+    exclusivePartnership: "شراكة حصرية",
+    engagementRate: "معدل الانخراط",
+    directInquiries: "استفسارات مباشرة",
+    linkCTR: "معدل النقر على الرابط",
+    saves: "الحفظ",
+    onHillSport: "On Hill Sport",
+    keybell: "Keybell",
+    reboot: "Reboot",
   },
+};
+
+const InstagramReel = ({ url, title }: { url: string; title: string }) => {
+  const getReelId = (instagramUrl: string) => {
+    const match = instagramUrl.match(/\/reel\/([^/?]+)/);
+    return match ? match[1] : null;
+  };
+
+  const reelId = getReelId(url);
+  if (!reelId) return null;
+
+  return (
+    <div className="aspect-video bg-black rounded-lg overflow-hidden">
+      <iframe
+        src={`https://www.instagram.com/reel/${reelId}/embed`}
+        width="100%"
+        height="100%"
+        frameBorder="0"
+        scrolling="no"
+        allowFullScreen
+        title={title}
+        className="w-full h-full"
+      />
+    </div>
+  );
 };
 
 export default function Home() {
@@ -195,19 +292,19 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
             <div className="text-center">
               <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
-                3.5M+
+                2.0M+
               </div>
               <p className="text-lg text-gray-600">{t.monthlyReach}</p>
             </div>
             <div className="text-center">
               <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
-                69%
+                79%
               </div>
               <p className="text-lg text-gray-600">{t.maleAudience}</p>
             </div>
             <div className="text-center">
               <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
-                25-44
+                25-34
               </div>
               <p className="text-lg text-gray-600">{t.primaryAgeGroup}</p>
             </div>
@@ -222,7 +319,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Case Studies Section */}
+      {/* Case Studies Section with Reels */}
       <section id="collaboration" className="py-20 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-5xl font-bold mb-16" style={{ fontFamily: "Playfair Display, serif" }}>
@@ -234,50 +331,78 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
                 <h3 className="text-3xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
-                  On Hill Sport
+                  {t.onHillSport}
                 </h3>
                 <p className="text-gray-700 mb-6 leading-relaxed">
-                  Premium running apparel and weighted accessories. Created 4 Reels showcasing the brand's products in authentic lifestyle scenarios. Achieved high engagement with direct product inquiries in comments.
+                  Premium running apparel and weighted accessories. Created engaging content showcasing the brand's products in authentic lifestyle scenarios. Achieved high engagement with direct product inquiries in comments.
                 </p>
                 <div className="flex gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Engagement Rate</p>
+                    <p className="text-sm text-gray-600">{t.engagementRate}</p>
                     <p className="text-2xl font-bold">8.2%</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Direct Inquiries</p>
+                    <p className="text-sm text-gray-600">{t.directInquiries}</p>
                     <p className="text-2xl font-bold">15+</p>
                   </div>
                 </div>
               </div>
-              <div className="h-64 bg-gradient-to-br from-gray-300 to-gray-400 rounded-lg flex items-center justify-center">
-                <p className="text-gray-600">On Hill Sport Campaign</p>
-              </div>
+              <InstagramReel
+                url="https://www.instagram.com/reel/DXTejdvCHq1/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
+                title="On Hill Sport Reel"
+              />
             </div>
 
             {/* Keybell */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center md:grid-flow-dense">
-              <div className="h-64 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg flex items-center justify-center md:order-last">
-                <p className="text-gray-600">Keybell Accessories</p>
-              </div>
+              <InstagramReel
+                url="https://www.instagram.com/reel/DX-KPOfo2YV/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
+                title="Keybell Reel"
+              />
               <div className="md:order-first">
                 <h3 className="text-3xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
-                  Keybell
+                  {t.keybell}
                 </h3>
                 <p className="text-gray-700 mb-6 leading-relaxed">
-                  Russian luxury accessories brand. Test collaboration with custom-engraved keychain. Positioned as premium ambasador with link in bio and ongoing content production.
+                  Russian luxury accessories brand. Test collaboration with custom-engraved keychain. Positioned as premium ambassador with link in bio and ongoing content production.
                 </p>
                 <div className="flex gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Bio Link CTR</p>
+                    <p className="text-sm text-gray-600">{t.linkCTR}</p>
                     <p className="text-2xl font-bold">12%</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Saves</p>
+                    <p className="text-sm text-gray-600">{t.saves}</p>
                     <p className="text-2xl font-bold">340</p>
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Reboot */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h3 className="text-3xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
+                  {t.reboot}
+                </h3>
+                <p className="text-gray-700 mb-6 leading-relaxed">
+                  Lifestyle brand collaboration featuring premium products and aesthetic lifestyle content. Strong audience resonance with high engagement rates and quality audience demographics.
+                </p>
+                <div className="flex gap-4">
+                  <div>
+                    <p className="text-sm text-gray-600">{t.engagementRate}</p>
+                    <p className="text-2xl font-bold">9.5%</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">{t.saves}</p>
+                    <p className="text-2xl font-bold">420</p>
+                  </div>
+                </div>
+              </div>
+              <InstagramReel
+                url="https://www.instagram.com/reel/DTsCmsLiIOB/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
+                title="Reboot Reel"
+              />
             </div>
           </div>
         </div>
@@ -293,7 +418,7 @@ export default function Home() {
             {t.collaborationPackages}
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Link in Bio */}
             <div className="border border-gray-300 p-8 hover:shadow-lg transition-shadow">
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
@@ -302,19 +427,19 @@ export default function Home() {
               <p className="text-4xl font-bold mb-4" style={{ color: "#8B4513" }}>
                 ₽10,000
               </p>
-              <p className="text-gray-600 mb-6">/month</p>
+              <p className="text-gray-600 mb-6">{t.month}</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex gap-2">
                   <span className="text-accent">✓</span>
-                  <span>Brand link in profile bio</span>
+                  <span>{t.brandLinkInProfile}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-accent">✓</span>
-                  <span>3.5M+ monthly reach</span>
+                  <span>{t.monthlyReachValue}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-accent">✓</span>
-                  <span>Passive traffic generation</span>
+                  <span>{t.passiveTrafficGeneration}</span>
                 </li>
               </ul>
               <Button
@@ -332,21 +457,21 @@ export default function Home() {
                 {t.singleReel}
               </h3>
               <p className="text-4xl font-bold mb-4" style={{ color: "#8B4513" }}>
-                ₽15,000
+                ₽7,000
               </p>
-              <p className="text-gray-600 mb-6">/reel</p>
+              <p className="text-gray-600 mb-6">{t.reel}</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex gap-2">
                   <span className="text-accent">✓</span>
-                  <span>Professional production</span>
+                  <span>{t.professionalProduction}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-accent">✓</span>
-                  <span>Authentic integration</span>
+                  <span>{t.authenticIntegration}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-accent">✓</span>
-                  <span>Full usage rights</span>
+                  <span>{t.fullUsageRights}</span>
                 </li>
               </ul>
               <Button
@@ -359,7 +484,7 @@ export default function Home() {
             </div>
 
             {/* Ambassador */}
-            <div className="border-2 border-accent p-8 hover:shadow-lg transition-shadow bg-gray-50">
+            <div className="border-2 border-accent p-8 hover:shadow-lg transition-shadow bg-gray-50 md:col-span-2">
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
                 {t.ambassador}
               </h3>
@@ -367,20 +492,22 @@ export default function Home() {
                 Custom
               </p>
               <p className="text-gray-600 mb-6">Long-term partnership</p>
-              <ul className="space-y-3 mb-8">
-                <li className="flex gap-2">
-                  <span className="text-accent">✓</span>
-                  <span>Link in bio + content</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="text-accent">✓</span>
-                  <span>4+ reels/month</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="text-accent">✓</span>
-                  <span>Exclusive partnership</span>
-                </li>
-              </ul>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <ul className="space-y-3">
+                  <li className="flex gap-2">
+                    <span className="text-accent">✓</span>
+                    <span>{t.linkInBioContent}</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-accent">✓</span>
+                    <span>{t.reelsPerMonth}</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-accent">✓</span>
+                    <span>{t.exclusivePartnership}</span>
+                  </li>
+                </ul>
+              </div>
               <Button
                 onClick={() => trackClick("package-ambassador")}
                 className="w-full"
