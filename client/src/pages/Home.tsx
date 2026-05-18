@@ -1,6 +1,10 @@
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Mail, Instagram, ArrowRight } from "lucide-react";
 import { useState } from "react";
+import Testimonials from "@/components/Testimonials";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 /**
  * Editorial Minimalism Design System
@@ -10,25 +14,145 @@ import { useState } from "react";
  * - Vibe: High-end editorial, cinematic, premium
  */
 
+const translations = {
+  en: {
+    tagline: "Quiet Luxury Lifestyle Content Creator",
+    exploreCollaboration: "Explore Collaboration",
+    monthlyReach: "Monthly Reach",
+    maleAudience: "Male Audience",
+    primaryAgeGroup: "Primary Age Group",
+    aboutBrand: "About the Brand",
+    aboutText: "I create cinematic lifestyle content that celebrates the philosophy of Quiet Luxury—understated elegance, premium quality, and authentic storytelling. My audience consists of discerning men aged 25-44 who value craftsmanship, personal development, and refined aesthetics. Every frame is intentional, every collaboration is strategic.",
+    recentCollaborations: "Recent Collaborations",
+    collaborationPackages: "Collaboration Packages",
+    getInTouch: "Get in Touch",
+    linkInBio: "Link in Bio",
+    singleReel: "Single Reel",
+    ambassador: "Ambassador",
+    inquire: "Inquire",
+    letsTalk: "Let's Talk",
+    name: "Name",
+    email: "Email",
+    message: "Message",
+    sendMessage: "Send Message",
+    thankYou: "Thank you! I'll be in touch soon.",
+    contact: "Contact",
+    collaboration: "Collaboration",
+  },
+  ru: {
+    tagline: "Создатель контента Quiet Luxury",
+    exploreCollaboration: "Изучить сотрудничество",
+    monthlyReach: "Месячный охват",
+    maleAudience: "Мужская аудитория",
+    primaryAgeGroup: "Основная возрастная группа",
+    aboutBrand: "О бренде",
+    aboutText: "Я создаю кинематографический контент о стиле жизни, который отражает философию Quiet Luxury — сдержанную элегантность, премиальное качество и аутентичное повествование. Моя аудитория — требовательные мужчины в возрасте 25-44 лет, которые ценят мастерство, личное развитие и утонченную эстетику.",
+    recentCollaborations: "Недавние сотрудничества",
+    collaborationPackages: "Пакеты сотрудничества",
+    getInTouch: "Свяжитесь со мной",
+    linkInBio: "Ссылка в профиле",
+    singleReel: "Один Reel",
+    ambassador: "Амбассадор",
+    inquire: "Узнать",
+    letsTalk: "Давайте обсудим",
+    name: "Имя",
+    email: "Email",
+    message: "Сообщение",
+    sendMessage: "Отправить",
+    thankYou: "Спасибо! Я свяжусь с вами в ближайшее время.",
+    contact: "Контакт",
+    collaboration: "Сотрудничество",
+  },
+  es: {
+    tagline: "Creador de contenido Quiet Luxury",
+    exploreCollaboration: "Explorar colaboración",
+    monthlyReach: "Alcance mensual",
+    maleAudience: "Audiencia masculina",
+    primaryAgeGroup: "Grupo de edad principal",
+    aboutBrand: "Sobre la marca",
+    aboutText: "Creo contenido de estilo de vida cinematográfico que celebra la filosofía de Quiet Luxury: elegancia discreta, calidad premium e historias auténticas. Mi audiencia son hombres exigentes de 25-44 años que valoran la artesanía, el desarrollo personal y la estética refinada.",
+    recentCollaborations: "Colaboraciones recientes",
+    collaborationPackages: "Paquetes de colaboración",
+    getInTouch: "Ponte en contacto",
+    linkInBio: "Enlace en bio",
+    singleReel: "Un Reel",
+    ambassador: "Embajador",
+    inquire: "Consultar",
+    letsTalk: "Hablemos",
+    name: "Nombre",
+    email: "Correo",
+    message: "Mensaje",
+    sendMessage: "Enviar",
+    thankYou: "¡Gracias! Me pondré en contacto pronto.",
+    contact: "Contacto",
+    collaboration: "Colaboración",
+  },
+  ar: {
+    tagline: "منشئ محتوى Quiet Luxury",
+    exploreCollaboration: "استكشف التعاون",
+    monthlyReach: "الوصول الشهري",
+    maleAudience: "الجمهور الذكوري",
+    primaryAgeGroup: "المجموعة العمرية الأساسية",
+    aboutBrand: "عن العلامة التجارية",
+    aboutText: "أنا أنشئ محتوى نمط حياة سينمائي يحتفل بفلسفة Quiet Luxury - الأناقة المتحفظة والجودة المتميزة والسرد الحقيقي. جمهوري يتكون من رجال متطلبين تتراوح أعمارهم بين 25-44 سنة يقدرون الحرفية والتطور الشخصي والجمالية المكررة.",
+    recentCollaborations: "التعاونات الأخيرة",
+    collaborationPackages: "حزم التعاون",
+    getInTouch: "تواصل معي",
+    linkInBio: "رابط في السيرة",
+    singleReel: "ريل واحد",
+    ambassador: "سفير",
+    inquire: "استفسر",
+    letsTalk: "لنتحدث",
+    name: "الاسم",
+    email: "البريد الإلكتروني",
+    message: "الرسالة",
+    sendMessage: "إرسال",
+    thankYou: "شكراً! سأتواصل معك قريباً.",
+    contact: "الاتصال",
+    collaboration: "التعاون",
+  },
+};
+
 export default function Home() {
+  const { user } = useAuth();
+  const { trackClick, trackFormSubmit, language, setLanguage } = useAnalytics();
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
 
+  const t = translations[language as keyof typeof translations] || translations.en;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    trackFormSubmit("contact_form", {
+      name: formState.name,
+      email: formState.email,
+    });
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 3000);
+  };
+
+  const handleCollaborationClick = () => {
+    trackClick("explore-collaboration-btn", "Explore Collaboration");
   };
 
   return (
     <div className="min-h-screen bg-white text-foreground">
       {/* Navigation */}
-      <nav className="fixed top-0 right-0 z-50 p-6 flex gap-4">
-        <a href="#collaboration" className="text-sm font-medium hover:text-accent transition-colors">
-          Collaboration
+      <nav className="fixed top-0 right-0 z-50 p-6 flex gap-4 items-center">
+        <LanguageSwitcher currentLanguage={language} onLanguageChange={setLanguage} />
+        <a
+          href="#collaboration"
+          onClick={() => trackClick("nav-collaboration")}
+          className="text-sm font-medium hover:text-accent transition-colors"
+        >
+          {t.collaboration}
         </a>
-        <a href="#contact" className="text-sm font-medium hover:text-accent transition-colors">
-          Contact
+        <a
+          href="#contact"
+          onClick={() => trackClick("nav-contact")}
+          className="text-sm font-medium hover:text-accent transition-colors"
+        >
+          {t.contact}
         </a>
       </nav>
 
@@ -52,12 +176,14 @@ export default function Home() {
           >
             Isaac Hakobian
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 mb-8 font-light">
-            Quiet Luxury Lifestyle Content Creator
-          </p>
+          <p className="text-xl md:text-2xl text-white/90 mb-8 font-light">{t.tagline}</p>
           <div className="flex gap-4 justify-center">
-            <a href="#collaboration" className="inline-flex items-center gap-2 bg-accent text-white px-6 py-3 hover:opacity-90 transition-opacity">
-              Explore Collaboration <ArrowRight size={16} />
+            <a
+              href="#collaboration"
+              onClick={handleCollaborationClick}
+              className="inline-flex items-center gap-2 bg-accent text-white px-6 py-3 hover:opacity-90 transition-opacity"
+            >
+              {t.exploreCollaboration} <ArrowRight size={16} />
             </a>
           </div>
         </div>
@@ -71,29 +197,27 @@ export default function Home() {
               <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
                 3.5M+
               </div>
-              <p className="text-lg text-gray-600">Monthly Reach</p>
+              <p className="text-lg text-gray-600">{t.monthlyReach}</p>
             </div>
             <div className="text-center">
               <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
                 69%
               </div>
-              <p className="text-lg text-gray-600">Male Audience</p>
+              <p className="text-lg text-gray-600">{t.maleAudience}</p>
             </div>
             <div className="text-center">
               <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
                 25-44
               </div>
-              <p className="text-lg text-gray-600">Primary Age Group</p>
+              <p className="text-lg text-gray-600">{t.primaryAgeGroup}</p>
             </div>
           </div>
 
           <div className="border-t border-gray-300 pt-12">
             <h2 className="text-4xl font-bold mb-6" style={{ fontFamily: "Playfair Display, serif" }}>
-              About the Brand
+              {t.aboutBrand}
             </h2>
-            <p className="text-lg text-gray-700 leading-relaxed max-w-3xl">
-              I create cinematic lifestyle content that celebrates the philosophy of Quiet Luxury—understated elegance, premium quality, and authentic storytelling. My audience consists of discerning men aged 25-44 who value craftsmanship, personal development, and refined aesthetics. Every frame is intentional, every collaboration is strategic.
-            </p>
+            <p className="text-lg text-gray-700 leading-relaxed max-w-3xl">{t.aboutText}</p>
           </div>
         </div>
       </section>
@@ -102,7 +226,7 @@ export default function Home() {
       <section id="collaboration" className="py-20 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-5xl font-bold mb-16" style={{ fontFamily: "Playfair Display, serif" }}>
-            Recent Collaborations
+            {t.recentCollaborations}
           </h2>
 
           <div className="space-y-20">
@@ -159,18 +283,21 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <Testimonials language={language} />
+
       {/* Collaboration Packages */}
       <section className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-5xl font-bold mb-16" style={{ fontFamily: "Playfair Display, serif" }}>
-            Collaboration Packages
+            {t.collaborationPackages}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Link in Bio */}
             <div className="border border-gray-300 p-8 hover:shadow-lg transition-shadow">
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
-                Link in Bio
+                {t.linkInBio}
               </h3>
               <p className="text-4xl font-bold mb-4" style={{ color: "#8B4513" }}>
                 ₽10,000
@@ -190,15 +317,19 @@ export default function Home() {
                   <span>Passive traffic generation</span>
                 </li>
               </ul>
-              <Button className="w-full" variant="outline">
-                Inquire
+              <Button
+                onClick={() => trackClick("package-link-in-bio")}
+                className="w-full"
+                variant="outline"
+              >
+                {t.inquire}
               </Button>
             </div>
 
             {/* Single Reel */}
             <div className="border border-gray-300 p-8 hover:shadow-lg transition-shadow">
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
-                Single Reel
+                {t.singleReel}
               </h3>
               <p className="text-4xl font-bold mb-4" style={{ color: "#8B4513" }}>
                 ₽15,000
@@ -218,15 +349,19 @@ export default function Home() {
                   <span>Full usage rights</span>
                 </li>
               </ul>
-              <Button className="w-full" variant="outline">
-                Inquire
+              <Button
+                onClick={() => trackClick("package-single-reel")}
+                className="w-full"
+                variant="outline"
+              >
+                {t.inquire}
               </Button>
             </div>
 
             {/* Ambassador */}
             <div className="border-2 border-accent p-8 hover:shadow-lg transition-shadow bg-gray-50">
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
-                Ambassador
+                {t.ambassador}
               </h3>
               <p className="text-4xl font-bold mb-4" style={{ color: "#8B4513" }}>
                 Custom
@@ -246,8 +381,11 @@ export default function Home() {
                   <span>Exclusive partnership</span>
                 </li>
               </ul>
-              <Button className="w-full">
-                Let's Talk
+              <Button
+                onClick={() => trackClick("package-ambassador")}
+                className="w-full"
+              >
+                {t.letsTalk}
               </Button>
             </div>
           </div>
@@ -258,18 +396,18 @@ export default function Home() {
       <section id="contact" className="py-20 px-6 bg-gray-50">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-5xl font-bold mb-12 text-center" style={{ fontFamily: "Playfair Display, serif" }}>
-            Get in Touch
+            {t.getInTouch}
           </h2>
 
           <div className="bg-white p-8 rounded-lg border border-gray-300">
             {submitted ? (
               <div className="text-center py-8">
-                <p className="text-lg text-accent font-semibold">Thank you! I'll be in touch soon.</p>
+                <p className="text-lg text-accent font-semibold">{t.thankYou}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Name</label>
+                  <label className="block text-sm font-medium mb-2">{t.name}</label>
                   <input
                     type="text"
                     required
@@ -279,7 +417,7 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <label className="block text-sm font-medium mb-2">{t.email}</label>
                   <input
                     type="email"
                     required
@@ -289,7 +427,7 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Message</label>
+                  <label className="block text-sm font-medium mb-2">{t.message}</label>
                   <textarea
                     required
                     value={formState.message}
@@ -299,16 +437,26 @@ export default function Home() {
                   />
                 </div>
                 <Button type="submit" className="w-full">
-                  Send Message
+                  {t.sendMessage}
                 </Button>
               </form>
             )}
 
             <div className="mt-8 pt-8 border-t border-gray-300 flex gap-6 justify-center">
-              <a href="https://instagram.com/isaac_hakobian" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-accent transition-colors">
+              <a
+                href="https://instagram.com/isaac_hakobian"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackClick("social-instagram")}
+                className="text-gray-600 hover:text-accent transition-colors"
+              >
                 <Instagram size={24} />
               </a>
-              <a href="mailto:isaac@example.com" className="text-gray-600 hover:text-accent transition-colors">
+              <a
+                href="mailto:isaac@example.com"
+                onClick={() => trackClick("social-email")}
+                className="text-gray-600 hover:text-accent transition-colors"
+              >
                 <Mail size={24} />
               </a>
             </div>
