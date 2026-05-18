@@ -56,6 +56,9 @@ const translations = {
     onHillSport: "On Hill Sport",
     keybell: "Keybell",
     reboot: "Reboot",
+    onHillSportDesc: "Premium running apparel and weighted accessories. Created engaging content showcasing the brand's products in authentic lifestyle scenarios. Achieved high engagement with direct product inquiries in comments.",
+    keybellDesc: "Russian luxury accessories brand. Test collaboration with custom-engraved keychain. Positioned as premium ambassador with link in bio and ongoing content production.",
+    rebootDesc: "Lifestyle brand collaboration with Reboot sport club as premium ambassador featuring premium products and aesthetic lifestyle content. Strong audience resonance with high engagement rates and quality audience demographics.",
   },
   ru: {
     tagline: "Создатель контента Quiet Luxury",
@@ -98,6 +101,9 @@ const translations = {
     onHillSport: "On Hill Sport",
     keybell: "Keybell",
     reboot: "Reboot",
+    onHillSportDesc: "Спортивная одежда премиум-класса и утяжелённые аксессуары. Создал привлекательный контент, демонстрирующий продукты бренда в аутентичных сценариях образа жизни. Достиг высокого уровня вовлечённости с прямыми запросами о продуктах в комментариях.",
+    keybellDesc: "Российский бренд люксовых аксессуаров. Тестовое сотрудничество с персонализированным брелоком. Позиционирован как премиум-амбассадор со ссылкой в профиле и постоянным созданием контента.",
+    rebootDesc: "Сотрудничество с брендом Reboot sport club в качестве премиум-амбассадора с премиальными продуктами и эстетичным контентом образа жизни. Сильный отклик аудитории с высокими показателями вовлечённости и качественной демографией.",
   },
   es: {
     tagline: "Creador de contenido Quiet Luxury",
@@ -140,6 +146,9 @@ const translations = {
     onHillSport: "On Hill Sport",
     keybell: "Keybell",
     reboot: "Reboot",
+    onHillSportDesc: "Ropa deportiva premium y accesorios ponderados. Creé contenido atractivo que muestra los productos de la marca en escenarios de estilo de vida auténticos. Logré un alto nivel de participación con consultas directas de productos en los comentarios.",
+    keybellDesc: "Marca rusa de accesorios de lujo. Colaboración de prueba con llavero personalizado. Posicionado como embajador premium con enlace en bio y producción continua de contenido.",
+    rebootDesc: "Colaboración con la marca Reboot sport club como embajador premium con productos premium y contenido de estilo de vida estético. Fuerte resonancia de la audiencia con altas tasas de participación y demografía de audiencia de calidad.",
   },
   ar: {
     tagline: "منشئ محتوى Quiet Luxury",
@@ -182,6 +191,9 @@ const translations = {
     onHillSport: "On Hill Sport",
     keybell: "Keybell",
     reboot: "Reboot",
+    onHillSportDesc: "ملابس رياضية فاخرة والإكسسوارات الثقيلة. أنشأت محتوى جذاب يعرض منتجات العلامة التجارية في سيناريوهات نمط حياة أصلية. حققت مستويات عالية من المشاركة مع استفسارات مباشرة عن المنتجات في التعليقات.",
+    keybellDesc: "علامة تجارية روسية للإكسسوارات الفاخرة. تعاون تجريبي مع مفتاح مخصص. موضع كسفير فاخر مع رابط في السيرة والإنتاج المستمر للمحتوى.",
+    rebootDesc: "التعاون مع علامة Reboot sport club كسفير فاخر مع منتجات فاخرة ومحتوى نمط حياة جمالي. استجابة قوية للجمهور مع معدلات مشاركة عالية وديموغرافيا جمهور عالية الجودة.",
   },
 };
 
@@ -259,7 +271,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              'url(https://d2xsxph8kpxj0f.cloudfront.net/310519663311211269/WZfdVfUKwq8MfAdGMwgGoQ/hero_main-PWDXyxppzXPuH3VQi3odAz.webp)',
+              'url(/manus-storage/80DC245D-61F0-4786-B87F-DC079CB4BB2C_f4659d04.JPEG)',
             backgroundPosition: "center",
           }}
         >
@@ -334,7 +346,7 @@ export default function Home() {
                   {t.onHillSport}
                 </h3>
                 <p className="text-gray-700 mb-6 leading-relaxed">
-                  Premium running apparel and weighted accessories. Created engaging content showcasing the brand's products in authentic lifestyle scenarios. Achieved high engagement with direct product inquiries in comments.
+                  {t.onHillSportDesc}
                 </p>
                 <div className="flex gap-4">
                   <div>
@@ -364,7 +376,7 @@ export default function Home() {
                   {t.keybell}
                 </h3>
                 <p className="text-gray-700 mb-6 leading-relaxed">
-                  Russian luxury accessories brand. Test collaboration with custom-engraved keychain. Positioned as premium ambassador with link in bio and ongoing content production.
+                  {t.keybellDesc}
                 </p>
                 <div className="flex gap-4">
                   <div>
@@ -386,7 +398,7 @@ export default function Home() {
                   {t.reboot}
                 </h3>
                 <p className="text-gray-700 mb-6 leading-relaxed">
-                  Lifestyle brand collaboration featuring premium products and aesthetic lifestyle content. Strong audience resonance with high engagement rates and quality audience demographics.
+                  {t.rebootDesc}
                 </p>
                 <div className="flex gap-4">
                   <div>
