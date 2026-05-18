@@ -57,7 +57,7 @@ const translations = {
     keybell: "Keybell",
     reboot: "Reboot",
     onHillSportDesc: "Premium running apparel and weighted accessories. Created engaging content showcasing the brand's products in authentic lifestyle scenarios. Achieved high engagement with direct product inquiries in comments.",
-    keybellDesc: "Russian luxury accessories brand. Test collaboration with custom-engraved keychain. Positioned as premium ambassador with link in bio and ongoing content production.",
+    keybellDesc: "Russian luxury accessories brand. Test collaboration with custom-engraved keychain.",
     rebootDesc: "Lifestyle brand collaboration with Reboot sport club as premium ambassador featuring premium products and aesthetic lifestyle content. Strong audience resonance with high engagement rates and quality audience demographics.",
   },
   ru: {
@@ -102,7 +102,7 @@ const translations = {
     keybell: "Keybell",
     reboot: "Reboot",
     onHillSportDesc: "Спортивная одежда премиум-класса и утяжелённые аксессуары. Создал привлекательный контент, демонстрирующий продукты бренда в аутентичных сценариях образа жизни. Достиг высокого уровня вовлечённости с прямыми запросами о продуктах в комментариях.",
-    keybellDesc: "Российский бренд люксовых аксессуаров. Тестовое сотрудничество с персонализированным брелоком. Позиционирован как премиум-амбассадор со ссылкой в профиле и постоянным созданием контента.",
+    keybellDesc: "Российский бренд люксовых аксессуаров. Тестовое сотрудничество с персонализированным брелоком.",
     rebootDesc: "Сотрудничество с брендом Reboot sport club в качестве премиум-амбассадора с премиальными продуктами и эстетичным контентом образа жизни. Сильный отклик аудитории с высокими показателями вовлечённости и качественной демографией.",
   },
   es: {
@@ -147,7 +147,7 @@ const translations = {
     keybell: "Keybell",
     reboot: "Reboot",
     onHillSportDesc: "Ropa deportiva premium y accesorios ponderados. Creé contenido atractivo que muestra los productos de la marca en escenarios de estilo de vida auténticos. Logré un alto nivel de participación con consultas directas de productos en los comentarios.",
-    keybellDesc: "Marca rusa de accesorios de lujo. Colaboración de prueba con llavero personalizado. Posicionado como embajador premium con enlace en bio y producción continua de contenido.",
+    keybellDesc: "Marca rusa de accesorios de lujo. Colaboración de prueba con llavero personalizado.",
     rebootDesc: "Colaboración con la marca Reboot sport club como embajador premium con productos premium y contenido de estilo de vida estético. Fuerte resonancia de la audiencia con altas tasas de participación y demografía de audiencia de calidad.",
   },
   ar: {
@@ -192,7 +192,7 @@ const translations = {
     keybell: "Keybell",
     reboot: "Reboot",
     onHillSportDesc: "ملابس رياضية فاخرة والإكسسوارات الثقيلة. أنشأت محتوى جذاب يعرض منتجات العلامة التجارية في سيناريوهات نمط حياة أصلية. حققت مستويات عالية من المشاركة مع استفسارات مباشرة عن المنتجات في التعليقات.",
-    keybellDesc: "علامة تجارية روسية للإكسسوارات الفاخرة. تعاون تجريبي مع مفتاح مخصص. موضع كسفير فاخر مع رابط في السيرة والإنتاج المستمر للمحتوى.",
+    keybellDesc: "علامة تجارية روسية للإكسسوارات الفاخرة. تعاون تجريبي مع مفتاح مخصص.",
     rebootDesc: "التعاون مع علامة Reboot sport club كسفير فاخر مع منتجات فاخرة ومحتوى نمط حياة جمالي. استجابة قوية للجمهور مع معدلات مشاركة عالية وديموغرافيا جمهور عالية الجودة.",
   },
 };
@@ -281,9 +281,9 @@ export default function Home() {
         <div className="relative z-10 text-center max-w-2xl px-6">
           <h1
             className="text-7xl md:text-8xl font-bold mb-6"
-            style={{ fontFamily: "Playfair Display, serif" }}
+            style={{ fontFamily: "Playfair Display, serif", color: "#aa7942" }}
           >
-            Isaac Hakobian
+            ISAAC HAKOBIAN
           </h1>
           <p className="text-xl md:text-2xl text-white/90 mb-8 font-light">{t.tagline}</p>
           <div className="flex gap-4 justify-center">
