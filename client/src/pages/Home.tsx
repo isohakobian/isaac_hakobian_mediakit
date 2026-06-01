@@ -1,6 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Mail, Instagram, ArrowRight, Linkedin, MessageCircle, Youtube, Tv } from "lucide-react";
+import { Mail, Instagram, ArrowRight, Linkedin, MessageCircle, Youtube, Tv, Music } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import Testimonials from "@/components/Testimonials";
@@ -105,6 +105,51 @@ const translations = {
     onHillSportDesc: "Спортивная одежда премиум-класса и утяжелённые аксессуары. Создал привлекательный контент, демонстрирующий продукты бренда в аутентичных сценариях образа жизни. Достиг высокого уровня вовлечённости с прямыми запросами о продуктах в комментариях.",
     keybellDesc: "Российский бренд люксовых аксессуаров. Тестовое сотрудничество с персонализированным брелоком.",
     rebootDesc: "Сотрудничество с брендом Reboot sport club в качестве премиум-амбассадора с премиальными продуктами и эстетичным контентом образа жизни. Сильный отклик аудитории с высокими показателями вовлечённости и качественной демографией.",
+  },
+  fr: {
+    tagline: "Créateur de contenu Quiet Luxury",
+    exploreCollaboration: "Explorer la collaboration",
+    monthlyReach: "Portée mensuelle",
+    maleAudience: "Audience masculine",
+    primaryAgeGroup: "Groupe d'âge principal",
+    aboutBrand: "À propos de la marque",
+    aboutText: "Je crée du contenu de style de vie cinématographique qui célèbre la philosophie du Quiet Luxury - l'élégance discrète, la qualité premium et la narration authentique. Mon audience est composée d'hommes exigeants âgés de 25-34 ans qui valorisent l'artisanat, le développement personnel et l'esthétique raffinée.",
+    recentCollaborations: "Collaborations récentes",
+    collaborationPackages: "Forfaits de collaboration",
+    getInTouch: "Me contacter",
+    linkInBio: "Lien en bio",
+    singleReel: "Un Reel",
+    ambassador: "Ambassadeur",
+    inquire: "S'informer",
+    letsTalk: "Parlons",
+    name: "Nom",
+    email: "E-mail",
+    message: "Message",
+    sendMessage: "Envoyer",
+    thankYou: "Merci! Je vous recontacterai bientôt.",
+    contact: "Contact",
+    collaboration: "Collaboration",
+    month: "/mois",
+    reel: "/reel",
+    brandLinkInProfile: "Lien de la marque en bio",
+    monthlyReachValue: "3.5M+ portée mensuelle",
+    passiveTrafficGeneration: "Génération passive de trafic",
+    professionalProduction: "Production professionnelle",
+    authenticIntegration: "Intégration authentique",
+    fullUsageRights: "Droits d'utilisation complets",
+    linkInBioContent: "Lien en bio + contenu",
+    reelsPerMonth: "4+ reels/mois",
+    exclusivePartnership: "Partenariat exclusif",
+    engagementRate: "Taux d'engagement",
+    directInquiries: "Demandes directes",
+    linkCTR: "CTR du lien en bio",
+    saves: "Enregistrements",
+    onHillSport: "On Hill Sport",
+    keybell: "Keybell",
+    reboot: "Reboot",
+    onHillSportDesc: "Vêtements de sport premium et accessoires lestés. J'ai créé du contenu attrayant mettant en avant les produits de la marque dans des scénarios de style de vie authentiques. J'ai obtenu un engagement élevé avec des demandes directes de produits dans les commentaires.",
+    keybellDesc: "Marque russe d'accessoires de luxe. Collaboration test avec porte-clés personnalisé.",
+    rebootDesc: "Collaboration avec la marque Reboot sport club en tant qu'ambassadeur premium avec des produits premium et du contenu de style de vie esthétique. Forte résonance du public avec des taux d'engagement élevés et une démographie d'audience de qualité.",
   },
   es: {
     tagline: "Creador de contenido Quiet Luxury",
@@ -622,12 +667,22 @@ export default function Home() {
                 <Instagram size={24} />
               </a>
               <a
-                href="mailto:isaac@example.com"
+                href="mailto:isohakobian@gmail.com"
                 onClick={() => trackClick("social-email")}
                 className="text-gray-600 hover:text-accent transition-colors"
                 title="Email"
               >
                 <Mail size={24} />
+              </a>
+              <a
+                href="https://www.tiktok.com/@isaachakobian?_r=1&_t=ZS-96qDdTjTH1B"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackClick("social-tiktok")}
+                className="text-gray-600 hover:text-accent transition-colors"
+                title="TikTok"
+              >
+                <Music size={24} />
               </a>
               <a
                 href="https://ru.pinterest.com/isohakobian/"
@@ -685,6 +740,7 @@ export default function Home() {
             {language === "ru" && "Следите за мной"}
             {language === "es" && "Sígueme"}
             {language === "ar" && "تابعني"}
+            {language === "fr" && "Suivez mon parcours"}
           </h2>
           <div className="flex gap-8 justify-center flex-wrap">
             <a
@@ -739,6 +795,16 @@ export default function Home() {
             >
               <Tv size={32} />
               <span className="text-sm">Threads</span>
+            </a>
+            <a
+              href="https://www.tiktok.com/@isaachakobian?_r=1&_t=ZS-96qDdTjTH1B"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackClick("footer-tiktok")}
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
+            >
+              <Music size={32} />
+              <span className="text-sm">TikTok</span>
             </a>
           </div>
         </div>
