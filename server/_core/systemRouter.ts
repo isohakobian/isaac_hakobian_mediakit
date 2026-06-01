@@ -26,4 +26,27 @@ export const systemRouter = router({
         success: delivered,
       } as const;
     }),
+
+  sendEmail: publicProcedure
+    .input(
+      z.object({
+        to: z.string().email(),
+        subject: z.string().min(1),
+        message: z.string().min(1),
+        senderEmail: z.string().email(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      try {
+        // Notify owner about new inquiry
+        await notifyOwner({
+          title: `New Collaboration Inquiry: ${input.subject}`,
+          content: `From: ${input.senderEmail}\n\nMessage:\n${input.message}`,
+        });
+        return { success: true };
+      } catch (error) {
+        console.error("Email sending failed:", error);
+        return { success: false };
+      }
+    }),
 });

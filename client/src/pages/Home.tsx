@@ -1,7 +1,8 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Mail, Instagram, ArrowRight } from "lucide-react";
+import { Mail, Instagram, ArrowRight, Linkedin, MessageCircle, Youtube, Tv } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import Testimonials from "@/components/Testimonials";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAnalytics } from "@/hooks/useAnalytics";
@@ -230,18 +231,46 @@ export default function Home() {
 
   const t = translations[language as keyof typeof translations] || translations.en;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    trackFormSubmit("contact_form", {
-      name: formState.name,
-      email: formState.email,
-    });
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-  };
+
 
   const handleCollaborationClick = () => {
     trackClick("explore-collaboration-btn", "Explore Collaboration");
+  };
+
+  const handleInstagramDM = () => {
+    const message = encodeURIComponent("Здравствуйте! Я заинтересован(а) в сотрудничестве и хотел(а) бы обсудить детали.");
+    window.open(`https://instagram.com/isaac_hakobian`, "_blank");
+    trackClick("instagram-dm-inquiry");
+  };
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      // Send email via tRPC
+      const response = await fetch("/api/trpc/system.sendEmail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: "isaac@example.com",
+          subject: `Collaboration Inquiry from ${formState.name}`,
+          message: formState.message,
+          senderEmail: formState.email,
+        }),
+      });
+      
+      if (response.ok) {
+        trackFormSubmit("contact_form", {
+          name: formState.name,
+          email: formState.email,
+        });
+        setSubmitted(true);
+        toast.success(t.thankYou);
+        setFormState({ name: "", email: "", message: "" });
+        setTimeout(() => setSubmitted(false), 3000);
+      }
+    } catch (error) {
+      toast.error("Failed to send message");
+    }
   };
 
   return (
@@ -455,7 +484,7 @@ export default function Home() {
                 </li>
               </ul>
               <Button
-                onClick={() => trackClick("package-link-in-bio")}
+                onClick={handleInstagramDM}
                 className="w-full"
                 variant="outline"
               >
@@ -487,7 +516,7 @@ export default function Home() {
                 </li>
               </ul>
               <Button
-                onClick={() => trackClick("package-single-reel")}
+                onClick={handleInstagramDM}
                 className="w-full"
                 variant="outline"
               >
@@ -521,7 +550,7 @@ export default function Home() {
                 </ul>
               </div>
               <Button
-                onClick={() => trackClick("package-ambassador")}
+                onClick={handleInstagramDM}
                 className="w-full"
               >
                 {t.letsTalk}
@@ -544,7 +573,7 @@ export default function Home() {
                 <p className="text-lg text-accent font-semibold">{t.thankYou}</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleEmailSubmit} className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">{t.name}</label>
                   <input
@@ -581,13 +610,14 @@ export default function Home() {
               </form>
             )}
 
-            <div className="mt-8 pt-8 border-t border-gray-300 flex gap-6 justify-center">
+            <div className="mt-8 pt-8 border-t border-gray-300 flex gap-6 justify-center flex-wrap">
               <a
                 href="https://instagram.com/isaac_hakobian"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackClick("social-instagram")}
                 className="text-gray-600 hover:text-accent transition-colors"
+                title="Instagram"
               >
                 <Instagram size={24} />
               </a>
@@ -595,10 +625,121 @@ export default function Home() {
                 href="mailto:isaac@example.com"
                 onClick={() => trackClick("social-email")}
                 className="text-gray-600 hover:text-accent transition-colors"
+                title="Email"
               >
                 <Mail size={24} />
               </a>
+              <a
+                href="https://ru.pinterest.com/isohakobian/"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackClick("social-pinterest")}
+                className="text-gray-600 hover:text-accent transition-colors"
+                title="Pinterest"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4z" fill="currentColor"/>
+                </svg>
+              </a>
+              <a
+                href="https://t.me/+A7IKAwimpLEyNTJi"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackClick("social-telegram")}
+                className="text-gray-600 hover:text-accent transition-colors"
+                title="Telegram"
+              >
+                <MessageCircle size={24} />
+              </a>
+              <a
+                href="https://www.youtube.com/@isaachakobian/featured"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackClick("social-youtube")}
+                className="text-gray-600 hover:text-accent transition-colors"
+                title="YouTube"
+              >
+                <Youtube size={24} />
+              </a>
+              <a
+                href="https://www.threads.com/@isaac_hakobian"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackClick("social-threads")}
+                className="text-gray-600 hover:text-accent transition-colors"
+                title="Threads"
+              >
+                <Tv size={24} />
+              </a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Media Footer */}
+      <section className="py-16 px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12" style={{ fontFamily: "Playfair Display, serif" }}>
+            {language === "en" && "Follow My Journey"}
+            {language === "ru" && "Следите за мной"}
+            {language === "es" && "Sígueme"}
+            {language === "ar" && "تابعني"}
+          </h2>
+          <div className="flex gap-8 justify-center flex-wrap">
+            <a
+              href="https://instagram.com/isaac_hakobian"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackClick("footer-instagram")}
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
+            >
+              <Instagram size={32} />
+              <span className="text-sm">Instagram</span>
+            </a>
+            <a
+              href="https://ru.pinterest.com/isohakobian/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackClick("footer-pinterest")}
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
+            >
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/>
+                <path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4z" fill="currentColor"/>
+              </svg>
+              <span className="text-sm">Pinterest</span>
+            </a>
+            <a
+              href="https://t.me/+A7IKAwimpLEyNTJi"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackClick("footer-telegram")}
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
+            >
+              <MessageCircle size={32} />
+              <span className="text-sm">Telegram</span>
+            </a>
+            <a
+              href="https://www.youtube.com/@isaachakobian/featured"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackClick("footer-youtube")}
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
+            >
+              <Youtube size={32} />
+              <span className="text-sm">YouTube</span>
+            </a>
+            <a
+              href="https://www.threads.com/@isaac_hakobian"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackClick("footer-threads")}
+              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
+            >
+              <Tv size={32} />
+              <span className="text-sm">Threads</span>
+            </a>
           </div>
         </div>
       </section>

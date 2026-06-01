@@ -30,7 +30,7 @@ export const appRouter = router({
     track: publicProcedure
       .input(z.object({
         eventType: z.string(),
-        eventData: z.record(z.any()).optional(),
+        eventData: z.record(z.string(), z.any()).optional(),
         referrer: z.string().optional(),
         language: z.string().optional(),
       }))

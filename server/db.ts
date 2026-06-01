@@ -1,4 +1,4 @@
-import { eq, gt } from "drizzle-orm";
+import { eq, and, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, testimonials, analytics, InsertAnalytics } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -99,8 +99,7 @@ export async function getTestimonialsByLanguage(language: string) {
   const result = await db
     .select()
     .from(testimonials)
-    .where(eq(testimonials.isPublished, 1))
-    .where(eq(testimonials.language, language))
+    .where(eq(testimonials.isPublished, 1) && eq(testimonials.language, language))
     .orderBy(testimonials.createdAt);
   
   return result;
