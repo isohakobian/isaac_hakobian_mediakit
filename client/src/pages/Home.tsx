@@ -1,4 +1,3 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Mail, Instagram, ArrowRight, Linkedin, MessageCircle, Youtube, Tv, Music } from "lucide-react";
 import { useState } from "react";
@@ -6,6 +5,7 @@ import { toast } from "sonner";
 import Testimonials from "@/components/Testimonials";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 /**
  * Editorial Minimalism Design System
@@ -17,14 +17,22 @@ import { useAnalytics } from "@/hooks/useAnalytics";
 
 const translations = {
   en: {
-    tagline: "Quiet Luxury Lifestyle Content Creator",
+    tagline: "Premium Men's Lifestyle Creator for Quality-Focused Brands",
+    taglineSupport: "Cinematic short-form content that helps premium fitness, lifestyle, accessories, grooming, and wellness brands reach a discerning male audience through authentic product integration and measurable engagement.",
     exploreCollaboration: "Explore Collaboration",
     monthlyReach: "Monthly Reach",
     maleAudience: "Male Audience",
     primaryAgeGroup: "Primary Age Group",
-    aboutBrand: "About the Brand",
-    aboutText: "I create cinematic lifestyle content that celebrates the philosophy of Quiet Luxury—understated elegance, premium quality, and authentic storytelling. My audience consists of discerning men aged 25-34 who value craftsmanship, personal development, and refined aesthetics. Every frame is intentional, every collaboration is strategic.",
-    recentCollaborations: "Recent Collaborations",
+    aboutBrand: "About",
+    aboutText: "I create cinematic lifestyle content for brands that value quality, craft, and trust. My audience is primarily men aged 25-34 who respond to refined aesthetics, personal development, performance, and premium products. Each collaboration is built to feel native to my content while giving brands clear creative assets, audience fit, and campaign proof.",
+    bestFitFor: "Best Fit For",
+    premiumFitness: "Premium fitness and sport clubs",
+    mensAccessories: "Men's accessories",
+    groomingWellness: "Grooming and wellness",
+    menswearLifestyle: "Menswear and lifestyle products",
+    everydayCarry: "High-quality everyday carry",
+    performanceBrands: "Performance and personal development brands",
+    recentCollaborations: "Proven Results",
     collaborationPackages: "Collaboration Packages",
     getInTouch: "Get in Touch",
     linkInBio: "Link in Bio",
@@ -60,17 +68,55 @@ const translations = {
     onHillSportDesc: "Premium running apparel and weighted accessories. Created engaging content showcasing the brand's products in authentic lifestyle scenarios. Achieved high engagement with direct product inquiries in comments.",
     keybellDesc: "Russian luxury accessories brand. Test collaboration with custom-engraved keychain.",
     rebootDesc: "Lifestyle brand collaboration with Reboot sport club as premium ambassador featuring premium products and aesthetic lifestyle content. Strong audience resonance with high engagement rates and quality audience demographics.",
+    collaborationProof: "Campaign Results",
+    campaignType: "Campaign Type",
+    results: "Results",
+    onHillSportCategory: "Premium running apparel and weighted accessories",
+    onHillSportCampaign: "Lifestyle reel / product integration",
+    onHillSportResults: "8.2% engagement rate • 15+ direct product inquiries",
+    onHillSportQuote: "Isaac brought authentic energy to our brand. His audience engagement was exceptional and the content quality exceeded expectations.",
+    keybellCategory: "Luxury accessories",
+    keybellCampaign: "Custom product feature / bio traffic",
+    keybellResults: "12% bio link CTR • 340 saves",
+    keybellQuote: "His followers are exactly our target demographic - discerning, quality-focused men.",
+    rebootCategory: "Premium sport club / lifestyle",
+    rebootCampaign: "Ambassador-style lifestyle content",
+    rebootResults: "9.5% engagement rate • 420 saves",
+    rebootQuote: "The production quality and authenticity of Isaac's content is unmatched. Highly recommended for premium brands.",
   },
   ru: {
-    tagline: "Создатель контента Quiet Luxury",
-    exploreCollaboration: "Изучить сотрудничество",
+    tagline: "Премиальный креатор контента для брендов высокого качества",
+    taglineSupport: "Кинематографический контент для премиальных брендов в спорте, аксессуарах, груминге и велнессе. Отображаю требовательную мужскую аудиторию через аутентичные интеграции и измеримые результаты.",
+    exploreCollaboration: "Обсудить сотрудничество",
     monthlyReach: "Месячный охват",
     maleAudience: "Мужская аудитория",
     primaryAgeGroup: "Основная возрастная группа",
-    aboutBrand: "О бренде",
-    aboutText: "Я создаю кинематографический контент о стиле жизни, который отражает философию Quiet Luxury — сдержанную элегантность, премиальное качество и аутентичное повествование. Моя аудитория — требовательные мужчины в возрасте 25-34 лет, которые ценят мастерство, личное развитие и утонченную эстетику.",
-    recentCollaborations: "Недавние сотрудничества",
+    aboutBrand: "О мне",
+    aboutText: "Креатор кинематографического контента для брендов, которые ценят качество, мастерство и доверие. Моя аудитория — мужчины 25-34 лет, которые оценивают рафинированную эстетику, личное развитие и премиальные продукты. Каждое сотрудничество — это аутентичные ассеты, таргетированная аудитория и измеримые результаты.",
+    bestFitFor: "Лучше всего подходит для",
+    premiumFitness: "Премиальные спортивные клубы",
+    mensAccessories: "Мужские аксессуары",
+    groomingWellness: "Груминг и велнесс",
+    menswearLifestyle: "Мужская мода и лайфстайл",
+    everydayCarry: "Премиум эверидей",
+    performanceBrands: "Бренды развития и производительности",
+    recentCollaborations: "Проверенные результаты",
     collaborationPackages: "Пакеты сотрудничества",
+    collaborationProof: "Результаты кампании",
+    campaignType: "Тип кампании",
+    results: "Показатели",
+    onHillSportCategory: "Премиальная спортивная одежда и утяжели",
+    onHillSportCampaign: "Лайфстайл рил / интеграция продукта",
+    onHillSportResults: "8.2% engagement rate • 15+ прямых запросов",
+    onHillSportQuote: "Исаак принес аутентичную энергию нашему бренду. Его аудитория показала исключительные результаты.",
+    keybellCategory: "Люксовые аксессуары",
+    keybellCampaign: "Показ продукта / трафик в профил",
+    keybellResults: "12% CTR ссылки • 340 сохранений",
+    keybellQuote: "Его подписчики — это точно наша таргет аудитория.",
+    rebootCategory: "Премиальный спорт клуб / лайфстайл",
+    rebootCampaign: "Контент амбассадора",
+    rebootResults: "9.5% engagement rate • 420 сохранений",
+    rebootQuote: "Качество производства и аутентичность контента бесподобны.",
     getInTouch: "Свяжитесь со мной",
     linkInBio: "Ссылка в профиле",
     singleReel: "Один Reel",
@@ -107,15 +153,38 @@ const translations = {
     rebootDesc: "Сотрудничество с брендом Reboot sport club в качестве премиум-амбассадора с премиальными продуктами и эстетичным контентом образа жизни. Сильный отклик аудитории с высокими показателями вовлечённости и качественной демографией.",
   },
   fr: {
-    tagline: "Créateur de contenu Quiet Luxury",
+    tagline: "Créateur de contenu premium pour marques de qualité",
+    taglineSupport: "Contenu cinématographique pour marques premium en fitness, accessoires, grooming et bien-être. J'atteins une audience masculine exigeante par des intégrations authentiques et des résultats mesurables.",
     exploreCollaboration: "Explorer la collaboration",
     monthlyReach: "Portée mensuelle",
     maleAudience: "Audience masculine",
     primaryAgeGroup: "Groupe d'âge principal",
-    aboutBrand: "À propos de la marque",
-    aboutText: "Je crée du contenu de style de vie cinématographique qui célèbre la philosophie du Quiet Luxury - l'élégance discrète, la qualité premium et la narration authentique. Mon audience est composée d'hommes exigeants âgés de 25-34 ans qui valorisent l'artisanat, le développement personnel et l'esthétique raffinée.",
-    recentCollaborations: "Collaborations récentes",
+    aboutBrand: "À propos",
+    aboutText: "Je crée du contenu de style de vie cinématographique pour les marques qui valorisent la qualité, l'artisanat et la confiance. Mon audience est composée d'hommes âgés de 25-34 ans qui apprécient l'esthétique raffinée, le développement personnel et les produits premium. Chaque collaboration est conçue pour s'intégrer naturellement à mon contenu tout en offrant aux marques des actifs créatifs clairs, un ajustement d'audience et une preuve de campagne.",
+    bestFitFor: "Meilleur pour",
+    premiumFitness: "Clubs sportifs premium",
+    mensAccessories: "Accessoires pour hommes",
+    groomingWellness: "Grooming et bien-être",
+    menswearLifestyle: "Mode masculine et style de vie",
+    everydayCarry: "Accessoires premium au quotidien",
+    performanceBrands: "Marques de développement et performance",
+    recentCollaborations: "Résultats Prouvés",
     collaborationPackages: "Forfaits de collaboration",
+    collaborationProof: "Résultats de campagne",
+    campaignType: "Type de campagne",
+    results: "Résultats",
+    onHillSportCategory: "Vêtements de sport premium et accessoires lestés",
+    onHillSportCampaign: "Reel de style de vie / intégration de produit",
+    onHillSportResults: "8.2% engagement rate • 15+ demandes directes",
+    onHillSportQuote: "Isaac a apporté une énergie authentique à notre marque. L'engagement de son audience a été exceptionnel.",
+    keybellCategory: "Accessoires de luxe",
+    keybellCampaign: "Présentation de produit / trafic en bio",
+    keybellResults: "12% CTR du lien • 340 enregistrements",
+    keybellQuote: "Ses followers sont exactement notre audience cible.",
+    rebootCategory: "Club sportif premium / style de vie",
+    rebootCampaign: "Contenu d'ambassadeur",
+    rebootResults: "9.5% engagement rate • 420 enregistrements",
+    rebootQuote: "La qualité de production et l'authenticité du contenu d'Isaac sont incomparables.",
     getInTouch: "Me contacter",
     linkInBio: "Lien en bio",
     singleReel: "Un Reel",
@@ -152,15 +221,38 @@ const translations = {
     rebootDesc: "Collaboration avec la marque Reboot sport club en tant qu'ambassadeur premium avec des produits premium et du contenu de style de vie esthétique. Forte résonance du public avec des taux d'engagement élevés et une démographie d'audience de qualité.",
   },
   es: {
-    tagline: "Creador de contenido Quiet Luxury",
+    tagline: "Creador de contenido premium para marcas de calidad",
+    taglineSupport: "Contenido cinematográfico para marcas premium en fitness, accesorios, grooming y bienestar. Llego a una audiencia masculina exigente a través de integraciones auténticas y resultados medibles.",
     exploreCollaboration: "Explorar colaboración",
     monthlyReach: "Alcance mensual",
     maleAudience: "Audiencia masculina",
     primaryAgeGroup: "Grupo de edad principal",
-    aboutBrand: "Sobre la marca",
-    aboutText: "Creo contenido de estilo de vida cinematográfico que celebra la filosofía de Quiet Luxury: elegancia discreta, calidad premium e historias auténticas. Mi audiencia son hombres exigentes de 25-34 años que valoran la artesanía, el desarrollo personal y la estética refinada.",
-    recentCollaborations: "Colaboraciones recientes",
+    aboutBrand: "Acerca de",
+    aboutText: "Creo contenido de estilo de vida cinematográfico para marcas que valoran la calidad, la artesanía y la confianza. Mi audiencia son principalmente hombres de 25-34 años que aprecian la estética refinada, el desarrollo personal y los productos premium. Cada colaboración está diseñada para sentirse nativa a mi contenido mientras proporciono a las marcas activos creativos claros, ajuste de audiencia y prueba de campaña.",
+    bestFitFor: "Mejor para",
+    premiumFitness: "Clubes deportivos premium",
+    mensAccessories: "Accesorios para hombres",
+    groomingWellness: "Grooming y bienestar",
+    menswearLifestyle: "Moda masculina y estilo de vida",
+    everydayCarry: "Accesorios premium de uso diario",
+    performanceBrands: "Marcas de desarrollo y rendimiento",
+    recentCollaborations: "Resultados Probados",
     collaborationPackages: "Paquetes de colaboración",
+    collaborationProof: "Resultados de campaña",
+    campaignType: "Tipo de campaña",
+    results: "Resultados",
+    onHillSportCategory: "Ropa deportiva premium y accesorios ponderados",
+    onHillSportCampaign: "Reel de estilo de vida / integración de producto",
+    onHillSportResults: "8.2% engagement rate • 15+ consultas directas",
+    onHillSportQuote: "Isaac trajo energía auténtica a nuestra marca. El engagement de su audiencia fue excepcional.",
+    keybellCategory: "Accesorios de lujo",
+    keybellCampaign: "Presentación de producto / tráfico en bio",
+    keybellResults: "12% CTR del enlace • 340 guardados",
+    keybellQuote: "Sus seguidores son exactamente nuestra audiencia objetivo.",
+    rebootCategory: "Club deportivo premium / estilo de vida",
+    rebootCampaign: "Contenido de embajador",
+    rebootResults: "9.5% engagement rate • 420 guardados",
+    rebootQuote: "La calidad de producción y autenticidad del contenido de Isaac es incomparable.",
     getInTouch: "Ponte en contacto",
     linkInBio: "Enlace en bio",
     singleReel: "Un Reel",
@@ -197,15 +289,38 @@ const translations = {
     rebootDesc: "Colaboración con la marca Reboot sport club como embajador premium con productos premium y contenido de estilo de vida estético. Fuerte resonancia de la audiencia con altas tasas de participación y demografía de audiencia de calidad.",
   },
   ar: {
-    tagline: "منشئ محتوى Quiet Luxury",
+    tagline: "منشئ محتوى بريميوم للعلامات التجارية عالية الجودة",
+    taglineSupport: "محتوى سينمائي للعلامات البريميوم في اللياقة والاكسسوارات والعناية بالبشرة. أصل لجمهور ذكوري متطلب من خلال التكامل الأصلي والنتائج المقاسة.",
     exploreCollaboration: "استكشف التعاون",
     monthlyReach: "الوصول الشهري",
     maleAudience: "الجمهور الذكوري",
     primaryAgeGroup: "المجموعة العمرية الأساسية",
-    aboutBrand: "عن العلامة التجارية",
-    aboutText: "أنا أنشئ محتوى نمط حياة سينمائي يحتفل بفلسفة Quiet Luxury - الأناقة المتحفظة والجودة المتميزة والسرد الحقيقي. جمهوري يتكون من رجال متطلبين تتراوح أعمارهم بين 25-34 سنة يقدرون الحرفية والتطور الشخصي والجمالية المكررة.",
-    recentCollaborations: "التعاونات الأخيرة",
+    aboutBrand: "حول",
+    aboutText: "أنشئ محتوى نمط حياة سينمائي للعلامات التجارية التي تقدر الجودة والحرفية والثقة. جمهوري يتكون في المقام الأول من رجال تتراوح أعمارهم بين 25-34 سنة يقدرون الجماليات المكررة والتطور الشخصي والمنتجات المتميزة. تم تصميم كل تعاون ليشعر بأنه أصلي لمحتوى الخاص بي مع توفير الأصول الإبداعية الواضحة وملاءمة الجمهور وإثبات الحملة.",
+    bestFitFor: "الأفضل ل",
+    premiumFitness: "نوادي رياضية بريميوم",
+    mensAccessories: "اكسسوارات رجالية",
+    groomingWellness: "العناية بالبشرة والعافية",
+    menswearLifestyle: "الملابس الرجالية ونمط الحياة",
+    everydayCarry: "اكسسوارات بريميوم يومية",
+    performanceBrands: "علامات التطور والأداء",
+    recentCollaborations: "النتائج المثبتة",
     collaborationPackages: "حزم التعاون",
+    collaborationProof: "نتائج الحملة",
+    campaignType: "نوع الحملة",
+    results: "النتائج",
+    onHillSportCategory: "ملابس رياضية فاخرة والإكسسوارات الثقيلة",
+    onHillSportCampaign: "ريل نمط حياة / تكامل منتج",
+    onHillSportResults: "8.2% engagement rate • 15+ استفسارات مباشرة",
+    onHillSportQuote: "أحضر إسحاق طاقة أصلية لعلامتنا التجارية. كان الانخراط استثنائياً.",
+    keybellCategory: "اكسسوارات فاخرة",
+    keybellCampaign: "عرض منتج / حركة بيو",
+    keybellResults: "12% CTR رابط • 340 حفظ",
+    keybellQuote: "متابعوه هم بالضبط جمهورنا المستهدف.",
+    rebootCategory: "نادي رياضي بريميوم / نمط حياة",
+    rebootCampaign: "محتوى سفير",
+    rebootResults: "9.5% engagement rate • 420 حفظ",
+    rebootQuote: "جودة الإنتاج وأصالة محتوى إسحاق لا مثيل لها.",
     getInTouch: "تواصل معي",
     linkInBio: "رابط في السيرة",
     singleReel: "ريل واحد",
@@ -278,7 +393,7 @@ export default function Home() {
 
 
 
-  const handleCollaborationClick = () => {
+    const handleCollaborationClick = () => {
     trackClick("explore-collaboration-btn", "Explore Collaboration");
   };
 
@@ -292,55 +407,59 @@ export default function Home() {
     e.preventDefault();
     try {
       // Send email via tRPC
-      const response = await fetch("/api/trpc/system.sendEmail", {
+      const response = await fetch("/api/trpc/system.sendEmail?input=" + encodeURIComponent(JSON.stringify({
+        to: "isohakobian@gmail.com",
+        subject: `Collaboration Inquiry from ${formState.name}`,
+        message: formState.message,
+        senderEmail: formState.email,
+      })), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          to: "isaac@example.com",
-          subject: `Collaboration Inquiry from ${formState.name}`,
-          message: formState.message,
-          senderEmail: formState.email,
-        }),
       });
-      
+
       if (response.ok) {
-        trackFormSubmit("contact_form", {
-          name: formState.name,
-          email: formState.email,
-        });
+        trackFormSubmit("contact-form", { email: formState.email, name: formState.name });
         setSubmitted(true);
-        toast.success(t.thankYou);
         setFormState({ name: "", email: "", message: "" });
+        toast.success(t.thankYou);
         setTimeout(() => setSubmitted(false), 3000);
+      } else {
+        toast.error("Error sending message");
       }
     } catch (error) {
-      toast.error("Failed to send message");
+      console.error("Error sending email:", error);
+      toast.error("Error sending message");
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-white text-foreground">
+    <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="fixed top-0 right-0 z-50 p-6 flex gap-4 items-center">
-        <LanguageSwitcher currentLanguage={language} onLanguageChange={setLanguage} />
-        <a
-          href="#collaboration"
-          onClick={() => trackClick("nav-collaboration")}
-          className="text-sm font-medium hover:text-accent transition-colors"
-        >
-          {t.collaboration}
-        </a>
-        <a
-          href="#contact"
-          onClick={() => trackClick("nav-contact")}
-          className="text-sm font-medium hover:text-accent transition-colors"
-        >
-          {t.contact}
-        </a>
+      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200 px-6 py-4">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <a href="/" className="text-2xl font-bold" style={{ fontFamily: "Playfair Display, serif", color: "#aa7942" }}>
+            Isaac
+          </a>
+          <LanguageSwitcher currentLanguage={language} onLanguageChange={setLanguage} />
+          <a
+            href="#collaboration"
+            onClick={() => trackClick("nav-collaboration")}
+            className="text-sm font-medium hover:text-accent transition-colors"
+          >
+            {t.collaboration}
+          </a>
+          <a
+            href="#contact"
+            onClick={() => trackClick("nav-contact")}
+            className="text-sm font-medium hover:text-accent transition-colors"
+          >
+            {t.contact}
+          </a>
+        </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative h-screen flex items-center justify-center overflow-hidden mt-20">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -352,19 +471,20 @@ export default function Home() {
           <div className="absolute inset-0 bg-black/20"></div>
         </div>
 
-        <div className="relative z-10 text-center max-w-2xl px-6">
+        <div className="relative z-10 text-center max-w-3xl px-6">
           <h1
-            className="text-7xl md:text-8xl font-bold mb-6"
+            className="text-7xl md:text-8xl font-bold mb-4"
             style={{ fontFamily: "Playfair Display, serif", color: "#aa7942" }}
           >
             ISAAC HAKOBIAN
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 mb-8 font-light">{t.tagline}</p>
+          <p className="text-2xl md:text-3xl text-white/95 mb-6 font-light" style={{ fontFamily: "Playfair Display, serif" }}>{t.tagline}</p>
+          {t.taglineSupport && <p className="text-lg text-white/80 mb-8 font-light leading-relaxed max-w-2xl mx-auto">{t.taglineSupport}</p>}
           <div className="flex gap-4 justify-center">
             <a
               href="#collaboration"
               onClick={handleCollaborationClick}
-              className="inline-flex items-center gap-2 bg-accent text-white px-6 py-3 hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-2 bg-accent text-white px-8 py-3 hover:opacity-90 transition-opacity font-medium"
             >
               {t.exploreCollaboration} <ArrowRight size={16} />
             </a>
@@ -395,9 +515,14 @@ export default function Home() {
               <p className="text-lg text-gray-600">{t.primaryAgeGroup}</p>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="border-t border-gray-300 pt-12">
-            <h2 className="text-4xl font-bold mb-6" style={{ fontFamily: "Playfair Display, serif" }}>
+      {/* About Section */}
+      <section className="py-20 px-6 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center">
+            <h2 className="text-5xl font-bold mb-8" style={{ fontFamily: "Playfair Display, serif" }}>
               {t.aboutBrand}
             </h2>
             <p className="text-lg text-gray-700 leading-relaxed max-w-3xl">{t.aboutText}</p>
@@ -416,22 +541,21 @@ export default function Home() {
             {/* On Hill Sport */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="text-3xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
+                <h3 className="text-3xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif" }}>
                   {t.onHillSport}
                 </h3>
-                <p className="text-gray-700 mb-6 leading-relaxed">
-                  {t.onHillSportDesc}
-                </p>
-                <div className="flex gap-4">
-                  <div>
-                    <p className="text-sm text-gray-600">{t.engagementRate}</p>
-                    <p className="text-2xl font-bold">8.2%</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">{t.directInquiries}</p>
-                    <p className="text-2xl font-bold">15+</p>
-                  </div>
+                <p className="text-sm text-accent font-medium mb-4">{t.onHillSportCategory}</p>
+                <div className="mb-6 pb-6 border-b border-gray-200">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">{t.campaignType}</p>
+                  <p className="text-gray-700 font-medium">{t.onHillSportCampaign}</p>
                 </div>
+                <div className="mb-6 pb-6 border-b border-gray-200">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{t.results}</p>
+                  <p className="text-gray-700 font-medium">{t.onHillSportResults}</p>
+                </div>
+                <blockquote className="italic text-gray-700 border-l-4 border-accent pl-4">
+                  "{t.onHillSportQuote}"
+                </blockquote>
               </div>
               <InstagramReel
                 url="https://www.instagram.com/reel/DXTejdvCHq1/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
@@ -446,44 +570,42 @@ export default function Home() {
                 title="Keybell Reel"
               />
               <div className="md:order-first">
-                <h3 className="text-3xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
+                <h3 className="text-3xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif" }}>
                   {t.keybell}
                 </h3>
-                <p className="text-gray-700 mb-6 leading-relaxed">
-                  {t.keybellDesc}
-                </p>
-                <div className="flex gap-4">
-                  <div>
-                    <p className="text-sm text-gray-600">{t.linkCTR}</p>
-                    <p className="text-2xl font-bold">12%</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">{t.saves}</p>
-                    <p className="text-2xl font-bold">340</p>
-                  </div>
+                <p className="text-sm text-accent font-medium mb-4">{t.keybellCategory}</p>
+                <div className="mb-6 pb-6 border-b border-gray-200">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">{t.campaignType}</p>
+                  <p className="text-gray-700 font-medium">{t.keybellCampaign}</p>
                 </div>
+                <div className="mb-6 pb-6 border-b border-gray-200">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{t.results}</p>
+                  <p className="text-gray-700 font-medium">{t.keybellResults}</p>
+                </div>
+                <blockquote className="italic text-gray-700 border-l-4 border-accent pl-4">
+                  "{t.keybellQuote}"
+                </blockquote>
               </div>
             </div>
 
             {/* Reboot */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="text-3xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
+                <h3 className="text-3xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif" }}>
                   {t.reboot}
                 </h3>
-                <p className="text-gray-700 mb-6 leading-relaxed">
-                  {t.rebootDesc}
-                </p>
-                <div className="flex gap-4">
-                  <div>
-                    <p className="text-sm text-gray-600">{t.engagementRate}</p>
-                    <p className="text-2xl font-bold">9.5%</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">{t.saves}</p>
-                    <p className="text-2xl font-bold">420</p>
-                  </div>
+                <p className="text-sm text-accent font-medium mb-4">{t.rebootCategory}</p>
+                <div className="mb-6 pb-6 border-b border-gray-200">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">{t.campaignType}</p>
+                  <p className="text-gray-700 font-medium">{t.rebootCampaign}</p>
                 </div>
+                <div className="mb-6 pb-6 border-b border-gray-200">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{t.results}</p>
+                  <p className="text-gray-700 font-medium">{t.rebootResults}</p>
+                </div>
+                <blockquote className="italic text-gray-700 border-l-4 border-accent pl-4">
+                  "{t.rebootQuote}"
+                </blockquote>
               </div>
               <InstagramReel
                 url="https://www.instagram.com/reel/DTsCmsLiIOB/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
@@ -510,31 +632,24 @@ export default function Home() {
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
                 {t.linkInBio}
               </h3>
-              <p className="text-4xl font-bold mb-4" style={{ color: "#8B4513" }}>
-                ₽10,000
-              </p>
               <p className="text-gray-600 mb-6">{t.month}</p>
               <ul className="space-y-3 mb-8">
-                <li className="flex gap-2">
-                  <span className="text-accent">✓</span>
-                  <span>{t.brandLinkInProfile}</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent mt-1">✓</span>
+                  <span className="text-gray-700">{t.brandLinkInProfile}</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-accent">✓</span>
-                  <span>{t.monthlyReachValue}</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent mt-1">✓</span>
+                  <span className="text-gray-700">{t.passiveTrafficGeneration}</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-accent">✓</span>
-                  <span>{t.passiveTrafficGeneration}</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent mt-1">✓</span>
+                  <span className="text-gray-700">{t.professionalProduction}</span>
                 </li>
               </ul>
-              <Button
-                onClick={handleInstagramDM}
-                className="w-full"
-                variant="outline"
-              >
+              <button onClick={handleInstagramDM} className="w-full bg-accent text-white py-3 hover:opacity-90 transition-opacity font-medium">
                 {t.inquire}
-              </Button>
+              </button>
             </div>
 
             {/* Single Reel */}
@@ -542,64 +657,49 @@ export default function Home() {
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
                 {t.singleReel}
               </h3>
-              <p className="text-4xl font-bold mb-4" style={{ color: "#8B4513" }}>
-                ₽7,000
-              </p>
               <p className="text-gray-600 mb-6">{t.reel}</p>
               <ul className="space-y-3 mb-8">
-                <li className="flex gap-2">
-                  <span className="text-accent">✓</span>
-                  <span>{t.professionalProduction}</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent mt-1">✓</span>
+                  <span className="text-gray-700">{t.authenticIntegration}</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-accent">✓</span>
-                  <span>{t.authenticIntegration}</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent mt-1">✓</span>
+                  <span className="text-gray-700">{t.fullUsageRights}</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-accent">✓</span>
-                  <span>{t.fullUsageRights}</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent mt-1">✓</span>
+                  <span className="text-gray-700">{t.professionalProduction}</span>
                 </li>
               </ul>
-              <Button
-                onClick={handleInstagramDM}
-                className="w-full"
-                variant="outline"
-              >
+              <button onClick={handleInstagramDM} className="w-full bg-accent text-white py-3 hover:opacity-90 transition-opacity font-medium">
                 {t.inquire}
-              </Button>
+              </button>
             </div>
 
             {/* Ambassador */}
-            <div className="border-2 border-accent p-8 hover:shadow-lg transition-shadow bg-gray-50 md:col-span-2">
+            <div className="border border-gray-300 p-8 hover:shadow-lg transition-shadow md:col-span-2 md:w-1/2 md:mx-auto">
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
                 {t.ambassador}
               </h3>
-              <p className="text-4xl font-bold mb-4" style={{ color: "#8B4513" }}>
-                Custom
-              </p>
-              <p className="text-gray-600 mb-6">Long-term partnership</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                <ul className="space-y-3">
-                  <li className="flex gap-2">
-                    <span className="text-accent">✓</span>
-                    <span>{t.linkInBioContent}</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-accent">✓</span>
-                    <span>{t.reelsPerMonth}</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-accent">✓</span>
-                    <span>{t.exclusivePartnership}</span>
-                  </li>
-                </ul>
-              </div>
-              <Button
-                onClick={handleInstagramDM}
-                className="w-full"
-              >
+              <p className="text-gray-600 mb-6">Custom</p>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-3">
+                  <span className="text-accent mt-1">✓</span>
+                  <span className="text-gray-700">{t.linkInBioContent}</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent mt-1">✓</span>
+                  <span className="text-gray-700">{t.reelsPerMonth}</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent mt-1">✓</span>
+                  <span className="text-gray-700">{t.exclusivePartnership}</span>
+                </li>
+              </ul>
+              <button onClick={handleInstagramDM} className="w-full bg-accent text-white py-3 hover:opacity-90 transition-opacity font-medium">
                 {t.letsTalk}
-              </Button>
+              </button>
             </div>
           </div>
         </div>
@@ -611,209 +711,87 @@ export default function Home() {
           <h2 className="text-5xl font-bold mb-12 text-center" style={{ fontFamily: "Playfair Display, serif" }}>
             {t.getInTouch}
           </h2>
-
-          <div className="bg-white p-8 rounded-lg border border-gray-300">
-            {submitted ? (
-              <div className="text-center py-8">
-                <p className="text-lg text-accent font-semibold">{t.thankYou}</p>
-              </div>
-            ) : (
-              <form onSubmit={handleEmailSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">{t.name}</label>
-                  <input
-                    type="text"
-                    required
-                    value={formState.name}
-                    onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                    className="w-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">{t.email}</label>
-                  <input
-                    type="email"
-                    required
-                    value={formState.email}
-                    onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                    className="w-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">{t.message}</label>
-                  <textarea
-                    required
-                    value={formState.message}
-                    onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                    rows={4}
-                    className="w-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  {t.sendMessage}
-                </Button>
-              </form>
-            )}
-
-            <div className="mt-8 pt-8 border-t border-gray-300 flex gap-6 justify-center flex-wrap">
-              <a
-                href="https://instagram.com/isaac_hakobian"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackClick("social-instagram")}
-                className="text-gray-600 hover:text-accent transition-colors"
-                title="Instagram"
-              >
-                <Instagram size={24} />
-              </a>
-              <a
-                href="mailto:isohakobian@gmail.com"
-                onClick={() => trackClick("social-email")}
-                className="text-gray-600 hover:text-accent transition-colors"
-                title="Email"
-              >
-                <Mail size={24} />
-              </a>
-              <a
-                href="https://www.tiktok.com/@isaachakobian?_r=1&_t=ZS-96qDdTjTH1B"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackClick("social-tiktok")}
-                className="text-gray-600 hover:text-accent transition-colors"
-                title="TikTok"
-              >
-                <Music size={24} />
-              </a>
-              <a
-                href="https://ru.pinterest.com/isohakobian/"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackClick("social-pinterest")}
-                className="text-gray-600 hover:text-accent transition-colors"
-                title="Pinterest"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4z" fill="currentColor"/>
-                </svg>
-              </a>
-              <a
-                href="https://t.me/+A7IKAwimpLEyNTJi"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackClick("social-telegram")}
-                className="text-gray-600 hover:text-accent transition-colors"
-                title="Telegram"
-              >
-                <MessageCircle size={24} />
-              </a>
-              <a
-                href="https://www.youtube.com/@isaachakobian/featured"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackClick("social-youtube")}
-                className="text-gray-600 hover:text-accent transition-colors"
-                title="YouTube"
-              >
-                <Youtube size={24} />
-              </a>
-              <a
-                href="https://www.threads.com/@isaac_hakobian"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackClick("social-threads")}
-                className="text-gray-600 hover:text-accent transition-colors"
-                title="Threads"
-              >
-                <Tv size={24} />
-              </a>
+          <form onSubmit={handleEmailSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t.name}</label>
+              <input
+                type="text"
+                value={formState.name}
+                onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-accent"
+                required
+              />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Social Media Footer */}
-      <section className="py-16 px-6 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12" style={{ fontFamily: "Playfair Display, serif" }}>
-            {language === "en" && "Follow My Journey"}
-            {language === "ru" && "Следите за мной"}
-            {language === "es" && "Sígueme"}
-            {language === "ar" && "تابعني"}
-            {language === "fr" && "Suivez mon parcours"}
-          </h2>
-          <div className="flex gap-8 justify-center flex-wrap">
-            <a
-              href="https://instagram.com/isaac_hakobian"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackClick("footer-instagram")}
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t.email}</label>
+              <input
+                type="email"
+                value={formState.email}
+                onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-accent"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t.message}</label>
+              <textarea
+                value={formState.message}
+                onChange={(e) => setFormState({ ...formState, message: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-accent h-32"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-accent text-white py-3 hover:opacity-90 transition-opacity font-medium"
             >
-              <Instagram size={32} />
-              <span className="text-sm">Instagram</span>
-            </a>
-            <a
-              href="https://ru.pinterest.com/isohakobian/"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackClick("footer-pinterest")}
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
-            >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/>
-                <path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4z" fill="currentColor"/>
-              </svg>
-              <span className="text-sm">Pinterest</span>
-            </a>
-            <a
-              href="https://t.me/+A7IKAwimpLEyNTJi"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackClick("footer-telegram")}
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
-            >
-              <MessageCircle size={32} />
-              <span className="text-sm">Telegram</span>
-            </a>
-            <a
-              href="https://www.youtube.com/@isaachakobian/featured"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackClick("footer-youtube")}
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
-            >
-              <Youtube size={32} />
-              <span className="text-sm">YouTube</span>
-            </a>
-            <a
-              href="https://www.threads.com/@isaac_hakobian"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackClick("footer-threads")}
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
-            >
-              <Tv size={32} />
-              <span className="text-sm">Threads</span>
-            </a>
-            <a
-              href="https://www.tiktok.com/@isaachakobian?_r=1&_t=ZS-96qDdTjTH1B"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackClick("footer-tiktok")}
-              className="flex flex-col items-center gap-2 text-gray-600 hover:text-accent transition-colors"
-            >
-              <Music size={32} />
-              <span className="text-sm">TikTok</span>
-            </a>
-          </div>
+              {t.sendMessage}
+            </button>
+          </form>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 bg-white border-t border-gray-300">
-        <div className="max-w-6xl mx-auto text-center text-gray-600 text-sm">
-          <p>© 2026 Isaac Hakobian. All rights reserved.</p>
+      <footer className="bg-black text-white py-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <h3 className="text-lg font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
+                Isaac Hakobian
+              </h3>
+              <p className="text-gray-400">Premium lifestyle content creator</p>
+            </div>
+            <div>
+              <h4 className="font-medium mb-4">{t.contact}</h4>
+              <div className="flex gap-4">
+                <a href="https://instagram.com/isaac_hakobian" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                  <Instagram size={20} />
+                </a>
+                <a href="mailto:isohakobian@gmail.com" className="text-gray-400 hover:text-white transition-colors">
+                  <Mail size={20} />
+                </a>
+                <a href="https://www.tiktok.com/@isaachakobian?_r=1&_t=ZS-96qDdTjTH1B" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                  <Music size={20} />
+                </a>
+                <a href="https://ru.pinterest.com/isohakobian/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                  <Tv size={20} />
+                </a>
+                <a href="https://t.me/+A7IKAwimpLEyNTJi" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                  <MessageCircle size={20} />
+                </a>
+                <a href="https://www.youtube.com/@isaachakobian/featured" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                  <Youtube size={20} />
+                </a>
+                <a href="https://www.threads.com/@isaac_hakobian" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                  <Linkedin size={20} />
+                </a>
+              </div>
+            </div>
+            <div className="text-right text-gray-400 text-sm">
+              <p>© 2026 Isaac Hakobian</p>
+              <p>All rights reserved</p>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
