@@ -99,7 +99,7 @@ export async function getTestimonialsByLanguage(language: string) {
   const result = await db
     .select()
     .from(testimonials)
-    .where(eq(testimonials.isPublished, 1) && eq(testimonials.language, language))
+    .where(and(eq(testimonials.isPublished, 1), eq(testimonials.language, language)))
     .orderBy(testimonials.createdAt);
   
   return result;

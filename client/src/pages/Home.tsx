@@ -564,12 +564,8 @@ export default function Home() {
             </div>
 
             {/* Keybell */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center md:grid-flow-dense">
-              <InstagramReel
-                url="https://www.instagram.com/reel/DX-KPOfo2YV/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
-                title="Keybell Reel"
-              />
-              <div className="md:order-first">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div>
                 <h3 className="text-3xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif" }}>
                   {t.keybell}
                 </h3>
@@ -586,6 +582,10 @@ export default function Home() {
                   "{t.keybellQuote}"
                 </blockquote>
               </div>
+              <InstagramReel
+                url="https://www.instagram.com/reel/DX-KPOfo2YV/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
+                title="Keybell Reel"
+              />
             </div>
 
             {/* Reboot */}
