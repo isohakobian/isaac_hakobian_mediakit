@@ -13,10 +13,11 @@ export function useAnalytics() {
     // Track page view
     trackEvent.mutate({
       eventType: "page_view",
+      eventData: {},
       referrer: document.referrer,
       language: savedLang,
     });
-  }, []);
+  }, [trackEvent]);
 
   const trackClick = (elementId: string, elementName?: string) => {
     trackEvent.mutate({
