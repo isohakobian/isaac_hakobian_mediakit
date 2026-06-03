@@ -1,11 +1,16 @@
 import { trpc } from "@/lib/trpc";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export function useAnalytics() {
   const [language, setLanguage] = useState("en");
   const trackEvent = trpc.analytics.track.useMutation();
+  const hasTrackedPageView = useRef(false);
 
   useEffect(() => {
+    // Only track page view once on mount
+    if (hasTrackedPageView.current) return;
+    hasTrackedPageView.current = true;
+
     // Detect language from localStorage or navigator
     const savedLang = localStorage.getItem("language") || navigator.language.split("-")[0];
     setLanguage(savedLang);
@@ -17,7 +22,7 @@ export function useAnalytics() {
       referrer: document.referrer,
       language: savedLang,
     });
-  }, [trackEvent]);
+  }, []); // Empty dependency array - run only once on mount
 
   const trackClick = (elementId: string, elementName?: string) => {
     trackEvent.mutate({
