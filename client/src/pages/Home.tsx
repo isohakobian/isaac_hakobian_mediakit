@@ -368,20 +368,19 @@ const InstagramReel = ({ url, title }: { url: string; title: string }) => {
   if (!reelId) return null;
 
   return (
-    <div className="aspect-video bg-black rounded-lg overflow-hidden">
-      <iframe
-        src={`https://www.instagram.com/reel/${reelId}/embed`}
-        width="100%"
-        height="100%"
-        frameBorder="0"
-        scrolling="no"
-        allowFullScreen
-        title={title}
-        className="w-full h-full"
-      />
-    </div>
-  );
-};
+  <div className="w-full max-w-[420px] mx-auto aspect-[9/16] bg-black rounded-[8px] overflow-hidden shadow-sm">
+    <iframe
+      src={`https://www.instagram.com/reel/${reelId}/embed`}
+      width="100%"
+      height="100%"
+      frameBorder="0"
+      scrolling="no"
+      allowFullScreen
+      title={title}
+      className="w-full h-full"
+    />
+  </div>
+);
 
 export default function Home() {
   const { user } = useAuth();
