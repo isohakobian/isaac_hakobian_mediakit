@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Mail, Instagram, ArrowRight, Linkedin, MessageCircle, Youtube, Tv, Music } from "lucide-react";
+import { Mail, Instagram, ArrowRight, Linkedin, MessageCircle, Youtube, Tv, Music, TrendingUp, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import Testimonials from "@/components/Testimonials";
@@ -97,6 +97,11 @@ const translations = {
     collaborationProof: "Campaign Results",
     campaignType: "Campaign Type",
     results: "Results",
+    collaborationCtaTitle: "Interested in working together?",
+    collaborationCtaText: "Get in touch via Instagram DM or email.",
+    instagramDm: "Instagram DM",
+    emailMe: "Email",
+    followAcrossPlatforms: "Follow across platforms",
   },
   ru: {
     tagline: "Премиальный креатор контента для брендов высокого качества",
@@ -179,6 +184,11 @@ const translations = {
     Yakapitan: "Ya Kapitan",
     Swdr: "Swdr.by",
     Rooms: "Rooms Project",
+    collaborationCtaTitle: "Хотите обсудить сотрудничество?",
+    collaborationCtaText: "Свяжитесь со мной через Instagram DM или email.",
+    instagramDm: "Instagram DM",
+    emailMe: "Email",
+    followAcrossPlatforms: "Мои платформы",
   },
   fr: {
     tagline: "Créateur lifestyle masculin premium pour les marques axées sur la qualité",
@@ -261,6 +271,11 @@ const translations = {
     collaborationProof: "Résultats de campagne",
     campaignType: "Type de campagne",
     results: "Résultats",
+    collaborationCtaTitle: "Vous souhaitez collaborer ?",
+    collaborationCtaText: "Contactez-moi via Instagram DM ou par email.",
+    instagramDm: "Instagram DM",
+    emailMe: "Email",
+    followAcrossPlatforms: "Mes plateformes",
   },
   es: {
     tagline: "Creador de contenido lifestyle premium para marcas enfocadas en calidad",
@@ -343,6 +358,11 @@ const translations = {
     collaborationProof: "Resultados de campaña",
     campaignType: "Tipo de campaña",
     results: "Resultados",
+    collaborationCtaTitle: "¿Quieres colaborar?",
+    collaborationCtaText: "Contáctame por Instagram DM o email.",
+    instagramDm: "Instagram DM",
+    emailMe: "Email",
+    followAcrossPlatforms: "Mis plataformas",
   },
   ar: {
     tagline: "منشئ محتوى نمط حياة رجالي فاخر للعلامات التجارية الموجهة للجودة",
@@ -376,7 +396,7 @@ const translations = {
     contact: "تواصل",
     collaboration: "تعاون",
     month: "200 ريال سعودي/شهر",
-    reel: "350 ريال سعودي/رeel",
+    reel: "350 ريال سعودي/reel",
     reelStoriesLink: "من 650 ريال سعودي",
     custom: "حسب الطلب",
     brandLinkInProfile: "رابط العلامة التجارية في السيرة الذاتية للملف الشخصي",
@@ -425,7 +445,24 @@ const translations = {
     collaborationProof: "نتائج الحملة",
     campaignType: "نوع الحملة",
     results: "النتائج",
+    collaborationCtaTitle: "هل ترغب في التعاون؟",
+    collaborationCtaText: "تواصل معي عبر Instagram DM أو البريد الإلكتروني.",
+    instagramDm: "Instagram DM",
+    emailMe: "Email",
+    followAcrossPlatforms: "منصاتي",
   },
+};
+
+// Social links
+const socialLinks = {
+  instagram: "https://www.instagram.com/isaac_hakobian",
+  email: "mailto:isohakobian@gmail.com",
+  tiktok: "https://www.tiktok.com/@isaachakobian?is_from_webapp=1&sender_device=pc",
+  youtube: "https://www.youtube.com/watch?v=-sqJm8NNIQk",
+  telegram: "https://t.me/feelsbyisaac",
+  pinterest: "https://ru.pinterest.com/isohakobian/?invite_code=137a9867795341eb8f82205cd77a4703&sender=606860255946808450",
+  threads: "https://www.threads.com/@isaac_hakobian?xmt=AQG0EtpGINI1vvrZxWnawTI88VQpZJfVSu0sCtv8Gtip2Us",
+  snapchat: "https://www.snapchat.com/@isaachakobian?invite_id=INi7xTAp&locale=en_AM&share_id=WCTYLXcMR8iUpsNAfDaL8w&sid=37e945e382b245518a90b1435f2bd780",
 };
 
 // Instagram Embed Component - supports both Reels and Posts
@@ -515,20 +552,14 @@ export default function Home() {
     },
   ];
 
-  const handleCollaborationClick = () => {
-    trackClick("explore-collaboration-btn", "Explore Collaboration");
-  };
-
   const handleInstagramDM = () => {
-    const message = encodeURIComponent("Здравствуйте! Я заинтересован(а) в сотрудничестве и хотел(а) бы обсудить детали.");
-    window.open(`https://instagram.com/isaac_hakobian`, "_blank");
+    window.open(socialLinks.instagram, "_blank");
     trackClick("instagram-dm-inquiry");
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Send email via tRPC
       const response = await fetch("/api/trpc/system.sendEmail?input=" + encodeURIComponent(JSON.stringify({
         to: "isohakobian@gmail.com",
         subject: `Collaboration Inquiry from ${formState.name}`,
@@ -607,7 +638,7 @@ export default function Home() {
           <div className="flex gap-4 justify-center">
             <a
               href="#collaboration"
-              onClick={handleCollaborationClick}
+              onClick={() => trackClick("explore-collaboration-btn")}
               className="inline-flex items-center gap-2 bg-accent text-white px-8 py-3 hover:opacity-90 transition-opacity font-medium"
             >
               {t.exploreCollaboration} <ArrowRight size={16} />
@@ -665,7 +696,7 @@ export default function Home() {
             {collaborations.map((item) => (
               <article
                 key={item.name}
-                className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start md:items-center"
+                className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start"
               >
                 <div className="order-1">
                   <h3 className="text-3xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif" }}>
@@ -685,7 +716,7 @@ export default function Home() {
                     "{item.quote}"
                   </blockquote>
                 </div>
-                <div className="order-2">
+                <div className="order-2 flex justify-center">
                   <InstagramEmbed url={item.url} title={item.title} />
                 </div>
               </article>
@@ -783,7 +814,57 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Contact Section */}
+      {/* Contact/Collaboration CTA Section */}
+      <section className="py-20 px-6 bg-gray-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-5xl font-bold mb-6" style={{ fontFamily: "Playfair Display, serif" }}>
+            {t.collaborationCtaTitle}
+          </h2>
+          <p className="text-xl text-gray-700 mb-12">{t.collaborationCtaText}</p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <button
+              onClick={handleInstagramDM}
+              className="inline-flex items-center justify-center gap-2 bg-accent text-white px-8 py-3 hover:opacity-90 transition-opacity font-medium"
+            >
+              <Instagram size={18} /> {t.instagramDm}
+            </button>
+            <a
+              href={socialLinks.email}
+              className="inline-flex items-center justify-center gap-2 border-2 border-accent text-accent px-8 py-3 hover:bg-accent hover:text-white transition-colors font-medium"
+            >
+              <Mail size={18} /> {t.emailMe}
+            </a>
+          </div>
+
+          {/* Social Icons Grid */}
+          <div>
+            <p className="text-sm text-gray-600 mb-6">{t.followAcrossPlatforms}</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a href={socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="TikTok">
+                <Tv size={24} className="text-gray-700" />
+              </a>
+              <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="YouTube">
+                <Youtube size={24} className="text-gray-700" />
+              </a>
+              <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="Telegram">
+                <Send size={24} className="text-gray-700" />
+              </a>
+              <a href={socialLinks.pinterest} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="Pinterest">
+                <TrendingUp size={24} className="text-gray-700" />
+              </a>
+              <a href={socialLinks.threads} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="Threads">
+                <MessageCircle size={24} className="text-gray-700" />
+              </a>
+              <a href={socialLinks.snapchat} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="Snapchat">
+                <Music size={24} className="text-gray-700" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form Section */}
       <section id="contact" className="py-20 px-6 bg-white">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-5xl font-bold mb-12 text-center" style={{ fontFamily: "Playfair Display, serif" }}>
@@ -849,20 +930,37 @@ export default function Home() {
             <div>
               <h4 className="font-bold mb-4">{t.contact}</h4>
               <div className="space-y-2 text-gray-400">
-                <a href="https://instagram.com/isaac_hakobian" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-accent">
+                <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-accent">
                   <Instagram size={16} /> Instagram
                 </a>
-                <a href="mailto:isohakobian@gmail.com" className="flex items-center gap-2 hover:text-accent">
+                <a href={socialLinks.email} className="flex items-center gap-2 hover:text-accent">
                   <Mail size={16} /> Email
                 </a>
               </div>
             </div>
 
             <div>
-              <h4 className="font-bold mb-4">{t.collaboration}</h4>
-              <p className="text-gray-400 text-sm">
-                Interested in working together? Get in touch via Instagram DM or email.
-              </p>
+              <h4 className="font-bold mb-4">{t.followAcrossPlatforms}</h4>
+              <div className="flex gap-3">
+                <a href={socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+                  <Tv size={20} />
+                </a>
+                <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+                  <Youtube size={20} />
+                </a>
+                <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+                  <Send size={20} />
+                </a>
+                <a href={socialLinks.pinterest} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+                  <TrendingUp size={20} />
+                </a>
+                <a href={socialLinks.threads} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+                  <MessageCircle size={20} />
+                </a>
+                <a href={socialLinks.snapchat} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+                  <Music size={20} />
+                </a>
+              </div>
             </div>
           </div>
 
