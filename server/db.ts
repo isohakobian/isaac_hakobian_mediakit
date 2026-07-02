@@ -95,14 +95,45 @@ export async function getUserByOpenId(openId: string) {
 export async function getTestimonialsByLanguage(language: string) {
   const db = await getDb();
   if (!db) return [];
-  
-  const result = await db
+
+  const dedupeByBrand = <T extends { brandName: string }>(items: T[]) => {
+    const preferredBrands = ["On Hill Sport", "Keybell", "Reboot"];
+    const seen = new Set<string>();
+    const unique: T[] = [];
+
+    for (const item of items) {
+      if (!preferredBrands.includes(item.brandName) || seen.has(item.brandName)) {
+        continue;
+      }
+
+      seen.add(item.brandName);
+      unique.push(item);
+    }
+
+    return preferredBrands
+      .map((brandName) => unique.find((item) => item.brandName === brandName))
+      .filter((item): item is T => Boolean(item));
+  };
+
+  const requestedTestimonials = await db
     .select()
     .from(testimonials)
     .where(and(eq(testimonials.isPublished, 1), eq(testimonials.language, language)))
     .orderBy(testimonials.createdAt);
-  
-  return result;
+
+  const requestedUnique = dedupeByBrand(requestedTestimonials);
+
+  if (language === "en" || requestedUnique.length >= 3) {
+    return requestedUnique;
+  }
+
+  const englishTestimonials = await db
+    .select()
+    .from(testimonials)
+    .where(and(eq(testimonials.isPublished, 1), eq(testimonials.language, "en")))
+    .orderBy(testimonials.createdAt);
+
+  return dedupeByBrand([...requestedUnique, ...englishTestimonials]);
 }
 
 /**

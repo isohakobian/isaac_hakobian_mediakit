@@ -102,6 +102,8 @@ const translations = {
     instagramDm: "Instagram DM",
     emailMe: "Email",
     followAcrossPlatforms: "Follow across platforms",
+    footerDescription: "Premium lifestyle content creator",
+    allRightsReserved: "All rights reserved",
   },
   ru: {
     tagline: "Премиальный креатор контента для брендов высокого качества",
@@ -189,6 +191,8 @@ const translations = {
     instagramDm: "Instagram DM",
     emailMe: "Email",
     followAcrossPlatforms: "Мои платформы",
+    footerDescription: "Премиальный lifestyle-креатор",
+    allRightsReserved: "Все права защищены",
   },
   fr: {
     tagline: "Créateur lifestyle masculin premium pour les marques axées sur la qualité",
@@ -276,6 +280,8 @@ const translations = {
     instagramDm: "Instagram DM",
     emailMe: "Email",
     followAcrossPlatforms: "Mes plateformes",
+    footerDescription: "Créateur de contenu lifestyle premium",
+    allRightsReserved: "Tous droits réservés",
   },
   es: {
     tagline: "Creador de contenido lifestyle premium para marcas enfocadas en calidad",
@@ -363,6 +369,8 @@ const translations = {
     instagramDm: "Instagram DM",
     emailMe: "Email",
     followAcrossPlatforms: "Mis plataformas",
+    footerDescription: "Creador de contenido lifestyle premium",
+    allRightsReserved: "Todos los derechos reservados",
   },
   ar: {
     tagline: "منشئ محتوى نمط حياة رجالي فاخر للعلامات التجارية الموجهة للجودة",
@@ -450,6 +458,8 @@ const translations = {
     instagramDm: "Instagram DM",
     emailMe: "Email",
     followAcrossPlatforms: "منصاتي",
+    footerDescription: "صانع محتوى لايف ستايل فاخر",
+    allRightsReserved: "جميع الحقوق محفوظة",
   },
 };
 
@@ -476,17 +486,29 @@ const InstagramEmbed = ({ url, title }: { url: string; title: string }) => {
   if (!instagramPath) return null;
 
   return (
-    <div className="w-full max-w-[420px] mx-auto aspect-[9/16] bg-black rounded-[8px] overflow-hidden shadow-sm">
-      <iframe
-        src={`https://www.instagram.com/${instagramPath}/embed`}
-        width="100%"
-        height="100%"
-        frameBorder="0"
-        scrolling="no"
-        allowFullScreen
-        title={title}
-        className="w-full h-full"
-      />
+    <div className="w-full max-w-[420px] mx-auto">
+      <div className="aspect-[9/16] bg-black rounded-[8px] overflow-hidden shadow-sm border border-gray-200">
+        <iframe
+          src={`https://www.instagram.com/${instagramPath}/embed/`}
+          width="100%"
+          height="100%"
+          frameBorder="0"
+          scrolling="no"
+          allowFullScreen
+          loading="lazy"
+          title={title}
+          className="w-full h-full"
+        />
+      </div>
+
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-4 inline-flex w-full items-center justify-center gap-2 border border-gray-300 px-4 py-3 text-sm font-medium text-gray-800 hover:border-accent hover:text-accent transition-colors"
+      >
+        View on Instagram
+      </a>
     </div>
   );
 };
@@ -653,7 +675,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
             <div className="text-center">
               <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
-                2.0M+
+                3.1M+
               </div>
               <p className="text-lg text-gray-600">{t.monthlyReach}</p>
             </div>
@@ -924,7 +946,7 @@ export default function Home() {
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif", color: "#aa7942" }}>
                 Isaac Hakobian
               </h3>
-              <p className="text-gray-400">Premium lifestyle content creator</p>
+              <p className="text-gray-400">{t.footerDescription}</p>
             </div>
 
             <div>
@@ -965,7 +987,7 @@ export default function Home() {
           </div>
 
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
-            <p>© 2026 Isaac Hakobian. All rights reserved.</p>
+            <p>© 2026 Isaac Hakobian. {t.allRightsReserved}</p>
           </div>
         </div>
       </footer>

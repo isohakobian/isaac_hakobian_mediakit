@@ -10,12 +10,23 @@ export default function Testimonials({ language = "en" }: TestimonialsProps) {
     language,
   });
 
+  const testimonialTitle =
+    language === "ru"
+      ? "Отзывы брендов"
+      : language === "es"
+      ? "Testimonios de marcas"
+      : language === "ar"
+      ? "آراء العلامات التجارية"
+      : language === "fr"
+      ? "Témoignages de marques"
+      : "Brand Testimonials";
+
   if (isLoading) {
     return (
       <section className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-5xl font-bold mb-16" style={{ fontFamily: "Playfair Display, serif" }}>
-            {language === "ru" ? "Отзывы брендов" : language === "es" ? "Testimonios de marcas" : language === "ar" ? "آراء العلامات التجارية" : "Brand Testimonials"}
+            {testimonialTitle}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[1, 2, 3, 4].map((i) => (
