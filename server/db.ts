@@ -164,3 +164,81 @@ export async function getAnalyticsSummary(days: number = 30) {
   
   return result;
 }
+
+/**
+ * Get detailed analytics for dashboard
+ */
+export async function getAnalyticsDashboard(days: number = 30) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - days);
+  
+  const events = await db
+    .select()
+    .from(analytics)
+    .where(gt(analytics.createdAt, cutoffDate));
+  
+  // Calculate metrics
+  const uniqueSessions = new Set(events.map(e => e.sessionId)).size;
+  const pageViews = events.filter(e => e.eventType === 'page_view').length;
+  const clicks = events.filter(e => e.eventType === 'click').length;
+  const formSubmits = events.filter(e => e.eventType === 'form_submit').length;
+  
+  // Device breakdown
+  const deviceBreakdown: Record<string, number> = {};
+  events.forEach(e => {
+    if (e.deviceType) {
+      deviceBreakdown[e.deviceType] = (deviceBreakdown[e.deviceType] || 0) + 1;
+    }
+  });
+  
+  // Language breakdown
+  const languageBreakdown: Record<string, number> = {};
+  events.forEach(e => {
+    if (e.language) {
+      languageBreakdown[e.language] = (languageBreakdown[e.language] || 0) + 1;
+    }
+  });
+  
+  // Click tracking
+  const clickTracking: Record<string, number> = {};
+  events
+    .filter(e => e.eventType === 'click')
+    .forEach(e => {
+      if (e.eventData) {
+        const data = JSON.parse(e.eventData);
+        const elementId = data.elementId || 'unknown';
+        clickTracking[elementId] = (clickTracking[elementId] || 0) + 1;
+      }
+    });
+  
+  // Referrer breakdown
+  const referrerBreakdown: Record<string, number> = {};
+  events.forEach(e => {
+    if (e.referrer) {
+      try {
+        const url = new URL(e.referrer).hostname || 'direct';
+        referrerBreakdown[url] = (referrerBreakdown[url] || 0) + 1;
+      } catch {
+        referrerBreakdown['direct'] = (referrerBreakdown['direct'] || 0) + 1;
+      }
+    } else {
+      referrerBreakdown['direct'] = (referrerBreakdown['direct'] || 0) + 1;
+    }
+  });
+  
+  return {
+    totalEvents: events.length,
+    uniqueSessions,
+    pageViews,
+    clicks,
+    formSubmits,
+    deviceBreakdown,
+    languageBreakdown,
+    clickTracking,
+    referrerBreakdown,
+    events,
+  };
+}

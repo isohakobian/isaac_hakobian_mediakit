@@ -55,6 +55,12 @@ export const analytics = mysqlTable("analytics", {
   userAgent: varchar("userAgent", { length: 512 }),
   ipHash: varchar("ipHash", { length: 64 }),
   language: varchar("language", { length: 10 }),
+  deviceType: varchar("deviceType", { length: 20 }),
+  country: varchar("country", { length: 100 }),
+  region: varchar("region", { length: 100 }),
+  pageUrl: varchar("pageUrl", { length: 512 }),
+  sessionId: varchar("sessionId", { length: 64 }),
+  timeOnPage: int("timeOnPage"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

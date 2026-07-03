@@ -1027,6 +1027,11 @@ export default function Home() {
 
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
             <p>© 2026 Isaac Hakobian. {t.allRightsReserved}</p>
+            {user && (
+              <a href="/analytics" className="mt-4 inline-block text-accent hover:underline">
+                View Analytics
+              </a>
+            )}
           </div>
         </div>
       </footer>

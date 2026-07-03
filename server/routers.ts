@@ -3,7 +3,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
-import { getTestimonialsByLanguage, addAnalyticsEvent } from "./db";
+import { getTestimonialsByLanguage, addAnalyticsEvent, getAnalyticsDashboard } from "./db";
 
 export const appRouter = router({
   system: systemRouter,
@@ -33,6 +33,9 @@ export const appRouter = router({
         eventData: z.record(z.string(), z.any()).optional(),
         referrer: z.string().optional(),
         language: z.string().optional(),
+        deviceType: z.string().optional(),
+        pageUrl: z.string().optional(),
+        sessionId: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const userAgent = (ctx.req.headers["user-agent"] as string) || "";
@@ -45,9 +48,21 @@ export const appRouter = router({
           userAgent: userAgent.substring(0, 512),
           ipHash: ipHash.substring(0, 64),
           language: input.language,
+          deviceType: input.deviceType,
+          pageUrl: input.pageUrl,
+          sessionId: input.sessionId,
         });
         
         return { success: true };
+      }),
+    dashboard: publicProcedure
+      .input(z.object({ days: z.number().default(30) }))
+      .query(async ({ input, ctx }) => {
+        // Only allow owner to view analytics
+        if (ctx.user?.openId !== process.env.OWNER_OPEN_ID) {
+          throw new Error('Unauthorized');
+        }
+        return await getAnalyticsDashboard(input.days);
       }),
   }),
 });
