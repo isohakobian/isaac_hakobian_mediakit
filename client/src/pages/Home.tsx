@@ -466,6 +466,7 @@ const translations = {
 // Social links
 const socialLinks = {
   instagram: "https://www.instagram.com/isaac_hakobian",
+  instagramDirect: "https://ig.me/m/isaac_hakobian",
   email: "mailto:isohakobian@gmail.com",
   tiktok: "https://www.tiktok.com/@isaachakobian?is_from_webapp=1&sender_device=pc",
   youtube: "https://www.youtube.com/watch?v=-sqJm8NNIQk",
@@ -575,7 +576,7 @@ export default function Home() {
   ];
 
   const handleInstagramDM = () => {
-    window.open(socialLinks.instagram, "_blank");
+    window.open(socialLinks.instagramDirect, "_blank");
     trackClick("instagram-dm-inquiry");
   };
 
@@ -862,24 +863,62 @@ export default function Home() {
           {/* Social Icons Grid */}
           <div>
             <p className="text-sm text-gray-600 mb-6">{t.followAcrossPlatforms}</p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <a href={socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="TikTok">
-                <Tv size={24} className="text-gray-700" />
+            <div className="flex flex-wrap justify-center gap-3">
+              <a
+                href={socialLinks.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-2 hover:bg-gray-200 rounded-full transition-colors"
+                title="TikTok"
+              >
+                <span className="text-sm font-medium text-gray-700">TikTok</span>
               </a>
-              <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="YouTube">
-                <Youtube size={24} className="text-gray-700" />
+              <a
+                href={socialLinks.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-2 hover:bg-gray-200 rounded-full transition-colors"
+                title="YouTube"
+              >
+                <Youtube size={20} className="text-gray-700" />
+                <span className="text-sm font-medium text-gray-700">YouTube</span>
               </a>
-              <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="Telegram">
-                <Send size={24} className="text-gray-700" />
+              <a
+                href={socialLinks.telegram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-2 hover:bg-gray-200 rounded-full transition-colors"
+                title="Telegram"
+              >
+                <Send size={20} className="text-gray-700" />
+                <span className="text-sm font-medium text-gray-700">Telegram</span>
               </a>
-              <a href={socialLinks.pinterest} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="Pinterest">
-                <TrendingUp size={24} className="text-gray-700" />
+              <a
+                href={socialLinks.pinterest}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-2 hover:bg-gray-200 rounded-full transition-colors"
+                title="Pinterest"
+              >
+                <span className="text-sm font-medium text-gray-700">Pinterest</span>
               </a>
-              <a href={socialLinks.threads} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="Threads">
-                <MessageCircle size={24} className="text-gray-700" />
+              <a
+                href={socialLinks.threads}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-2 hover:bg-gray-200 rounded-full transition-colors"
+                title="Threads"
+              >
+                <span className="text-sm font-medium text-gray-700">Threads</span>
               </a>
-              <a href={socialLinks.snapchat} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-gray-200 rounded-full transition-colors" title="Snapchat">
-                <Music size={24} className="text-gray-700" />
+              <a
+                href={socialLinks.snapchat}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-2 hover:bg-gray-200 rounded-full transition-colors"
+                title="Snapchat"
+              >
+                <span className="text-sm font-medium text-gray-700">Snapchat</span>
               </a>
             </div>
           </div>
@@ -963,24 +1002,24 @@ export default function Home() {
 
             <div>
               <h4 className="font-bold mb-4">{t.followAcrossPlatforms}</h4>
-              <div className="flex gap-3">
-                <a href={socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
-                  <Tv size={20} />
+              <div className="flex flex-wrap gap-3">
+                <a href={socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                  <span>TikTok</span>
                 </a>
-                <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
-                  <Youtube size={20} />
+                <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                  <Youtube size={20} /> <span>YouTube</span>
                 </a>
-                <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
-                  <Send size={20} />
+                <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                  <Send size={20} /> <span>Telegram</span>
                 </a>
-                <a href={socialLinks.pinterest} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
-                  <TrendingUp size={20} />
+                <a href={socialLinks.pinterest} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                  <span>Pinterest</span>
                 </a>
-                <a href={socialLinks.threads} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
-                  <MessageCircle size={20} />
+                <a href={socialLinks.threads} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                  <span>Threads</span>
                 </a>
-                <a href={socialLinks.snapchat} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
-                  <Music size={20} />
+                <a href={socialLinks.snapchat} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                  <span>Snapchat</span>
                 </a>
               </div>
             </div>
