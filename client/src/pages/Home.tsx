@@ -6,6 +6,7 @@ import Testimonials from "@/components/Testimonials";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { sortCollaborationsNewestFirst } from "@shared/collaborationOrder";
 
 /**
  * Editorial Minimalism Design System
@@ -557,57 +558,8 @@ export default function Home() {
 
   const t = translations[language as keyof typeof translations] || translations.en;
 
+  // Keep Recent Collaborations in newest-first order. Add each new collaboration above the existing entries.
   const collaborations = [
-    {
-      name: t.DreamBeachClub,
-      category: t.dreamBeachClubCategory,
-      description: t.dreamBeachClubDescription,
-      campaign: t.dreamBeachClubCampaign,
-      results: t.dreamBeachClubResults,
-      quote: t.dreamBeachClubQuote,
-      url: "https://www.instagram.com/reel/DZZbnO8tAb9/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==",
-      title: "Dream Beach Club",
-    },
-    {
-      name: t.Abib,
-      category: t.abibCategory,
-      description: t.abibDescription,
-      campaign: t.abibCampaign,
-      results: t.abibResults,
-      quote: t.abibQuote,
-      url: "https://www.instagram.com/reel/DZpdNz3IsJ4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      title: "Abib",
-    },
-    {
-      name: t.Yakapitan,
-      category: t.yakapitanCategory,
-      description: t.yakapitanDescription,
-      campaign: t.yakapitanCampaign,
-      results: t.yakapitanResults,
-      quote: t.yakapitanQuote,
-      url: "https://www.instagram.com/reel/DYzaM9zI0VX/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      title: "Ya Kapitan",
-    },
-    {
-      name: t.Swdr,
-      category: t.swdrCategory,
-      description: t.swdrDescription,
-      campaign: t.swdrCampaign,
-      results: t.swdrResults,
-      quote: t.swdrQuote,
-      url: "https://www.instagram.com/reel/DZQNm0EIvb4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      title: "Swdr.by",
-    },
-    {
-      name: t.Rooms,
-      category: t.roomsCategory,
-      description: t.roomsDescription,
-      campaign: t.roomsCampaign,
-      results: t.roomsResults,
-      quote: t.roomsQuote,
-      url: "https://www.instagram.com/p/DZRuUBLiPuo/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      title: "Rooms Project",
-    },
     {
       name: t.limberLifeArmenia,
       category: t.limberLifeArmeniaCategory,
@@ -618,8 +570,66 @@ export default function Home() {
       quoteLabel: t.creatorNote,
       url: "https://www.instagram.com/reel/Db53EikuKsd/",
       title: "Limber Life Armenia × Pravilo",
+      publishedAt: "2026-08-14",
+    },
+    {
+      name: t.DreamBeachClub,
+      category: t.dreamBeachClubCategory,
+      description: t.dreamBeachClubDescription,
+      campaign: t.dreamBeachClubCampaign,
+      results: t.dreamBeachClubResults,
+      quote: t.dreamBeachClubQuote,
+      url: "https://www.instagram.com/reel/DZZbnO8tAb9/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==",
+      title: "Dream Beach Club",
+      publishedAt: null,
+    },
+    {
+      name: t.Abib,
+      category: t.abibCategory,
+      description: t.abibDescription,
+      campaign: t.abibCampaign,
+      results: t.abibResults,
+      quote: t.abibQuote,
+      url: "https://www.instagram.com/reel/DZpdNz3IsJ4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      title: "Abib",
+      publishedAt: null,
+    },
+    {
+      name: t.Yakapitan,
+      category: t.yakapitanCategory,
+      description: t.yakapitanDescription,
+      campaign: t.yakapitanCampaign,
+      results: t.yakapitanResults,
+      quote: t.yakapitanQuote,
+      url: "https://www.instagram.com/reel/DYzaM9zI0VX/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      title: "Ya Kapitan",
+      publishedAt: null,
+    },
+    {
+      name: t.Swdr,
+      category: t.swdrCategory,
+      description: t.swdrDescription,
+      campaign: t.swdrCampaign,
+      results: t.swdrResults,
+      quote: t.swdrQuote,
+      url: "https://www.instagram.com/reel/DZQNm0EIvb4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      title: "Swdr.by",
+      publishedAt: null,
+    },
+    {
+      name: t.Rooms,
+      category: t.roomsCategory,
+      description: t.roomsDescription,
+      campaign: t.roomsCampaign,
+      results: t.roomsResults,
+      quote: t.roomsQuote,
+      url: "https://www.instagram.com/p/DZRuUBLiPuo/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      title: "Rooms Project",
+      publishedAt: null,
     },
   ];
+
+  const orderedCollaborations = sortCollaborationsNewestFirst(collaborations);
 
   const handleInstagramDM = () => {
     window.open(socialLinks.instagramDirect, "_blank");
@@ -762,7 +772,7 @@ export default function Home() {
           </h2>
 
           <div className="space-y-16 md:space-y-20">
-            {collaborations.map((item) => (
+            {orderedCollaborations.map((item) => (
               <article
                 key={item.name}
                 className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start"

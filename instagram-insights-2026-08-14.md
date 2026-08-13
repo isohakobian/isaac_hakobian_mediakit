@@ -81,3 +81,7 @@ This identifies the collaboration as a bungee-fitness activation at Limber Life 
 ## Media-kit QA note
 
 The updated dev preview loaded successfully at the current desktop viewport and rendered the existing editorial hero/navigation. The browser extension timed out when attempting to scroll further to the lower statistics/collaboration sections, so additional lower-page visual verification was not available from this browser session. Production build, TypeScript diagnostics, and the full Vitest suite passed. The new Reel URL is present in Home.tsx and was verified directly in Instagram as `https://www.instagram.com/reel/Db53EikuKsd/`.
+
+## Rendered ordering verification
+
+The refreshed dev preview rendered `Limber Life Armenia × Pravilo` first in the Recent Collaborations section, followed by the older collaborations. Its first visible card included the expected category, campaign type, results, creator note, and View on Instagram link.
