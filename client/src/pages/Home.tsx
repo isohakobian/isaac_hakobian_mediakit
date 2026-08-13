@@ -20,9 +20,9 @@ const translations = {
     tagline: "Premium Men's Lifestyle Creator for Quality-Focused Brands",
     taglineSupport: "Cinematic short-form content that helps premium fitness, lifestyle, accessories, grooming, and wellness brands reach a discerning male audience through authentic product integration and measurable engagement.",
     exploreCollaboration: "Explore Collaboration",
-    monthlyReach: "Monthly Reach",
-    maleAudience: "Male Audience",
-    primaryAgeGroup: "Primary Age Group",
+    monthlyReach: "30-Day Views",
+    maleAudience: "Total Followers",
+    primaryAgeGroup: "30-Day Viewers",
     aboutBrand: "About the Brand",
     aboutText: "I create cinematic lifestyle content for brands that value quality, craft, and trust. My audience is primarily men aged 25-34 who respond to refined aesthetics, personal development, performance, and premium products. Each collaboration is built to feel native to my content while giving brands clear creative assets, audience fit, and campaign proof.",
     bestFitFor: "Best Fit For",
@@ -52,7 +52,7 @@ const translations = {
     reelStoriesLink: "from $800",
     custom: "Custom",
     brandLinkInProfile: "Brand link in profile bio",
-    monthlyReachValue: "3.1+ monthly reach",
+    monthlyReachValue: "1.31M+ views in the last 30 days",
     passiveTrafficGeneration: "Passive traffic generation",
     professionalProduction: "Professional production",
     authenticIntegration: "Authentic integration",
@@ -94,6 +94,13 @@ const translations = {
     roomsCampaign: "Lifestyle reel / product integration",
     roomsResults: "80.1% engagement rate non followers • 100+ saves",
     roomsQuote: "We truly enjoyed collaborating with Isaac.",
+    limberLifeArmenia: "Limber Life Armenia × Pravilo",
+    limberLifeArmeniaDescription: "A first-person bungee fitness experience in Yerevan, Armenia, captured as a high-energy lifestyle integration.",
+    limberLifeArmeniaCategory: "Bungee fitness in Yerevan",
+    limberLifeArmeniaCampaign: "Bungee fitness experience / lifestyle Reel",
+    limberLifeArmeniaResults: "78.1K views • 25.6K viewers • 2,175 interactions • 293 saves",
+    creatorNote: "Creator note",
+    limberLifeArmeniaNote: "A first time trying bungee fitness — and definitely not the last.",
     collaborationProof: "Campaign Results",
     campaignType: "Campaign Type",
     results: "Results",
@@ -109,9 +116,9 @@ const translations = {
     tagline: "Премиальный креатор контента для брендов высокого качества",
     taglineSupport: "Кинематографический контент для премиальных брендов в спорте, аксессуарах, груминге и велнессе. Отображаю требовательную мужскую аудиторию через аутентичные интеграции и измеримые результаты.",
     exploreCollaboration: "Обсудить сотрудничество",
-    monthlyReach: "Месячный охват",
-    maleAudience: "Мужская аудитория",
-    primaryAgeGroup: "Основная возрастная группа",
+    monthlyReach: "Просмотры за 30 дней",
+    maleAudience: "Всего подписчиков",
+    primaryAgeGroup: "Зрители за 30 дней",
     aboutBrand: "О бренде",
     aboutText: "Креатор кинематографического контента для брендов, которые ценят качество, мастерство и доверие. Моя аудитория — мужчины 25-34 лет, которые оценивают рафинированную эстетику, личное развитие и премиальные продукты. Каждое сотрудничество — это аутентичные ассеты, таргетированная аудитория и измеримые результаты.",
     bestFitFor: "Лучше всего подходит для",
@@ -151,6 +158,13 @@ const translations = {
     roomsCampaign: "Lifestyle reel / product integration",
     roomsResults: "80,1% вовлечённости среди неподписчиков • 100+ сохранений",
     roomsQuote: "Нам было очень приятно сотрудничать с Исааком.",
+    limberLifeArmenia: "Limber Life Armenia × Pravilo",
+    limberLifeArmeniaDescription: "Личный опыт банджи-фитнеса в Ереване, снятый как динамичная lifestyle-интеграция с реальным первым опытом.",
+    limberLifeArmeniaCategory: "Банджи-фитнес в Ереване",
+    limberLifeArmeniaCampaign: "Опыт банджи-фитнеса / lifestyle Reel",
+    limberLifeArmeniaResults: "78,1K просмотров • 25,6K зрителей • 2 175 взаимодействий • 293 сохранения",
+    creatorNote: "Заметка креатора",
+    limberLifeArmeniaNote: "Первый опыт банджи-фитнеса — и точно не последний.",
     getInTouch: "Свяжитесь со мной",
     linkInBio: "Трафик в профиль",
     singleReel: "Рил осведомленности",
@@ -169,7 +183,7 @@ const translations = {
     reelStoriesLink: "от 25.000",
     custom: "Индивидуально",
     brandLinkInProfile: "Ссылка на бренд в профиле",
-    monthlyReachValue: "3.1M+ месячный охват",
+    monthlyReachValue: "1,31M+ просмотров за последние 30 дней",
     passiveTrafficGeneration: "Пассивная генерация трафика",
     professionalProduction: "Профессиональное производство",
     authenticIntegration: "Аутентичная интеграция",
@@ -198,9 +212,9 @@ const translations = {
     tagline: "Créateur lifestyle masculin premium pour les marques axées sur la qualité",
     taglineSupport: "Du contenu short-form cinématographique qui aide les marques premium de fitness, lifestyle, accessoires, grooming et wellness à toucher une audience masculine exigeante grâce à une intégration produit authentique et des résultats d'engagement mesurables.",
     exploreCollaboration: "Explorer une collaboration",
-    monthlyReach: "Portée mensuelle",
-    maleAudience: "Audience masculine",
-    primaryAgeGroup: "Tranche d'âge principale",
+    monthlyReach: "Vues sur 30 jours",
+    maleAudience: "Abonnés au total",
+    primaryAgeGroup: "Spectateurs sur 30 jours",
     aboutBrand: "À propos de la marque",
     aboutText: "Je crée du contenu lifestyle cinématographique pour les marques qui valorisent la qualité, le savoir-faire et la confiance. Mon audience est principalement composée d'hommes de 25 à 34 ans, sensibles à une esthétique raffinée, au développement personnel, à la performance et aux produits premium. Chaque collaboration est conçue pour s'intégrer naturellement à mon contenu tout en offrant aux marques des assets créatifs clairs, une audience pertinente et des preuves de performance de campagne.",
     bestFitFor: "Idéal pour",
@@ -230,7 +244,7 @@ const translations = {
     reelStoriesLink: "à partir de €650",
     custom: "Sur demande",
     brandLinkInProfile: "Lien de la marque dans la bio du profil",
-    monthlyReachValue: "3.1+ de portée mensuelle",
+    monthlyReachValue: "1,31M+ vues sur les 30 derniers jours",
     passiveTrafficGeneration: "Génération passive de trafic",
     professionalProduction: "Production professionnelle",
     authenticIntegration: "Intégration authentique",
@@ -272,6 +286,13 @@ const translations = {
     roomsCampaign: "Lifestyle Reel / intégration produit",
     roomsResults: "80,1 % d'engagement auprès des non-abonnés • 100+ enregistrements",
     roomsQuote: "Nous avons beaucoup apprécié notre collaboration avec Isaac.",
+    limberLifeArmenia: "Limber Life Armenia × Pravilo",
+    limberLifeArmeniaDescription: "Une première expérience de bungee fitness à Erevan, en Arménie, capturée comme une intégration lifestyle énergique et authentique.",
+    limberLifeArmeniaCategory: "Bungee fitness à Erevan",
+    limberLifeArmeniaCampaign: "Expérience bungee fitness / Reel lifestyle",
+    limberLifeArmeniaResults: "78,1 k vues • 25,6 k spectateurs • 2 175 interactions • 293 enregistrements",
+    creatorNote: "Note du créateur",
+    limberLifeArmeniaNote: "Une première expérience du bungee fitness — et certainement pas la dernière.",
     collaborationProof: "Résultats de campagne",
     campaignType: "Type de campagne",
     results: "Résultats",
@@ -287,9 +308,9 @@ const translations = {
     tagline: "Creador de contenido lifestyle premium para marcas enfocadas en calidad",
     taglineSupport: "Contenido cinematográfico de corta duración que ayuda a marcas premium de fitness, lifestyle, accesorios, grooming y bienestar a llegar a una audiencia masculina exigente a través de integraciones de productos auténticas y engagement medible.",
     exploreCollaboration: "Explorar colaboración",
-    monthlyReach: "Alcance mensual",
-    maleAudience: "Audiencia masculina",
-    primaryAgeGroup: "Grupo de edad principal",
+    monthlyReach: "Visualizaciones en 30 días",
+    maleAudience: "Seguidores totales",
+    primaryAgeGroup: "Espectadores en 30 días",
     aboutBrand: "Sobre la marca",
     aboutText: "Creo contenido lifestyle cinematográfico para marcas que valoran la calidad, la artesanía y la confianza. Mi audiencia son principalmente hombres de 25-34 años que aprecian la estética refinada, el desarrollo personal, el desempeño y los productos premium. Cada colaboración está diseñada para sentirse nativa a mi contenido mientras proporciono a las marcas activos creativos claros, ajuste de audiencia y prueba de campaña.",
     bestFitFor: "Ideal para",
@@ -319,7 +340,7 @@ const translations = {
     reelStoriesLink: "desde $650",
     custom: "Personalizado",
     brandLinkInProfile: "Enlace de marca en bio del perfil",
-    monthlyReachValue: "3.1+ alcance mensual",
+    monthlyReachValue: "1,31M+ visualizaciones en los últimos 30 días",
     passiveTrafficGeneration: "Generación pasiva de tráfico",
     professionalProduction: "Producción profesional",
     authenticIntegration: "Integración auténtica",
@@ -361,6 +382,13 @@ const translations = {
     roomsCampaign: "Lifestyle Reel / integración de producto",
     roomsResults: "80,1% engagement de no seguidores • 100+ guardados",
     roomsQuote: "Disfrutamos mucho colaborando con Isaac.",
+    limberLifeArmenia: "Limber Life Armenia × Pravilo",
+    limberLifeArmeniaDescription: "Una primera experiencia de bungee fitness en Ereván, Armenia, capturada como una integración lifestyle dinámica y auténtica.",
+    limberLifeArmeniaCategory: "Bungee fitness en Ereván",
+    limberLifeArmeniaCampaign: "Experiencia de bungee fitness / Reel lifestyle",
+    limberLifeArmeniaResults: "78,1K visualizaciones • 25,6K espectadores • 2.175 interacciones • 293 guardados",
+    creatorNote: "Nota del creador",
+    limberLifeArmeniaNote: "Una primera experiencia de bungee fitness — y definitivamente no será la última.",
     collaborationProof: "Resultados de campaña",
     campaignType: "Tipo de campaña",
     results: "Resultados",
@@ -376,9 +404,9 @@ const translations = {
     tagline: "منشئ محتوى نمط حياة رجالي فاخر للعلامات التجارية الموجهة للجودة",
     taglineSupport: "محتوى سينمائي قصير الشكل يساعد العلامات التجارية الفاخرة في اللياقة البدنية والنمط الحياة والإكسسوارات والعناية الشخصية والعافية على الوصول إلى جمهور ذكوري متطلب من خلال التكامل الأصلي للمنتجات والمشاركة القابلة للقياس.",
     exploreCollaboration: "استكشف التعاون",
-    monthlyReach: "الوصول الشهري",
-    maleAudience: "الجمهور الذكوري",
-    primaryAgeGroup: "مجموعة العمر الأساسية",
+    monthlyReach: "المشاهدات خلال 30 يوماً",
+    maleAudience: "إجمالي المتابعين",
+    primaryAgeGroup: "المشاهدون خلال 30 يوماً",
     aboutBrand: "عن العلامة التجارية",
     aboutText: "أنا أنشئ محتوى نمط حياة سينمائي للعلامات التجارية التي تقدر الجودة والحرفية والثقة. جمهوري يتكون بشكل أساسي من الرجال الذين تتراوح أعمارهم بين 25-34 سنة الذين يقدرون الجماليات المكررة والتطور الشخصي والأداء والمنتجات الفاخرة. كل تعاون مصمم ليشعر بأنه أصلي لمحتواي مع تزويد العلامات التجارية بأصول إبداعية واضحة وملاءمة الجمهور وإثبات الحملة.",
     bestFitFor: "الأنسب لـ",
@@ -408,7 +436,7 @@ const translations = {
     reelStoriesLink: "من 650 ريال سعودي",
     custom: "حسب الطلب",
     brandLinkInProfile: "رابط العلامة التجارية في السيرة الذاتية للملف الشخصي",
-    monthlyReachValue: "3.1+ وصول شهري",
+    monthlyReachValue: "1.31M+ مشاهدة خلال آخر 30 يوماً",
     passiveTrafficGeneration: "توليد حركة مرور سلبية",
     professionalProduction: "إنتاج احترافي",
     authenticIntegration: "تكامل أصلي",
@@ -450,6 +478,13 @@ const translations = {
     roomsCampaign: "Lifestyle Reel / تكامل المنتج",
     roomsResults: "80.1% تفاعل من غير المتابعين • 100+ حفظ",
     roomsQuote: "استمتعنا كثيراً بالتعاون مع Isaac.",
+    limberLifeArmenia: "Limber Life Armenia × Pravilo",
+    limberLifeArmeniaDescription: "تجربة أولى في رياضة البانجي فتنس في يريفان، أرمينيا، تم تصويرها كتكامل ديناميكي وأصيل مع أسلوب الحياة.",
+    limberLifeArmeniaCategory: "بانجي فتنس في يريفان",
+    limberLifeArmeniaCampaign: "تجربة بانجي فتنس / Reel لنمط الحياة",
+    limberLifeArmeniaResults: "78.1K مشاهدة • 25.6K مشاهد • 2,175 تفاعلاً • 293 حفظاً",
+    creatorNote: "ملاحظة من الكريتور",
+    limberLifeArmeniaNote: "كانت المرة الأولى في تجربة بانجي فتنس — وبالتأكيد لن تكون الأخيرة.",
     collaborationProof: "نتائج الحملة",
     campaignType: "نوع الحملة",
     results: "النتائج",
@@ -573,6 +608,17 @@ export default function Home() {
       url: "https://www.instagram.com/p/DZRuUBLiPuo/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
       title: "Rooms Project",
     },
+    {
+      name: t.limberLifeArmenia,
+      category: t.limberLifeArmeniaCategory,
+      description: t.limberLifeArmeniaDescription,
+      campaign: t.limberLifeArmeniaCampaign,
+      results: t.limberLifeArmeniaResults,
+      quote: t.limberLifeArmeniaNote,
+      quoteLabel: t.creatorNote,
+      url: "https://www.instagram.com/reel/Db53EikuKsd/",
+      title: "Limber Life Armenia × Pravilo",
+    },
   ];
 
   const handleInstagramDM = () => {
@@ -676,19 +722,19 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
             <div className="text-center">
               <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
-                3.1M+
+                1.31M+
               </div>
               <p className="text-lg text-gray-600">{t.monthlyReach}</p>
             </div>
             <div className="text-center">
               <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
-                79%
+                37.5K+
               </div>
               <p className="text-lg text-gray-600">{t.maleAudience}</p>
             </div>
             <div className="text-center">
               <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
-                25-34
+                286.9K
               </div>
               <p className="text-lg text-gray-600">{t.primaryAgeGroup}</p>
             </div>
@@ -736,6 +782,7 @@ export default function Home() {
                     <p className="text-gray-700 font-medium">{item.results}</p>
                   </div>
                   <blockquote className="italic text-gray-700 border-l-4 border-accent pl-4">
+                    {item.quoteLabel && <span className="not-italic text-xs text-gray-500 uppercase tracking-wide block mb-2">{item.quoteLabel}</span>}
                     "{item.quote}"
                   </blockquote>
                 </div>
