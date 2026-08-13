@@ -12,3 +12,8 @@
 - [x] Enforce newest-first ordering with explicit order metadata or dates instead of relying on array placement
 - [x] Verify in the rendered page that Limber Life Armenia × Pravilo is the first collaboration card
 - [x] Save a new checkpoint after the ordering fix
+
+- [x] Audit mobile, tablet, and desktop layouts for deformation, overflow, and alignment issues
+- [x] Verify navigation, hero, stats, collaborations, embeds, forms, footer, and all five languages responsively
+- [x] Fix any responsive issues found and document the verification result
+- [x] Re-run build/tests and save a responsive QA checkpoint

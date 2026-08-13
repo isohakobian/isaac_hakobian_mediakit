@@ -667,13 +667,13 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-3">
+      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
+        <div className="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-2 sm:gap-3">
           <a href="/" className="text-2xl font-bold" style={{ fontFamily: "Playfair Display, serif", color: "#aa7942" }}>
             Isaac
           </a>
           <LanguageSwitcher currentLanguage={language} onLanguageChange={setLanguage} />
-          <div className="flex gap-6">
+          <div className="flex gap-3 sm:gap-6 whitespace-nowrap">
             <a
               href="#collaboration"
               onClick={() => trackClick("nav-collaboration")}
@@ -707,18 +707,18 @@ export default function Home() {
 
         <div className="relative z-10 text-center max-w-3xl px-6">
           <h1
-            className="text-5xl sm:text-6xl md:text-8xl font-bold mb-4 leading-none"
+            className="text-5xl sm:text-6xl lg:text-8xl font-bold mb-4 leading-none break-words"
             style={{ fontFamily: "Playfair Display, serif", color: "#aa7942" }}
           >
             ISAAC HAKOBIAN
           </h1>
-          <p className="text-xl sm:text-2xl md:text-3xl text-white/95 mb-6 font-light">{t.tagline}</p>
-          {t.taglineSupport && <p className="text-lg text-white/80 mb-8 font-light leading-relaxed max-w-2xl mx-auto">{t.taglineSupport}</p>}
+          <p className="text-lg sm:text-2xl lg:text-3xl text-white/95 mb-6 font-light">{t.tagline}</p>
+          {t.taglineSupport && <p className="text-base sm:text-lg text-white/80 mb-8 font-light leading-relaxed max-w-2xl mx-auto">{t.taglineSupport}</p>}
           <div className="flex gap-4 justify-center">
             <a
               href="#collaboration"
               onClick={() => trackClick("explore-collaboration-btn")}
-              className="inline-flex items-center gap-2 bg-accent text-white px-8 py-3 hover:opacity-90 transition-opacity font-medium"
+              className="inline-flex items-center gap-2 bg-accent text-white px-6 sm:px-8 py-3 hover:opacity-90 transition-opacity font-medium"
             >
               {t.exploreCollaboration} <ArrowRight size={16} />
             </a>
@@ -729,21 +729,21 @@ export default function Home() {
       {/* Statistics Section */}
       <section className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12 mb-16">
             <div className="text-center">
-              <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
+              <div className="text-5xl sm:text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
                 1.31M+
               </div>
               <p className="text-lg text-gray-600">{t.monthlyReach}</p>
             </div>
             <div className="text-center">
-              <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
+              <div className="text-5xl sm:text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
                 37.5K+
               </div>
               <p className="text-lg text-gray-600">{t.maleAudience}</p>
             </div>
             <div className="text-center">
-              <div className="text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
+              <div className="text-5xl sm:text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
                 286.9K
               </div>
               <p className="text-lg text-gray-600">{t.primaryAgeGroup}</p>
@@ -756,7 +756,7 @@ export default function Home() {
       <section className="py-20 px-6 bg-gray-50">
         <div className="max-w-4xl mx-auto">
           <div className="text-center">
-            <h2 className="text-5xl font-bold mb-8" style={{ fontFamily: "Playfair Display, serif" }}>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-8" style={{ fontFamily: "Playfair Display, serif" }}>
               {t.aboutBrand}
             </h2>
             <p className="text-lg text-gray-700 leading-relaxed max-w-3xl">{t.aboutText}</p>
@@ -767,7 +767,7 @@ export default function Home() {
       {/* Recent Collaborations Section */}
       <section id="collaboration" className="py-20 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-5xl font-bold mb-16" style={{ fontFamily: "Playfair Display, serif" }}>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-16" style={{ fontFamily: "Playfair Display, serif" }}>
             {t.recentCollaborations}
           </h2>
 
@@ -775,10 +775,10 @@ export default function Home() {
             {orderedCollaborations.map((item) => (
               <article
                 key={item.name}
-                className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start"
+                className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start"
               >
                 <div className="order-1">
-                  <h3 className="text-3xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif" }}>
+                  <h3 className="text-2xl sm:text-3xl font-bold mb-2 break-words" style={{ fontFamily: "Playfair Display, serif" }}>
                     {item.name}
                   </h3>
                   <p className="text-sm text-accent font-medium mb-4">{item.category}</p>
@@ -791,7 +791,7 @@ export default function Home() {
                     <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{t.results}</p>
                     <p className="text-gray-700 font-medium">{item.results}</p>
                   </div>
-                  <blockquote className="italic text-gray-700 border-l-4 border-accent pl-4">
+                  <blockquote className="italic text-gray-700 border-l-4 border-accent pl-4 break-words">
                     {item.quoteLabel && <span className="not-italic text-xs text-gray-500 uppercase tracking-wide block mb-2">{item.quoteLabel}</span>}
                     "{item.quote}"
                   </blockquote>
@@ -811,11 +811,11 @@ export default function Home() {
       {/* Collaboration Packages */}
       <section className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-5xl font-bold mb-16" style={{ fontFamily: "Playfair Display, serif" }}>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-16" style={{ fontFamily: "Playfair Display, serif" }}>
             {t.collaborationPackages}
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Link in Bio */}
             <div className="border border-gray-300 p-8 hover:shadow-lg transition-shadow">
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
@@ -897,7 +897,7 @@ export default function Home() {
       {/* Contact/Collaboration CTA Section */}
       <section className="py-20 px-6 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl font-bold mb-6" style={{ fontFamily: "Playfair Display, serif" }}>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-6" style={{ fontFamily: "Playfair Display, serif" }}>
             {t.collaborationCtaTitle}
           </h2>
           <p className="text-xl text-gray-700 mb-12">{t.collaborationCtaText}</p>
@@ -985,7 +985,7 @@ export default function Home() {
       {/* Contact Form Section */}
       <section id="contact" className="py-20 px-6 bg-white">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-5xl font-bold mb-12 text-center" style={{ fontFamily: "Playfair Display, serif" }}>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-12 text-center" style={{ fontFamily: "Playfair Display, serif" }}>
             {t.getInTouch}
           </h2>
 
@@ -1037,7 +1037,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-8">
             <div>
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif", color: "#aa7942" }}>
                 Isaac Hakobian
