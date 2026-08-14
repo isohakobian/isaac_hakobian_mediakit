@@ -113,3 +113,29 @@ describe("analytics", () => {
     expect(result).toEqual({ success: true });
   });
 });
+
+describe("analytics dashboard access", () => {
+  it("rejects unauthenticated dashboard access with a typed permission error", async () => {
+    const caller = appRouter.createCaller(createPublicContext());
+
+    await expect(caller.analytics.dashboard({ days: 30 })).rejects.toThrow(/login|permission/i);
+  });
+
+  it("rejects regular users while allowing the admin role to reach the procedure", async () => {
+    const regularUserCtx = createPublicContext();
+    regularUserCtx.user = {
+      id: 2,
+      openId: "regular-user",
+      name: "Regular User",
+      email: "user@example.com",
+      loginMethod: "oauth",
+      role: "user",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lastSignedIn: new Date(),
+    };
+
+    const caller = appRouter.createCaller(regularUserCtx);
+    await expect(caller.analytics.dashboard({ days: 30 })).rejects.toThrow(/permission/i);
+  });
+});

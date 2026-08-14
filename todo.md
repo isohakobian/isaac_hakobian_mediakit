@@ -28,3 +28,8 @@
 - [x] Add explicit Vitest coverage for managed collaboration newest-first ordering with dated and undated records
 - [x] Complete authenticated owner verification of create, edit, delete, preview, and publish controls when browser login is available
 - [x] Save a dedicated checkpoint after the collaboration admin feature QA pass
+
+- [ ] Reproduce the Analytics error and identify whether it is auth, query, or rendering related
+- [ ] Fix Analytics access, data loading, empty states, and error handling without breaking owner security
+- [ ] Add or update Vitest coverage for the Analytics fix and verify the public site regression
+- [ ] Save the final Analytics fix checkpoint and synchronize it to GitHub

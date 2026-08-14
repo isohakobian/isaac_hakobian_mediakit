@@ -112,13 +112,9 @@ export const appRouter = router({
         
         return { success: true };
       }),
-    dashboard: publicProcedure
-      .input(z.object({ days: z.number().default(30) }))
-      .query(async ({ input, ctx }) => {
-        // Only allow owner to view analytics
-        if (ctx.user?.openId !== process.env.OWNER_OPEN_ID) {
-          throw new Error('Unauthorized');
-        }
+    dashboard: adminProcedure
+      .input(z.object({ days: z.number().int().min(1).max(365).default(30) }))
+      .query(async ({ input }) => {
         return await getAnalyticsDashboard(input.days);
       }),
   }),

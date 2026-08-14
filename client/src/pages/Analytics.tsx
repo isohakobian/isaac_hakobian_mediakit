@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,17 +14,39 @@ export function Analytics() {
   const { user, loading } = useAuth();
   const [, setLocation] = useLocation();
   const [days, setDays] = useState(30);
-  const { data: dashboardData, isLoading, refetch } = trpc.analytics.dashboard.useQuery({ days });
+  const isAdmin = user?.role === "admin";
+  const { data: dashboardData, isLoading, isError, error, refetch } = trpc.analytics.dashboard.useQuery(
+    { days },
+    { enabled: !loading && isAdmin },
+  );
 
-  // Redirect if not owner
-  if (!loading && (!user || user.openId !== process.env.VITE_APP_ID)) {
+  if (!loading && !user) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
-          <p className="text-gray-600 mb-6">You don't have permission to view analytics.</p>
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6">
+        <div className="text-center max-w-md">
+          <h1 className="text-3xl font-bold mb-4">Analytics доступен владельцу</h1>
+          <p className="text-gray-600 mb-6">Войдите в аккаунт владельца, чтобы просматривать статистику сайта.</p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Button onClick={() => { window.location.href = getLoginUrl(); }}>
+              Войти как владелец
+            </Button>
+            <Button onClick={() => setLocation("/")} variant="outline">
+              На главную
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!loading && user && !isAdmin) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6">
+        <div className="text-center max-w-md">
+          <h1 className="text-3xl font-bold mb-4">Доступ ограничен</h1>
+          <p className="text-gray-600 mb-6">Analytics доступен только владельцу медиа-кита.</p>
           <Button onClick={() => setLocation("/")} variant="default">
-            Back to Home
+            На главную
           </Button>
         </div>
       </div>
@@ -41,15 +64,29 @@ export function Analytics() {
     );
   }
 
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6">
+        <div className="text-center max-w-lg">
+          <h1 className="text-3xl font-bold mb-4">Не удалось загрузить Analytics</h1>
+          <p className="text-gray-600 mb-6">Проверьте соединение и попробуйте ещё раз. Данные сайта не потеряны.</p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Button onClick={() => refetch()}>Повторить загрузку</Button>
+            <Button onClick={() => setLocation("/")} variant="outline">На главную</Button>
+          </div>
+          {error?.message && <p className="mt-4 text-xs text-muted-foreground">{error.message}</p>}
+        </div>
+      </div>
+    );
+  }
+
   if (!dashboardData) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">No Data</h1>
-          <p className="text-gray-600 mb-6">No analytics data available yet.</p>
-          <Button onClick={() => setLocation("/")} variant="default">
-            Back to Home
-          </Button>
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6">
+        <div className="text-center max-w-lg">
+          <h1 className="text-3xl font-bold mb-4">Пока нет данных</h1>
+          <p className="text-gray-600 mb-6">Analytics подключён, но в выбранном периоде ещё нет событий.</p>
+          <Button onClick={() => setLocation("/")} variant="default">На главную</Button>
         </div>
       </div>
     );
@@ -73,6 +110,8 @@ export function Analytics() {
       name: name.replace(/-/g, " "),
       value,
     }));
+
+  const totalClicks = dashboardData.clicks || 1;
 
   const referrerData = Object.entries(dashboardData.referrerBreakdown)
     .sort((a, b) => b[1] - a[1])
@@ -241,7 +280,7 @@ export function Analytics() {
                       <td className="py-3 px-4">{element.replace(/-/g, " ")}</td>
                       <td className="text-right py-3 px-4 font-semibold">{count}</td>
                       <td className="text-right py-3 px-4">
-                        {((count / dashboardData.clicks) * 100).toFixed(1)}%
+                        {dashboardData.clicks === 0 ? "0.0" : ((count / totalClicks) * 100).toFixed(1)}%
                       </td>
                     </tr>
                   ))}

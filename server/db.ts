@@ -258,9 +258,13 @@ export async function getAnalyticsDashboard(days: number = 30) {
     .filter(e => e.eventType === 'click')
     .forEach(e => {
       if (e.eventData) {
-        const data = JSON.parse(e.eventData);
-        const elementId = data.elementId || 'unknown';
-        clickTracking[elementId] = (clickTracking[elementId] || 0) + 1;
+        try {
+          const data = JSON.parse(e.eventData) as { elementId?: string };
+          const elementId = data.elementId || 'unknown';
+          clickTracking[elementId] = (clickTracking[elementId] || 0) + 1;
+        } catch {
+          clickTracking.unknown = (clickTracking.unknown || 0) + 1;
+        }
       }
     });
   
