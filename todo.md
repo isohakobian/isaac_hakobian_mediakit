@@ -17,3 +17,14 @@
 - [x] Verify navigation, hero, stats, collaborations, embeds, forms, footer, and all five languages responsively
 - [x] Fix any responsive issues found and document the verification result
 - [x] Re-run build/tests and save a responsive QA checkpoint
+
+- [x] Add owner-only collaboration management page with clear visual CRUD controls
+- [x] Add persistent collaboration records with localized content, publishedAt sorting, and media URLs
+- [x] Add create, edit, delete, and preview flows with validation and confirmation states
+- [x] Connect the public media kit to managed collaboration records without breaking current translations or newest-first order
+- [x] Write and run Vitest coverage for collaboration management procedures and ordering
+- [x] Run responsive/admin access QA, build, and save a new checkpoint
+
+- [ ] Add explicit Vitest coverage for managed collaboration newest-first ordering with dated and undated records
+- [ ] Complete authenticated owner verification of create, edit, delete, preview, and publish controls when browser login is available
+- [ ] Save a dedicated checkpoint after the collaboration admin feature QA pass

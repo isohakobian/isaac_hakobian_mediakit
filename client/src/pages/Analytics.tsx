@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FolderKanban } from "lucide-react";
 import { useLocation } from "wouter";
 
 const COLORS = ["#aa7942", "#d4a574", "#8b6f47", "#c9a961", "#6b5436"];
@@ -104,7 +104,10 @@ export function Analytics() {
           </div>
 
           {/* Days Filter */}
-          <div className="flex gap-2">
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button variant="outline" size="sm" onClick={() => setLocation("/collaborations")}>
+              <FolderKanban className="mr-2 h-4 w-4" /> Manage Collaborations
+            </Button>
             {[7, 30, 90].map((d) => (
               <Button
                 key={d}

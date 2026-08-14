@@ -1,6 +1,7 @@
-import { eq, and, gt } from "drizzle-orm";
+import { eq, and, desc, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, testimonials, analytics, InsertAnalytics } from "../drizzle/schema";
+import { Collaboration, InsertCollaboration, InsertUser, collaborations, users, testimonials, analytics, InsertAnalytics } from "../drizzle/schema";
+import type { CollaborationTranslations, ManagedCollaboration } from "@shared/collaborations";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -168,6 +169,55 @@ export async function getAnalyticsSummary(days: number = 30) {
 /**
  * Get detailed analytics for dashboard
  */
+function serializeCollaboration(row: Collaboration): ManagedCollaboration | null {
+  try {
+    return {
+      id: row.id,
+      translations: JSON.parse(row.translations) as CollaborationTranslations,
+      mediaUrl: row.mediaUrl,
+      mediaTitle: row.mediaTitle,
+      publishedAt: row.publishedAt ? row.publishedAt.toISOString().slice(0, 10) : null,
+      isPublished: row.isPublished,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+  } catch (error) {
+    console.error(`[Database] Invalid collaboration translations for id ${row.id}:`, error);
+    return null;
+  }
+}
+
+export async function getManagedCollaborations(includeUnpublished = false) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const rows = await db
+    .select()
+    .from(collaborations)
+    .where(includeUnpublished ? undefined : eq(collaborations.isPublished, 1))
+    .orderBy(desc(collaborations.publishedAt), desc(collaborations.createdAt));
+
+  return rows.map(serializeCollaboration).filter((item): item is ManagedCollaboration => Boolean(item));
+}
+
+export async function createManagedCollaboration(input: Omit<InsertCollaboration, "id" | "createdAt" | "updatedAt">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.insert(collaborations).values(input);
+}
+
+export async function updateManagedCollaboration(id: number, input: Partial<Omit<InsertCollaboration, "id" | "createdAt" | "updatedAt">>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(collaborations).set(input).where(eq(collaborations.id, id));
+}
+
+export async function deleteManagedCollaboration(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(collaborations).where(eq(collaborations.id, id));
+}
+
 export async function getAnalyticsDashboard(days: number = 30) {
   const db = await getDb();
   if (!db) return null;

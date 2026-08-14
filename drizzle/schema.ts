@@ -66,3 +66,21 @@ export const analytics = mysqlTable("analytics", {
 
 export type Analytics = typeof analytics.$inferSelect;
 export type InsertAnalytics = typeof analytics.$inferInsert;
+
+/**
+ * Owner-managed collaboration records. Localized copy is stored as JSON text
+ * so the editor can support all five languages without schema duplication.
+ */
+export const collaborations = mysqlTable("collaborations", {
+  id: int("id").autoincrement().primaryKey(),
+  translations: text("translations").notNull(),
+  mediaUrl: varchar("mediaUrl", { length: 512 }).notNull(),
+  mediaTitle: varchar("mediaTitle", { length: 255 }).notNull(),
+  publishedAt: timestamp("publishedAt"),
+  isPublished: int("isPublished").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Collaboration = typeof collaborations.$inferSelect;
+export type InsertCollaboration = typeof collaborations.$inferInsert;

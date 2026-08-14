@@ -7,6 +7,8 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { sortCollaborationsNewestFirst } from "@shared/collaborationOrder";
+import { collaborationLanguages, type CollaborationLanguage, type ManagedCollaboration } from "@shared/collaborations";
+import { trpc } from "@/lib/trpc";
 
 /**
  * Editorial Minimalism Design System
@@ -15,6 +17,11 @@ import { sortCollaborationsNewestFirst } from "@shared/collaborationOrder";
  * - Layout: Full-width image sections with text overlays
  * - Vibe: High-end editorial, cinematic, premium
  */
+
+function getManagedTranslation(item: ManagedCollaboration, language: CollaborationLanguage) {
+  const fallback = item.translations.en;
+  return { ...fallback, ...(item.translations[language] ?? {}) };
+}
 
 const translations = {
   en: {
@@ -553,6 +560,7 @@ const InstagramEmbed = ({ url, title }: { url: string; title: string }) => {
 export default function Home() {
   const { user } = useAuth();
   const { trackClick, trackFormSubmit, language, setLanguage } = useAnalytics();
+  const { data: managedCollaborations } = trpc.collaborations.publicList.useQuery();
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
 
@@ -629,7 +637,18 @@ export default function Home() {
     },
   ];
 
-  const orderedCollaborations = sortCollaborationsNewestFirst(collaborations);
+  const currentLocale: CollaborationLanguage = collaborationLanguages.includes(language as CollaborationLanguage) ? language as CollaborationLanguage : "en";
+  const managedItems = (managedCollaborations ?? []).map((item) => {
+    const content = getManagedTranslation(item, currentLocale);
+    return {
+      ...content,
+      url: item.mediaUrl,
+      title: item.mediaTitle,
+      publishedAt: item.publishedAt,
+    };
+  });
+
+  const orderedCollaborations = sortCollaborationsNewestFirst([...managedItems, ...collaborations]);
 
   const handleInstagramDM = () => {
     window.open(socialLinks.instagramDirect, "_blank");
