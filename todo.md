@@ -29,7 +29,16 @@
 - [x] Complete authenticated owner verification of create, edit, delete, preview, and publish controls when browser login is available
 - [x] Save a dedicated checkpoint after the collaboration admin feature QA pass
 
-- [ ] Reproduce the Analytics error and identify whether it is auth, query, or rendering related
-- [ ] Fix Analytics access, data loading, empty states, and error handling without breaking owner security
-- [ ] Add or update Vitest coverage for the Analytics fix and verify the public site regression
-- [ ] Save the final Analytics fix checkpoint and synchronize it to GitHub
+- [x] Reproduce the Analytics error and identify whether it is auth, query, or rendering related
+- [x] Fix Analytics access, data loading, empty states, and error handling withoutправля owner security
+- [x] Add or update Vitest coverage for the Analytics fix and verify the public site regression
+- [x] Save the final Analytics fix checkpoint and synchronize it to GitHub
+
+- [x] Re-verify public site rendering and navigation after Analytics fix
+- [x] Push/synchronize the final Analytics fix and collaboration editor checkpoint to GitHub
+
+- [x] Re-open home page and confirm no regressions in public sections
+- [x] Push/commit all code changes and synchronize with GitHub repository
+
+- [ ] Run git commit and git push to update the remote GitHub repository with all Analytics and Collaboration Editor changes
+- [ ] Verify remote GitHub synchronization status
