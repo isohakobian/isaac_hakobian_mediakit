@@ -25,6 +25,6 @@
 - [x] Write and run Vitest coverage for collaboration management procedures and ordering
 - [x] Run responsive/admin access QA, build, and save a new checkpoint
 
-- [ ] Add explicit Vitest coverage for managed collaboration newest-first ordering with dated and undated records
-- [ ] Complete authenticated owner verification of create, edit, delete, preview, and publish controls when browser login is available
-- [ ] Save a dedicated checkpoint after the collaboration admin feature QA pass
+- [x] Add explicit Vitest coverage for managed collaboration newest-first ordering with dated and undated records
+- [x] Complete authenticated owner verification of create, edit, delete, preview, and publish controls when browser login is available
+- [x] Save a dedicated checkpoint after the collaboration admin feature QA pass
