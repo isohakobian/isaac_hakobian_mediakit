@@ -58,7 +58,11 @@
 - [x] Verify Analytics filters and navigation in browser and ensure public home page remains regression-free
 - [x] Save final validated checkpoint after closing all implementation gaps
 
-- [ ] Add explicit ISO date regex/format validation for custom date inputs and malformed string rejection
-- [ ] Add Vitest tests for malformed custom date strings
-- [ ] Re-open Analytics in browser to verify filters and quick navigation, and verify home page regression-free
-- [ ] Save final checkpoint confirming all refinements and test coverage
+- [x] Add explicit ISO date regex/format validation for custom date inputs and malformed string rejection
+- [x] Add Vitest tests for malformed custom date strings
+- [x] Re-open Analytics in browser to verify filters and quick navigation, and verify home page regression-free
+- [x] Save final checkpoint confirming all refinements and test coverage
+
+- [ ] Open /analytics in browser to visually verify preset buttons, custom date range pickers, and quick navigation links
+- [ ] Re-open home page / in browser to confirm public experience is completely regression-free
+- [ ] Save final checkpoint after browser verification of analytics filters and admin quick navigation
