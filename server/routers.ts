@@ -113,9 +113,13 @@ export const appRouter = router({
         return { success: true };
       }),
     dashboard: adminProcedure
-      .input(z.object({ days: z.number().int().min(1).max(365).default(30) }))
+      .input(z.object({
+        days: z.number().int().min(1).max(365).default(30),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+      }))
       .query(async ({ input }) => {
-        return await getAnalyticsDashboard(input.days);
+        return await getAnalyticsDashboard(input.days, input.startDate, input.endDate);
       }),
   }),
 });

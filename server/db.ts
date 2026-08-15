@@ -1,4 +1,4 @@
-import { eq, and, desc, gt } from "drizzle-orm";
+import { eq, and, desc, gt, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { Collaboration, InsertCollaboration, InsertUser, collaborations, users, testimonials, analytics, InsertAnalytics } from "../drizzle/schema";
 import type { CollaborationTranslations, ManagedCollaboration } from "@shared/collaborations";
@@ -218,17 +218,27 @@ export async function deleteManagedCollaboration(id: number) {
   await db.delete(collaborations).where(eq(collaborations.id, id));
 }
 
-export async function getAnalyticsDashboard(days: number = 30) {
+export async function getAnalyticsDashboard(days: number = 30, startDate?: string, endDate?: string) {
   const db = await getDb();
   if (!db) return null;
   
-  const cutoffDate = new Date();
-  cutoffDate.setDate(cutoffDate.getDate() - days);
-  
+  let conditions = undefined;
+  if (startDate && endDate) {
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+    conditions = and(gte(analytics.createdAt, start), lte(analytics.createdAt, end));
+  } else {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+    conditions = gt(analytics.createdAt, cutoffDate);
+  }
+
   const events = await db
     .select()
     .from(analytics)
-    .where(gt(analytics.createdAt, cutoffDate));
+    .where(conditions);
   
   // Calculate metrics
   const uniqueSessions = new Set(events.map(e => e.sessionId)).size;

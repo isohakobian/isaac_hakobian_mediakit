@@ -47,3 +47,8 @@
 - [x] Run git status and check remote branch alignment with origin/main
 
 - [x] Save final project state using webdev_save_checkpoint for platform-managed repository synchronization
+
+- [ ] Add clear owner-only quick links to Analytics and Collaboration Editor in admin navigation
+- [ ] Add Analytics date-range presets and custom start/end date filtering
+- [ ] Add tests for date-range validation and analytics query parameters
+- [ ] Verify navigation, filters, public-site regression, build, tests, and save a final checkpoint

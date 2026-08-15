@@ -138,4 +138,24 @@ describe("analytics dashboard access", () => {
     const caller = appRouter.createCaller(regularUserCtx);
     await expect(caller.analytics.dashboard({ days: 30 })).rejects.toThrow(/permission/i);
   });
+
+  it("accepts custom startDate and endDate query parameters for admin dashboard", async () => {
+    const adminCtx = createPublicContext();
+    adminCtx.user = {
+      id: 1,
+      openId: "admin-user",
+      name: "Admin User",
+      email: "admin@example.com",
+      loginMethod: "oauth",
+      role: "admin",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lastSignedIn: new Date(),
+    };
+
+    const caller = appRouter.createCaller(adminCtx);
+    const result = await caller.analytics.dashboard({ days: 30, startDate: "2026-01-01", endDate: "2026-12-31" });
+    expect(result).not.toBeNull();
+    expect(result).toHaveProperty("totalEvents");
+  });
 });

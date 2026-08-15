@@ -13,10 +13,18 @@ const COLORS = ["#aa7942", "#d4a574", "#8b6f47", "#c9a961", "#6b5436"];
 export function Analytics() {
   const { user, loading } = useAuth();
   const [, setLocation] = useLocation();
-  const [days, setDays] = useState(30);
+  const [days, setDays] = useState<number>(30);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<string>("30d");
+
   const isAdmin = user?.role === "admin";
+  const queryInput = activeTab === "custom" && startDate && endDate
+    ? { days: 30, startDate, endDate }
+    : { days };
+
   const { data: dashboardData, isLoading, isError, error, refetch } = trpc.analytics.dashboard.useQuery(
-    { days },
+    queryInput,
     { enabled: !loading && isAdmin },
   );
 
@@ -142,26 +150,79 @@ export function Analytics() {
             </div>
           </div>
 
-          {/* Days Filter */}
-          <div className="flex flex-wrap justify-end gap-2">
+          {/* Days & Date Range Filter */}
+          <div className="flex flex-wrap justify-end items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => setLocation("/collaborations")}>
-              <FolderKanban className="mr-2 h-4 w-4" /> Manage Collaborations
+              <FolderKanban className="mr-2 h-4 w-4" /> Коллаборации
             </Button>
-            {[7, 30, 90].map((d) => (
+            <Button variant="outline" size="sm" onClick={() => setLocation("/")}>
+              Сайт
+            </Button>
+            {[
+              { label: "7 дней", days: 7, key: "7d" },
+              { label: "30 дней", days: 30, key: "30d" },
+              { label: "90 дней", days: 90, key: "90d" },
+              { label: "Год", days: 365, key: "365d" },
+            ].map((preset) => (
               <Button
-                key={d}
-                variant={days === d ? "default" : "outline"}
+                key={preset.key}
+                variant={activeTab === preset.key ? "default" : "outline"}
                 size="sm"
                 onClick={() => {
-                  setDays(d);
-                  refetch();
+                  setActiveTab(preset.key);
+                  setDays(preset.days);
+                  setStartDate("");
+                  setEndDate("");
                 }}
               >
-                {d}d
+                {preset.label}
               </Button>
             ))}
           </div>
         </div>
+
+        {/* Custom Date Range Picker Bar */}
+        <Card className="p-4 mb-8 bg-card/50 flex flex-wrap items-center gap-4 justify-between">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-sm font-medium text-muted-foreground">Произвольный период:</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">С:</span>
+              <input
+                type="date"
+                className="px-3 py-1.5 text-sm rounded-md border border-input bg-background text-foreground shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">По:</span>
+              <input
+                type="date"
+                className="px-3 py-1.5 text-sm rounded-md border border-input bg-background text-foreground shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
+            <Button
+              size="sm"
+              variant={activeTab === "custom" ? "default" : "secondary"}
+              disabled={!startDate || !endDate}
+              onClick={() => {
+                if (startDate && endDate) {
+                  setActiveTab("custom");
+                  refetch();
+                }
+              }}
+            >
+              Применить даты
+            </Button>
+          </div>
+          {activeTab === "custom" && startDate && endDate && (
+            <span className="text-xs text-amber-700 font-medium">
+              Фильтр: {startDate} — {endDate}
+            </span>
+          )}
+        </Card>
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-12">
@@ -291,7 +352,13 @@ export function Analytics() {
 
         {/* Footer */}
         <div className="text-center text-gray-600 text-sm">
-          <p>Data from the last {days} days • Last updated: {new Date().toLocaleString()}</p>
+          <p>
+            {activeTab === "custom" && startDate && endDate
+              ? `Статистика за период с ${startDate} по ${endDate}`
+              : `Статистика за последние ${days} дней`}
+            {" • Обновлено: "}
+            {new Date().toLocaleString()}
+          </p>
         </div>
       </div>
     </div>
