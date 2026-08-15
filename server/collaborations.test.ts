@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { appRouter } from "./routers";
 import { sortCollaborationsNewestFirst } from "@shared/collaborationOrder";
-import { filterCollaborations, type ManagedCollaboration } from "@shared/collaborations";
+import { filterCollaborations, sortCollaborations, type ManagedCollaboration } from "@shared/collaborations";
 import type { TrpcContext } from "./_core/context";
 
 function createContext(user: TrpcContext["user"]): TrpcContext {
@@ -67,6 +67,36 @@ describe("collaborations", () => {
     ]);
 
     expect(ordered.map((item) => item.title)).toEqual(["Newest", "Older", "Legacy"]);
+  });
+
+  it("filters by category and supports editor sort modes", () => {
+    const newer = makeManagedCollaboration({
+      id: 3,
+      publishedAt: "2026-08-14",
+      translations: {
+        en: { name: "Zeta Studio", category: "Fitness", description: "Training", campaign: "Reel", results: "10K views", quote: "Note" },
+        ru: { name: "Zeta Studio", category: "Фитнес", description: "Тренировка", campaign: "Reel", results: "10K views", quote: "Note" },
+        es: emptyTranslations.es,
+        ar: emptyTranslations.ar,
+        fr: emptyTranslations.fr,
+      },
+    });
+    const older = makeManagedCollaboration({
+      id: 4,
+      publishedAt: "2026-08-01",
+      translations: {
+        en: { name: "Alpha Grooming", category: "Grooming", description: "Care", campaign: "Post", results: "4K views", quote: "Note" },
+        ru: { name: "Alpha Grooming", category: "Уход", description: "Уход", campaign: "Post", results: "4K views", quote: "Note" },
+        es: emptyTranslations.es,
+        ar: emptyTranslations.ar,
+        fr: emptyTranslations.fr,
+      },
+    });
+
+    expect(filterCollaborations([newer, older], { category: "fitness" }).map((item) => item.id)).toEqual([3]);
+    expect(sortCollaborations([newer, older], "oldest").map((item) => item.id)).toEqual([4, 3]);
+    expect(sortCollaborations([newer, older], "brand-asc").map((item) => item.id)).toEqual([4, 3]);
+    expect(sortCollaborations([newer, older], "brand-desc").map((item) => item.id)).toEqual([3, 4]);
   });
 
   it("exposes the public managed list without requiring authentication", async () => {

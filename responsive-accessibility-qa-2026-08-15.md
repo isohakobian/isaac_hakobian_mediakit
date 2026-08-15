@@ -47,3 +47,7 @@ The final source review confirms that Analytics now exposes exact chart values i
 ## Preserved laptop hero evidence
 
 Captured artifact: `/home/ubuntu/webdev-static-assets/isaac-laptop-hero-qa-2026-08-15.png` (1279×941 preview capture). Visual inspection shows Isaac's face, hair, shoulders, and torso remain in frame with the adjusted editorial crop; the hero no longer presents the previous excessive close-up.
+
+## Collaboration Editor filter and preset UI QA
+
+The authenticated preview at `/collaborations` was checked after the latest update. The saved-collaboration panel visibly presents search, published/draft status buttons, language and category comboboxes, date-from/date-to inputs, a sort combobox with `Сначала новые`, and saved preset controls. The layout remains usable at the desktop preview width, and the empty-state/result count is visible below the controls. Preset action controls are disabled while their short loading state is active, with a spinner and live status text before the success toast appears. Applying the existing `Только опубликованные` preset in the authenticated preview visibly showed `Обновляем список` during filtering and then the success toast `Набор «Только опубликованные» применён`.

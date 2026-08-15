@@ -114,3 +114,8 @@
 - [x] Verify keyboard-focus styling, non-hover chart summaries, aria-live feedback, and collaboration preset controls through rendered DOM/source QA
 - [x] Document verifiable laptop hero crop evidence and non-hover access behavior for new controls
 - [x] Save fresh final checkpoint after this latest responsive and accessibility verification
+
+- [x] Add smooth loading animations and toast notifications for collaboration filter presets in Collaboration Editor
+- [x] Implement enhanced filtering (search, category, status, language completeness) and sorting (newest, oldest, brand alphabetical) in /collaborations
+- [ ] Run Vitest tests, production build, and verify responsiveness and accessibility for updated Collaboration Editor
+- [ ] Save final checkpoint and synchronize with GitHub repository

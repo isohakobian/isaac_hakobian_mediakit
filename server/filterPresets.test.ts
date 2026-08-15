@@ -7,8 +7,10 @@ const preset = (id: string, name: string): CollaborationFilterPreset => ({
   query: "fitness",
   status: "published",
   language: "all",
+  category: "Beauty",
   fromDate: "2026-08-01",
   toDate: "2026-08-15",
+  sortMode: "newest",
 });
 
 describe("collaboration filter presets", () => {

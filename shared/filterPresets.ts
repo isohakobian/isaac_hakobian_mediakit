@@ -1,4 +1,4 @@
-import type { CollaborationLanguage } from "./collaborations";
+import type { CollaborationLanguage, CollaborationSortMode } from "./collaborations";
 
 export type CollaborationFilterPreset = {
   id: string;
@@ -6,8 +6,10 @@ export type CollaborationFilterPreset = {
   query: string;
   status: "all" | "published" | "draft";
   language: "all" | CollaborationLanguage;
+  category: string;
   fromDate: string;
   toDate: string;
+  sortMode: CollaborationSortMode;
 };
 
 export function upsertFilterPreset(current: CollaborationFilterPreset[], preset: CollaborationFilterPreset, maxItems = 8) {

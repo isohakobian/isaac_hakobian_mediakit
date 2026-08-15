@@ -6,13 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { collaborationLanguages, filterCollaborations, type CollaborationLanguage, type CollaborationTranslation, type CollaborationTranslations, type ManagedCollaboration } from "@shared/collaborations";
+import { collaborationLanguages, filterCollaborations, sortCollaborations, type CollaborationLanguage, type CollaborationSortMode, type CollaborationTranslation, type CollaborationTranslations, type ManagedCollaboration } from "@shared/collaborations";
 import { removeFilterPreset, upsertFilterPreset, type CollaborationFilterPreset } from "@shared/filterPresets";
-import { ArrowLeft, CalendarDays, Check, ExternalLink, Eye, EyeOff, FolderKanban, Instagram, Pencil, Plus, Save, Search, SlidersHorizontal, Trash2, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, Check, ExternalLink, Eye, EyeOff, FolderKanban, Instagram, Loader2, Pencil, Plus, Save, Search, SlidersHorizontal, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -24,7 +25,14 @@ function loadFilterPresets(): CollaborationFilterPreset[] {
   if (typeof window === "undefined") return [];
   try {
     const parsed = JSON.parse(window.localStorage.getItem(FILTER_PRESETS_STORAGE_KEY) ?? "[]");
-    return Array.isArray(parsed) ? parsed.filter((item): item is CollaborationFilterPreset => Boolean(item?.id && item?.name)) : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .filter((item): item is CollaborationFilterPreset => Boolean(item?.id && item?.name))
+      .map((item) => ({
+        ...item,
+        category: typeof item.category === "string" ? item.category : "",
+        sortMode: item.sortMode === "oldest" || item.sortMode === "brand-asc" || item.sortMode === "brand-desc" ? item.sortMode : "newest",
+      }));
   } catch {
     return [];
   }
@@ -93,11 +101,14 @@ export function Collaborations() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
   const [languageFilter, setLanguageFilter] = useState<"all" | CollaborationLanguage>("all");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [sortMode, setSortMode] = useState<CollaborationSortMode>("newest");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [isFiltering, setIsFiltering] = useState(false);
   const [filterPresetName, setFilterPresetName] = useState("");
   const [filterPresets, setFilterPresets] = useState<CollaborationFilterPreset[]>(() => loadFilterPresets());
+  const [presetAction, setPresetAction] = useState<"idle" | "saving" | "applying" | "deleting">("idle");
 
   const collaborationsQuery = trpc.collaborations.list.useQuery(undefined, { enabled: isAdmin });
   const utils = trpc.useUtils();
@@ -130,15 +141,21 @@ export function Collaborations() {
     onError: (error) => toast.error(error.message || "Не удалось удалить коллаборацию"),
   });
 
-  const sortedItems = useMemo(() => collaborationsQuery.data ?? [], [collaborationsQuery.data]);
+  const categoryOptions = useMemo(() => Array.from(new Set((collaborationsQuery.data ?? [])
+    .flatMap((item) => Object.values(item.translations).map((translation) => translation.category.trim()))
+    .filter(Boolean)))
+    .sort((a, b) => a.localeCompare(b, ["ru", "en"], { sensitivity: "base" })), [collaborationsQuery.data]);
+  const sortedItems = useMemo(() => sortCollaborations(collaborationsQuery.data ?? [], sortMode), [collaborationsQuery.data, sortMode]);
   const filteredItems = useMemo(() => filterCollaborations(sortedItems, {
     query: searchQuery,
     status: statusFilter,
     language: languageFilter,
+    category: categoryFilter,
     fromDate,
     toDate,
-  }), [fromDate, languageFilter, searchQuery, sortedItems, statusFilter, toDate]);
-  const hasFilters = Boolean(searchQuery || statusFilter !== "all" || languageFilter !== "all" || fromDate || toDate);
+  }), [categoryFilter, fromDate, languageFilter, searchQuery, sortedItems, statusFilter, toDate]);
+  const hasFilters = Boolean(searchQuery || statusFilter !== "all" || languageFilter !== "all" || categoryFilter || fromDate || toDate);
+  const hasListControls = hasFilters || sortMode !== "newest";
   const activePreview = form.translations[previewLanguage];
 
   useEffect(() => {
@@ -155,15 +172,23 @@ export function Collaborations() {
     setIsFiltering(true);
     const timeout = window.setTimeout(() => setIsFiltering(false), 180);
     return () => window.clearTimeout(timeout);
-  }, [fromDate, hasFilters, languageFilter, searchQuery, statusFilter, toDate]);
+  }, [categoryFilter, fromDate, hasFilters, languageFilter, searchQuery, sortMode, statusFilter, toDate]);
   const isSaving = createMutation.isPending || updateMutation.isPending;
+  const isPresetBusy = presetAction !== "idle";
 
   const applyFilterPreset = (preset: CollaborationFilterPreset) => {
-    setSearchQuery(preset.query);
-    setStatusFilter(preset.status);
-    setLanguageFilter(preset.language);
-    setFromDate(preset.fromDate);
-    setToDate(preset.toDate);
+    setPresetAction("applying");
+    window.setTimeout(() => {
+      setSearchQuery(preset.query);
+      setStatusFilter(preset.status);
+      setLanguageFilter(preset.language);
+      setCategoryFilter(preset.category ?? "");
+      setFromDate(preset.fromDate);
+      setToDate(preset.toDate);
+      setSortMode(preset.sortMode ?? "newest");
+      setPresetAction("idle");
+      toast.success(`Набор «${preset.name}» применён`);
+    }, 180);
   };
 
   const saveFilterPreset = () => {
@@ -182,17 +207,27 @@ export function Collaborations() {
       query: searchQuery,
       status: statusFilter,
       language: languageFilter,
+      category: categoryFilter,
       fromDate,
       toDate,
+      sortMode,
     };
-    setFilterPresets((current) => upsertFilterPreset(current, preset));
-    setFilterPresetName("");
-    toast.success("Набор фильтров сохранён");
+    setPresetAction("saving");
+    window.setTimeout(() => {
+      setFilterPresets((current) => upsertFilterPreset(current, preset));
+      setFilterPresetName("");
+      setPresetAction("idle");
+      toast.success("Набор фильтров сохранён");
+    }, 180);
   };
 
   const handleRemoveFilterPreset = (id: string) => {
-    setFilterPresets((current) => removeFilterPreset(current, id));
-    toast.success("Набор фильтров удалён");
+    setPresetAction("deleting");
+    window.setTimeout(() => {
+      setFilterPresets((current) => removeFilterPreset(current, id));
+      setPresetAction("idle");
+      toast.success("Набор фильтров удалён");
+    }, 180);
   };
 
   const updateTranslation = (language: CollaborationLanguage, field: keyof CollaborationTranslation, value: string) => {
@@ -387,7 +422,7 @@ export function Collaborations() {
                   <div className="rounded-2xl border border-[#e6ded3] bg-[#f8f6f2] p-4 space-y-3">
                     <div className="relative">
                       <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Поиск по бренду, кампании, результатам или ссылке…" className="bg-white pl-9 pr-9" />
+                      <Input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Поиск по бренду, кампании, результатам или ссылке…" className="bg-white pl-9 pr-9" aria-label="Поиск коллабораций" />
                       {searchQuery && <button type="button" onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" aria-label="Очистить поиск"><X className="h-4 w-4" /></button>}
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
@@ -397,21 +432,35 @@ export function Collaborations() {
                         { key: "published", label: "Опубликованные" },
                         { key: "draft", label: "Черновики" },
                       ].map((filter) => <Button key={filter.key} type="button" size="sm" variant={statusFilter === filter.key ? "default" : "outline"} onClick={() => setStatusFilter(filter.key as typeof statusFilter)}>{filter.label}</Button>)}
-                      <select aria-label="Фильтр по языку" value={languageFilter} onChange={(event) => setLanguageFilter(event.target.value as typeof languageFilter)} className="h-9 rounded-md border border-input bg-white px-3 text-sm text-foreground">
-                        <option value="all">Все языки</option>
-                        {collaborationLanguages.map((language) => <option key={language} value={language}>Заполнен {language.toUpperCase()}</option>)}
-                      </select>
+                      <Select value={languageFilter} onValueChange={(value) => setLanguageFilter(value as typeof languageFilter)}>
+                        <SelectTrigger size="sm" aria-label="Фильтр по языку" className="bg-white"><SelectValue placeholder="Все языки" /></SelectTrigger>
+                        <SelectContent><SelectItem value="all">Все языки</SelectItem>{collaborationLanguages.map((language) => <SelectItem key={language} value={language}>Заполнен {language.toUpperCase()}</SelectItem>)}</SelectContent>
+                      </Select>
+                      <Select value={categoryFilter || "all"} onValueChange={(value) => setCategoryFilter(value === "all" ? "" : value)}>
+                        <SelectTrigger size="sm" aria-label="Фильтр по категории" className="bg-white"><SelectValue placeholder="Все категории" /></SelectTrigger>
+                        <SelectContent><SelectItem value="all">Все категории</SelectItem>{categoryOptions.map((category) => <SelectItem key={category} value={category}>{category}</SelectItem>)}</SelectContent>
+                      </Select>
+                      <Select value={sortMode} onValueChange={(value) => setSortMode(value as CollaborationSortMode)}>
+                        <SelectTrigger size="sm" aria-label="Сортировка коллабораций" className="bg-white"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="newest">Сначала новые</SelectItem>
+                          <SelectItem value="oldest">Сначала старые</SelectItem>
+                          <SelectItem value="brand-asc">Бренд: А–Я</SelectItem>
+                          <SelectItem value="brand-desc">Бренд: Я–А</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <Input aria-label="Дата от" type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} className="h-9 w-auto bg-white" />
                       <Input aria-label="Дата до" type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} className="h-9 w-auto bg-white" />
-                      {hasFilters && <Button type="button" size="sm" variant="ghost" onClick={() => { setSearchQuery(""); setStatusFilter("all"); setLanguageFilter("all"); setFromDate(""); setToDate(""); }}>Сбросить</Button>}
+                      {hasListControls && <Button type="button" size="sm" variant="ghost" onClick={() => { setSearchQuery(""); setStatusFilter("all"); setLanguageFilter("all"); setCategoryFilter(""); setFromDate(""); setToDate(""); setSortMode("newest"); }}>Сбросить</Button>}
                     </div>
-                    <p className="flex min-h-5 items-center gap-2 text-xs text-muted-foreground" aria-live="polite"><span className={`transition-opacity duration-200 ${isFiltering ? "opacity-60" : "opacity-100"}`}>Показано {filteredItems.length} из {sortedItems.length}</span>{isFiltering && <span className="inline-flex items-center gap-1 text-[#8b6134]"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#aa7942]" /> Обновляем</span>}</p>
+                    <p className="flex min-h-5 items-center gap-2 text-xs text-muted-foreground" aria-live="polite"><span className={`transition-opacity duration-200 ${isFiltering ? "opacity-60" : "opacity-100"}`}>Показано {filteredItems.length} из {sortedItems.length}</span>{isFiltering && <span className="inline-flex items-center gap-1 text-[#8b6134]"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#aa7942]" /> Обновляем список</span>}</p>
                     <div className="flex flex-col gap-3 border-t border-[#e6ded3] pt-3 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex min-w-0 flex-wrap items-center gap-2" aria-label="Сохранённые наборы фильтров">
                         <span className="text-xs font-medium text-muted-foreground">Быстрые наборы:</span>
-                        {filterPresets.length === 0 ? <span className="text-xs text-muted-foreground">Пока нет</span> : filterPresets.map((preset) => <span key={preset.id} className="inline-flex max-w-full items-center rounded-full border border-[#d9cbbd] bg-white pl-3 text-xs"><button type="button" onClick={() => applyFilterPreset(preset)} className="max-w-40 truncate rounded-sm py-1.5 pr-1 text-[#8b6134] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#aa7942] focus-visible:ring-offset-1" title={`Применить: ${preset.name}`}>{preset.name}</button><button type="button" onClick={() => handleRemoveFilterPreset(preset.id)} className="rounded-sm px-2 py-1.5 text-muted-foreground hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#aa7942] focus-visible:ring-offset-1" aria-label={`Удалить набор ${preset.name}`}>×</button></span>)}
+                        {isPresetBusy && <span className="inline-flex items-center gap-1 text-xs text-[#8b6134]" aria-live="polite"><Loader2 className="h-3.5 w-3.5 animate-spin" /> {presetAction === "saving" ? "Сохраняем…" : presetAction === "applying" ? "Применяем…" : "Удаляем…"}</span>}
+                        {filterPresets.length === 0 ? <span className="text-xs text-muted-foreground">Пока нет</span> : filterPresets.map((preset) => <span key={preset.id} className="inline-flex max-w-full items-center rounded-full border border-[#d9cbbd] bg-white pl-3 text-xs"><button type="button" disabled={isPresetBusy} onClick={() => applyFilterPreset(preset)} className="max-w-40 truncate rounded-sm py-1.5 pr-1 text-[#8b6134] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#aa7942] focus-visible:ring-offset-1 disabled:cursor-wait disabled:opacity-50" title={`Применить: ${preset.name}`}>{preset.name}</button><button type="button" disabled={isPresetBusy} onClick={() => handleRemoveFilterPreset(preset.id)} className="rounded-sm px-2 py-1.5 text-muted-foreground hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#aa7942] focus-visible:ring-offset-1 disabled:cursor-wait disabled:opacity-50" aria-label={`Удалить набор ${preset.name}`}>×</button></span>)}
                       </div>
-                      <div className="flex w-full gap-2 sm:w-auto"><Input value={filterPresetName} onChange={(event) => setFilterPresetName(event.target.value)} onKeyDown={(event) => event.key === "Enter" && saveFilterPreset()} placeholder="Название набора" aria-label="Название нового набора фильтров" className="h-9 min-w-0 bg-white sm:w-40" /><Button type="button" size="sm" variant="outline" onClick={saveFilterPreset} disabled={!hasFilters || !filterPresetName.trim()}><Save className="mr-1.5 h-3.5 w-3.5" /> Сохранить</Button></div>
+                      <div className="flex w-full gap-2 sm:w-auto"><Input value={filterPresetName} onChange={(event) => setFilterPresetName(event.target.value)} onKeyDown={(event) => event.key === "Enter" && saveFilterPreset()} placeholder="Название набора" aria-label="Название нового набора фильтров" className="h-9 min-w-0 bg-white sm:w-40" disabled={isPresetBusy} /><Button type="button" size="sm" variant="outline" onClick={saveFilterPreset} disabled={isPresetBusy || !hasFilters || !filterPresetName.trim()}>{presetAction === "saving" ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Save className="mr-1.5 h-3.5 w-3.5" />} {presetAction === "saving" ? "Сохраняем…" : "Сохранить"}</Button></div>
                     </div>
                   </div>
                   {collaborationsQuery.isLoading ? <div className="flex items-center justify-center gap-3 py-8 text-center text-sm text-muted-foreground" aria-live="polite"><span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#aa7942]" /> Загружаем записи…</div> : sortedItems.length === 0 ? <div className="rounded-xl border border-dashed border-[#d9cbbd] px-5 py-8 text-center text-sm text-muted-foreground">Пока нет управляемых коллабораций. Создайте первую запись выше.</div> : filteredItems.length === 0 ? <div className="rounded-xl border border-dashed border-[#d9cbbd] px-5 py-8 text-center text-sm text-muted-foreground">Ничего не найдено. Измените запрос или сбросьте фильтры.</div> : <div className={`space-y-3 transition-opacity duration-200 ${isFiltering ? "opacity-60" : "opacity-100"}`}>{filteredItems.map((item) => {
