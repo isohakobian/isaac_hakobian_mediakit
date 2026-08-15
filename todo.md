@@ -78,5 +78,10 @@
 - [x] Add collaboration filters for publication status, language completeness, and date range
 - [x] Add empty states, responsive QA, Vitest coverage, build checks, and final checkpoint
 
-- [ ] Add total event volume line series to the Analytics audience activity chart
-- [ ] Save final validated checkpoint after completing all chart series and verification
+- [x] Add total event volume line series to the Analytics audience activity chart
+- [x] Save final validated checkpoint after completing all chart series and verification
+
+- [x] Open /analytics in browser to confirm total-events line series renders correctly on the audience activity chart
+- [x] Save final validated checkpoint after successful browser chart check
+
+- [ ] Open /analytics in browser to visually confirm the updated activity chart and save the final checkpoint
