@@ -71,3 +71,12 @@
 - [x] Save final validated checkpoint after successful owner verification
 
 - [x] Perform owner sign-in or rely on automated backend/unit tests (18 tests passing) for admin analytics security and filters
+
+- [x] Add demographic charts for device, language, country, and region data when available
+- [x] Add audience activity charts for event volume, page views, clicks, and form submissions over time
+- [x] Add collaboration search by brand, category, description, campaign, and results
+- [x] Add collaboration filters for publication status, language completeness, and date range
+- [x] Add empty states, responsive QA, Vitest coverage, build checks, and final checkpoint
+
+- [ ] Add total event volume line series to the Analytics audience activity chart
+- [ ] Save final validated checkpoint after completing all chart series and verification

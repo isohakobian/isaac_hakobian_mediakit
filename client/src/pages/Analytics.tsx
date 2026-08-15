@@ -130,6 +130,29 @@ export function Analytics() {
       value,
     }));
 
+  const countryData = Object.entries(dashboardData.countryBreakdown ?? {})
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([name, value]) => ({ name, value }));
+
+  const regionData = Object.entries(dashboardData.regionBreakdown ?? {})
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([name, value]) => ({ name, value }));
+
+  const activityMap: Record<string, { date: string; events: number; pageViews: number; clicks: number; forms: number }> = {};
+  dashboardData.events.forEach((event) => {
+    const eventDate = new Date(event.createdAt);
+    if (Number.isNaN(eventDate.getTime())) return;
+    const date = eventDate.toISOString().slice(0, 10);
+    activityMap[date] ??= { date, events: 0, pageViews: 0, clicks: 0, forms: 0 };
+    activityMap[date].events += 1;
+    if (event.eventType === "page_view") activityMap[date].pageViews += 1;
+    if (event.eventType === "click") activityMap[date].clicks += 1;
+    if (event.eventType === "form_submit") activityMap[date].forms += 1;
+  });
+  const activityData = Object.values(activityMap).sort((a, b) => a.date.localeCompare(b.date));
+
   return (
     <div className="min-h-screen bg-background text-foreground py-12 px-6">
       <div className="max-w-7xl mx-auto">
@@ -263,7 +286,78 @@ export function Analytics() {
           </Card>
         </div>
 
-        {/* Charts Grid */}
+        {/* Audience Activity & Demographics */}
+        <div className="grid grid-cols-1 xl:grid-cols-[1.25fr_0.75fr] gap-8 mb-8">
+          <Card className="p-6">
+            <div className="flex items-start justify-between gap-4 mb-6">
+              <div>
+                <h3 className="text-xl font-bold">Активность аудитории</h3>
+                <p className="mt-1 text-sm text-muted-foreground">События, просмотры, клики и заявки по дням</p>
+              </div>
+              <span className="rounded-full bg-[#aa7942]/10 px-3 py-1 text-xs font-medium text-[#8b6134]">Динамика</span>
+            </div>
+            {activityData.length === 0 ? (
+              <div className="flex h-[300px] items-center justify-center rounded-xl border border-dashed border-border text-sm text-muted-foreground">Нет данных об активности за выбранный период.</div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={activityData} margin={{ top: 8, right: 12, left: 0, bottom: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" tickFormatter={(value) => value.slice(5)} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="events" name="Всего событий" stroke="#333333" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
+                  <Line type="monotone" dataKey="pageViews" name="Просмотры" stroke="#aa7942" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="clicks" name="Клики" stroke="#8b6f47" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="forms" name="Заявки" stroke="#2f7d62" strokeWidth={2} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </Card>
+
+          <Card className="p-6">
+            <div className="mb-6">
+              <h3 className="text-xl font-bold">География аудитории</h3>
+              <p className="mt-1 text-sm text-muted-foreground">Только регионы, реально переданные аналитикой</p>
+            </div>
+            {countryData.length === 0 && regionData.length === 0 ? (
+              <div className="flex h-[300px] items-center justify-center rounded-xl border border-dashed border-border px-6 text-center text-sm text-muted-foreground">Данные о стране и регионе пока не собираются для выбранного периода.</div>
+            ) : (
+              <div className="space-y-6">
+                {countryData.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Страны</p>
+                    <ResponsiveContainer width="100%" height={150}>
+                      <BarChart data={countryData} layout="vertical" margin={{ top: 0, right: 12, left: 8, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis type="number" allowDecimals={false} />
+                        <YAxis dataKey="name" type="category" width={70} />
+                        <Tooltip />
+                        <Bar dataKey="value" name="Посетители" fill="#aa7942" radius={[0, 4, 4, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+                {regionData.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Регионы</p>
+                    <ResponsiveContainer width="100%" height={150}>
+                      <BarChart data={regionData} layout="vertical" margin={{ top: 0, right: 12, left: 8, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis type="number" allowDecimals={false} />
+                        <YAxis dataKey="name" type="category" width={70} />
+                        <Tooltip />
+                        <Bar dataKey="value" name="Посетители" fill="#d4a574" radius={[0, 4, 4, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </div>
+            )}
+          </Card>
+        </div>
+
+        {/* Demographic & Conversion Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Device Type */}
           <Card className="p-6">

@@ -10,8 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { collaborationLanguages, type CollaborationLanguage, type CollaborationTranslation, type CollaborationTranslations, type ManagedCollaboration } from "@shared/collaborations";
-import { ArrowLeft, CalendarDays, Check, ExternalLink, Eye, EyeOff, FolderKanban, Instagram, Pencil, Plus, Save, Trash2 } from "lucide-react";
+import { collaborationLanguages, filterCollaborations, type CollaborationLanguage, type CollaborationTranslation, type CollaborationTranslations, type ManagedCollaboration } from "@shared/collaborations";
+import { ArrowLeft, CalendarDays, Check, ExternalLink, Eye, EyeOff, FolderKanban, Instagram, Pencil, Plus, Save, Search, SlidersHorizontal, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -77,6 +77,11 @@ export function Collaborations() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [previewLanguage, setPreviewLanguage] = useState<CollaborationLanguage>("en");
   const [deleteTarget, setDeleteTarget] = useState<ManagedCollaboration | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
+  const [languageFilter, setLanguageFilter] = useState<"all" | CollaborationLanguage>("all");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const collaborationsQuery = trpc.collaborations.list.useQuery(undefined, { enabled: isAdmin });
   const utils = trpc.useUtils();
@@ -110,6 +115,14 @@ export function Collaborations() {
   });
 
   const sortedItems = useMemo(() => collaborationsQuery.data ?? [], [collaborationsQuery.data]);
+  const filteredItems = useMemo(() => filterCollaborations(sortedItems, {
+    query: searchQuery,
+    status: statusFilter,
+    language: languageFilter,
+    fromDate,
+    toDate,
+  }), [fromDate, languageFilter, searchQuery, sortedItems, statusFilter, toDate]);
+  const hasFilters = Boolean(searchQuery || statusFilter !== "all" || languageFilter !== "all" || fromDate || toDate);
   const activePreview = form.translations[previewLanguage];
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
@@ -301,8 +314,31 @@ export function Collaborations() {
                   <CardTitle className="font-serif text-2xl">Сохранённые коллаборации</CardTitle>
                   <CardDescription>Черновики и опубликованные записи. Список отсортирован по дате публикации.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  {collaborationsQuery.isLoading ? <div className="py-8 text-center text-sm text-muted-foreground">Загружаем записи…</div> : sortedItems.length === 0 ? <div className="rounded-xl border border-dashed border-[#d9cbbd] px-5 py-8 text-center text-sm text-muted-foreground">Пока нет управляемых коллабораций. Создайте первую запись выше.</div> : sortedItems.map((item) => {
+                <CardContent className="space-y-4">
+                  <div className="rounded-2xl border border-[#e6ded3] bg-[#f8f6f2] p-4 space-y-3">
+                    <div className="relative">
+                      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Поиск по бренду, кампании, результатам или ссылке…" className="bg-white pl-9 pr-9" />
+                      {searchQuery && <button type="button" onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" aria-label="Очистить поиск"><X className="h-4 w-4" /></button>}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <SlidersHorizontal className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                      {[
+                        { key: "all", label: "Все" },
+                        { key: "published", label: "Опубликованные" },
+                        { key: "draft", label: "Черновики" },
+                      ].map((filter) => <Button key={filter.key} type="button" size="sm" variant={statusFilter === filter.key ? "default" : "outline"} onClick={() => setStatusFilter(filter.key as typeof statusFilter)}>{filter.label}</Button>)}
+                      <select aria-label="Фильтр по языку" value={languageFilter} onChange={(event) => setLanguageFilter(event.target.value as typeof languageFilter)} className="h-9 rounded-md border border-input bg-white px-3 text-sm text-foreground">
+                        <option value="all">Все языки</option>
+                        {collaborationLanguages.map((language) => <option key={language} value={language}>Заполнен {language.toUpperCase()}</option>)}
+                      </select>
+                      <Input aria-label="Дата от" type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} className="h-9 w-auto bg-white" />
+                      <Input aria-label="Дата до" type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} className="h-9 w-auto bg-white" />
+                      {hasFilters && <Button type="button" size="sm" variant="ghost" onClick={() => { setSearchQuery(""); setStatusFilter("all"); setLanguageFilter("all"); setFromDate(""); setToDate(""); }}>Сбросить</Button>}
+                    </div>
+                    <p className="text-xs text-muted-foreground">Показано {filteredItems.length} из {sortedItems.length}</p>
+                  </div>
+                  {collaborationsQuery.isLoading ? <div className="py-8 text-center text-sm text-muted-foreground">Загружаем записи…</div> : sortedItems.length === 0 ? <div className="rounded-xl border border-dashed border-[#d9cbbd] px-5 py-8 text-center text-sm text-muted-foreground">Пока нет управляемых коллабораций. Создайте первую запись выше.</div> : filteredItems.length === 0 ? <div className="rounded-xl border border-dashed border-[#d9cbbd] px-5 py-8 text-center text-sm text-muted-foreground">Ничего не найдено. Измените запрос или сбросьте фильтры.</div> : filteredItems.map((item) => {
                     const title = item.translations.ru?.name || item.translations.en.name;
                     const statusPublished = item.isPublished === 1;
                     return <div key={item.id} className="flex flex-col gap-4 rounded-xl border border-[#e6ded3] bg-white p-4 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h3 className="truncate font-medium">{title}</h3><Badge variant={statusPublished ? "default" : "outline"} className={statusPublished ? "bg-emerald-700 hover:bg-emerald-700" : ""}>{statusPublished ? <><Eye className="mr-1 h-3 w-3" /> Published</> : <><EyeOff className="mr-1 h-3 w-3" /> Draft</>}</Badge></div><p className="mt-1 text-xs text-muted-foreground">{item.publishedAt || "Без даты"} · {item.mediaTitle}</p></div><div className="flex shrink-0 gap-2"><Button variant="outline" size="sm" onClick={() => startEditing(item)}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Изменить</Button><Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => setDeleteTarget(item)}><Trash2 className="mr-1.5 h-3.5 w-3.5" /> Удалить</Button></div></div>;

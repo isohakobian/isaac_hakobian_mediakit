@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { appRouter } from "./routers";
 import { sortCollaborationsNewestFirst } from "@shared/collaborationOrder";
+import { filterCollaborations, type ManagedCollaboration } from "@shared/collaborations";
 import type { TrpcContext } from "./_core/context";
 
 function createContext(user: TrpcContext["user"]): TrpcContext {
@@ -22,7 +23,42 @@ const emptyTranslations = {
   fr: { name: "", category: "", description: "", campaign: "", results: "", quote: "" },
 };
 
+const makeManagedCollaboration = (overrides: Partial<ManagedCollaboration> = {}): ManagedCollaboration => {
+  const translation = { name: "Brand", category: "Lifestyle", description: "Campaign description", campaign: "Reel", results: "1K views", quote: "Creator note" };
+  return {
+    id: 1,
+    translations: { en: translation, ru: translation, es: translation, ar: translation, fr: translation },
+    mediaUrl: "https://instagram.com/reel/example",
+    mediaTitle: "Brand campaign Reel",
+    publishedAt: "2026-08-14",
+    isPublished: 1,
+    createdAt: new Date("2026-08-14"),
+    updatedAt: new Date("2026-08-14"),
+    ...overrides,
+  };
+};
+
 describe("collaborations", () => {
+  it("filters managed collaborations by search, status, language, and date range", () => {
+    const draft = makeManagedCollaboration({
+      id: 2,
+      mediaTitle: "Older skincare campaign",
+      publishedAt: "2026-07-01",
+      isPublished: 0,
+      translations: {
+        en: { name: "Skincare", category: "Beauty", description: "Sensitive skin", campaign: "Reel", results: "2K views", quote: "Note" },
+        ru: { name: "", category: "", description: "", campaign: "", results: "", quote: "" },
+        es: { name: "", category: "", description: "", campaign: "", results: "", quote: "" },
+        ar: { name: "", category: "", description: "", campaign: "", results: "", quote: "" },
+        fr: { name: "", category: "", description: "", campaign: "", results: "", quote: "" },
+      },
+    });
+
+    expect(filterCollaborations([makeManagedCollaboration(), draft], { query: "skincare", status: "draft" })).toHaveLength(1);
+    expect(filterCollaborations([makeManagedCollaboration(), draft], { language: "ru" })).toHaveLength(1);
+    expect(filterCollaborations([makeManagedCollaboration(), draft], { fromDate: "2026-08-01", toDate: "2026-08-31" })).toHaveLength(1);
+  });
+
   it("keeps managed collaborations newest-first and legacy undated items last", () => {
     const ordered = sortCollaborationsNewestFirst([
       { title: "Legacy", publishedAt: null },

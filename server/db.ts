@@ -261,6 +261,14 @@ export async function getAnalyticsDashboard(days: number = 30, startDate?: strin
       languageBreakdown[e.language] = (languageBreakdown[e.language] || 0) + 1;
     }
   });
+
+  // Country and region breakdowns (only real collected values; no inferred data)
+  const countryBreakdown: Record<string, number> = {};
+  const regionBreakdown: Record<string, number> = {};
+  events.forEach(e => {
+    if (e.country) countryBreakdown[e.country] = (countryBreakdown[e.country] || 0) + 1;
+    if (e.region) regionBreakdown[e.region] = (regionBreakdown[e.region] || 0) + 1;
+  });
   
   // Click tracking
   const clickTracking: Record<string, number> = {};
@@ -301,6 +309,8 @@ export async function getAnalyticsDashboard(days: number = 30, startDate?: strin
     formSubmits,
     deviceBreakdown,
     languageBreakdown,
+    countryBreakdown,
+    regionBreakdown,
     clickTracking,
     referrerBreakdown,
     events,
