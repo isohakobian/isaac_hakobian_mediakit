@@ -714,7 +714,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden mt-20">
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="editorial-drift absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
               'url(/manus-storage/80DC245D-61F0-4786-B87F-DC079CB4BB2C_f4659d04.JPEG)',
@@ -722,6 +722,7 @@ export default function Home() {
           }}
         >
           <div className="absolute inset-0 bg-black/20"></div>
+          <div className="editorial-glow pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#aa7942]/20 via-transparent to-transparent" aria-hidden="true"></div>
         </div>
 
         <div className="relative z-10 text-center max-w-3xl px-6">

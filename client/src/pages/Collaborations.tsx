@@ -12,7 +12,7 @@ import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { collaborationLanguages, filterCollaborations, type CollaborationLanguage, type CollaborationTranslation, type CollaborationTranslations, type ManagedCollaboration } from "@shared/collaborations";
 import { ArrowLeft, CalendarDays, Check, ExternalLink, Eye, EyeOff, FolderKanban, Instagram, Pencil, Plus, Save, Search, SlidersHorizontal, Trash2, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -82,6 +82,7 @@ export function Collaborations() {
   const [languageFilter, setLanguageFilter] = useState<"all" | CollaborationLanguage>("all");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const collaborationsQuery = trpc.collaborations.list.useQuery(undefined, { enabled: isAdmin });
   const utils = trpc.useUtils();
@@ -124,6 +125,16 @@ export function Collaborations() {
   }), [fromDate, languageFilter, searchQuery, sortedItems, statusFilter, toDate]);
   const hasFilters = Boolean(searchQuery || statusFilter !== "all" || languageFilter !== "all" || fromDate || toDate);
   const activePreview = form.translations[previewLanguage];
+
+  useEffect(() => {
+    if (!hasFilters) {
+      setIsFiltering(false);
+      return;
+    }
+    setIsFiltering(true);
+    const timeout = window.setTimeout(() => setIsFiltering(false), 180);
+    return () => window.clearTimeout(timeout);
+  }, [fromDate, hasFilters, languageFilter, searchQuery, statusFilter, toDate]);
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
   const updateTranslation = (language: CollaborationLanguage, field: keyof CollaborationTranslation, value: string) => {
@@ -181,7 +192,7 @@ export function Collaborations() {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-[#f8f6f2] flex items-center justify-center text-sm text-muted-foreground">Проверяем доступ…</div>;
+    return <div className="min-h-screen bg-[#f8f6f2] flex items-center justify-center text-sm text-muted-foreground"><div className="flex items-center gap-3" aria-live="polite"><span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#aa7942]" /> Проверяем доступ…</div></div>;
   }
 
   if (!user || !isAdmin) {
@@ -336,13 +347,13 @@ export function Collaborations() {
                       <Input aria-label="Дата до" type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} className="h-9 w-auto bg-white" />
                       {hasFilters && <Button type="button" size="sm" variant="ghost" onClick={() => { setSearchQuery(""); setStatusFilter("all"); setLanguageFilter("all"); setFromDate(""); setToDate(""); }}>Сбросить</Button>}
                     </div>
-                    <p className="text-xs text-muted-foreground">Показано {filteredItems.length} из {sortedItems.length}</p>
+                    <p className="flex min-h-5 items-center gap-2 text-xs text-muted-foreground" aria-live="polite"><span className={`transition-opacity duration-200 ${isFiltering ? "opacity-60" : "opacity-100"}`}>Показано {filteredItems.length} из {sortedItems.length}</span>{isFiltering && <span className="inline-flex items-center gap-1 text-[#8b6134]"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#aa7942]" /> Обновляем</span>}</p>
                   </div>
-                  {collaborationsQuery.isLoading ? <div className="py-8 text-center text-sm text-muted-foreground">Загружаем записи…</div> : sortedItems.length === 0 ? <div className="rounded-xl border border-dashed border-[#d9cbbd] px-5 py-8 text-center text-sm text-muted-foreground">Пока нет управляемых коллабораций. Создайте первую запись выше.</div> : filteredItems.length === 0 ? <div className="rounded-xl border border-dashed border-[#d9cbbd] px-5 py-8 text-center text-sm text-muted-foreground">Ничего не найдено. Измените запрос или сбросьте фильтры.</div> : filteredItems.map((item) => {
+                  {collaborationsQuery.isLoading ? <div className="flex items-center justify-center gap-3 py-8 text-center text-sm text-muted-foreground" aria-live="polite"><span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#aa7942]" /> Загружаем записи…</div> : sortedItems.length === 0 ? <div className="rounded-xl border border-dashed border-[#d9cbbd] px-5 py-8 text-center text-sm text-muted-foreground">Пока нет управляемых коллабораций. Создайте первую запись выше.</div> : filteredItems.length === 0 ? <div className="rounded-xl border border-dashed border-[#d9cbbd] px-5 py-8 text-center text-sm text-muted-foreground">Ничего не найдено. Измените запрос или сбросьте фильтры.</div> : <div className={`space-y-3 transition-opacity duration-200 ${isFiltering ? "opacity-60" : "opacity-100"}`}>{filteredItems.map((item) => {
                     const title = item.translations.ru?.name || item.translations.en.name;
                     const statusPublished = item.isPublished === 1;
                     return <div key={item.id} className="flex flex-col gap-4 rounded-xl border border-[#e6ded3] bg-white p-4 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h3 className="truncate font-medium">{title}</h3><Badge variant={statusPublished ? "default" : "outline"} className={statusPublished ? "bg-emerald-700 hover:bg-emerald-700" : ""}>{statusPublished ? <><Eye className="mr-1 h-3 w-3" /> Published</> : <><EyeOff className="mr-1 h-3 w-3" /> Draft</>}</Badge></div><p className="mt-1 text-xs text-muted-foreground">{item.publishedAt || "Без даты"} · {item.mediaTitle}</p></div><div className="flex shrink-0 gap-2"><Button variant="outline" size="sm" onClick={() => startEditing(item)}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Изменить</Button><Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => setDeleteTarget(item)}><Trash2 className="mr-1.5 h-3.5 w-3.5" /> Удалить</Button></div></div>;
-                  })}
+                  })}</div>}
                 </CardContent>
               </Card>
             </div>

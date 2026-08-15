@@ -5,8 +5,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useState } from "react";
-import { ArrowLeft, FolderKanban } from "lucide-react";
+import { ArrowLeft, FolderKanban, Instagram, Users, ExternalLink, MapPin } from "lucide-react";
 import { useLocation } from "wouter";
+import { instagramAudience } from "@shared/instagramAudience";
 
 const COLORS = ["#aa7942", "#d4a574", "#8b6f47", "#c9a961", "#6b5436"];
 
@@ -25,7 +26,7 @@ export function Analytics() {
     ? { days: 30, startDate, endDate }
     : { days };
 
-  const { data: dashboardData, isLoading, isError, error, refetch } = trpc.analytics.dashboard.useQuery(
+  const { data: dashboardData, isLoading, isFetching, isError, error, refetch } = trpc.analytics.dashboard.useQuery(
     queryInput,
     { enabled: !loading && isAdmin && !dateError },
   );
@@ -171,7 +172,14 @@ export function Analytics() {
               <h1 className="text-4xl font-bold" style={{ fontFamily: "Playfair Display, serif", color: "#aa7942" }}>
                 Analytics Dashboard
               </h1>
-              <p className="text-gray-600 mt-2">Website performance & visitor insights</p>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+            <p className="text-gray-600">Website performance & visitor insights</p>
+            {isFetching && (
+              <span className="inline-flex items-center gap-2 text-xs font-medium text-[#8b6134]" aria-live="polite">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-[#aa7942]" /> Обновляем данные…
+              </span>
+            )}
+          </div>
             </div>
           </div>
 
@@ -285,6 +293,52 @@ export function Analytics() {
             <p className="text-3xl font-bold">{dashboardData.formSubmits.toLocaleString()}</p>
           </Card>
         </div>
+
+        {/* Instagram Audience Snapshot */}
+        <section className="mb-8" aria-labelledby="instagram-audience-title">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-[#aa7942]"><Instagram className="h-4 w-4" /><span className="text-xs font-semibold uppercase tracking-[0.18em]">Instagram audience</span></div>
+              <h2 id="instagram-audience-title" className="mt-2 font-serif text-2xl font-semibold">Расширенная аудитория</h2>
+              <p className="mt-1 max-w-2xl text-sm text-muted-foreground">Подтверждённые данные из Instagram Professional Dashboard. Период: последние 30 дней.</p>
+            </div>
+            <span className="rounded-full border border-[#e6ded3] bg-white px-3 py-1.5 text-xs font-medium text-muted-foreground">{instagramAudience.periodLabel}</span>
+          </div>
+          <div className={`grid gap-4 sm:grid-cols-3 transition-opacity duration-300 ${isFetching ? "opacity-60" : "opacity-100"}`}>
+            <Card className="p-5"><p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Просмотры</p><p className="mt-2 text-3xl font-semibold">{instagramAudience.views.toLocaleString()}</p><p className="mt-1 text-xs text-muted-foreground">{instagramAudience.followerViewShare}% followers · {instagramAudience.nonFollowerViewShare}% non-followers</p></Card>
+            <Card className="p-5"><p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Зрители</p><p className="mt-2 text-3xl font-semibold">{instagramAudience.viewers.toLocaleString()}</p><p className="mt-1 text-xs text-muted-foreground">Уникальная аудитория за период Instagram</p></Card>
+            <Card className="p-5"><p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Followers</p><p className="mt-2 text-3xl font-semibold">{instagramAudience.totalFollowers.toLocaleString()}</p><p className="mt-1 text-xs text-muted-foreground">Всего подписчиков на момент проверки</p></Card>
+          </div>
+          <div className={`mt-4 grid gap-6 lg:grid-cols-2 transition-opacity duration-300 ${isFetching ? "opacity-60" : "opacity-100"}`}>
+            <Card className="p-6">
+              <div className="mb-4 flex items-start justify-between gap-3"><div><h3 className="text-lg font-semibold">Контент по просмотрам</h3><p className="mt-1 text-xs text-muted-foreground">Доля каждого формата в Instagram Insights</p></div><Users className="h-4 w-4 text-[#aa7942]" /></div>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={instagramAudience.contentByViews} layout="vertical" margin={{ top: 4, right: 12, left: 10, bottom: 4 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                  <XAxis type="number" domain={[0, 100]} hide />
+                  <YAxis type="category" dataKey="name" width={64} tick={{ fontSize: 12 }} />
+                  <Tooltip formatter={(value) => [`${value}%`, "Доля"]} />
+                  <Bar dataKey="value" fill="#aa7942" radius={[0, 6, 6, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+            <Card className="p-6">
+              <div className="mb-4 flex items-start justify-between gap-3"><div><h3 className="text-lg font-semibold">Контент по взаимодействиям</h3><p className="mt-1 text-xs text-muted-foreground">Какие форматы дают больше действий</p></div><ExternalLink className="h-4 w-4 text-[#aa7942]" /></div>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={instagramAudience.contentByInteractions} layout="vertical" margin={{ top: 4, right: 12, left: 10, bottom: 4 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                  <XAxis type="number" domain={[0, 100]} hide />
+                  <YAxis type="category" dataKey="name" width={64} tick={{ fontSize: 12 }} />
+                  <Tooltip formatter={(value) => [`${value}%`, "Доля"]} />
+                  <Bar dataKey="value" fill="#2f7d62" radius={[0, 6, 6, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
+          <Card className="mt-4 border-[#e6ded3] bg-[#fbfaf8] p-5">
+            <div className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#aa7942]" /><div><h3 className="text-base font-semibold">Что ещё доступно из Instagram</h3><p className="mt-1 text-sm text-muted-foreground">Возраст, пол, страны и города не были переданы в текущем Account Insights export, поэтому они отмечены честно и не подменены предположениями.</p><div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">{instagramAudience.unavailableDemographics.map((item) => <div key={item.label} className="rounded-lg border border-dashed border-[#d9cbbd] bg-white px-3 py-2"><p className="text-sm font-medium">{item.label}</p><p className="mt-1 text-xs text-muted-foreground">Недоступно</p></div>)}</div></div></div>
+          </Card>
+        </section>
 
         {/* Audience Activity & Demographics */}
         <div className="grid grid-cols-1 xl:grid-cols-[1.25fr_0.75fr] gap-8 mb-8">

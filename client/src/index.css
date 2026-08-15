@@ -1,6 +1,34 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@keyframes editorial-drift {
+  0%, 100% { transform: scale(1.03) translate3d(-0.6%, 0, 0); }
+  50% { transform: scale(1.06) translate3d(0.6%, -0.4%, 0); }
+}
+
+@keyframes editorial-glow {
+  0%, 100% { opacity: 0.18; transform: translateX(-8%); }
+  50% { opacity: 0.32; transform: translateX(8%); }
+}
+
+.editorial-drift {
+  animation: editorial-drift 20s ease-in-out infinite;
+  will-change: transform;
+}
+
+.editorial-glow {
+  animation: editorial-glow 14s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-drift,
+  .editorial-glow {
+    animation: none;
+    will-change: auto;
+  }
+}
+
 /* Editorial Minimalism Design System */
 /* Typography: Playfair Display (headings) + Inter (body) */
 /* Color: White background, deep charcoal text, warm gray accents */
