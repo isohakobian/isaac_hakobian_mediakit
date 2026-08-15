@@ -48,7 +48,12 @@
 
 - [x] Save final project state using webdev_save_checkpoint for platform-managed repository synchronization
 
-- [ ] Add clear owner-only quick links to Analytics and Collaboration Editor in admin navigation
-- [ ] Add Analytics date-range presets and custom start/end date filtering
-- [ ] Add tests for date-range validation and analytics query parameters
-- [ ] Verify navigation, filters, public-site regression, build, tests, and save a final checkpoint
+- [x] Add clear owner-only quick links to Analytics and Collaboration Editor in admin navigation
+- [x] Add Analytics date-range presets and custom start/end date filtering
+- [x] Add tests for date-range validation and analytics query parameters
+- [x] Verify navigation, filters, public-site regression, build, tests, and save a final checkpoint
+
+- [ ] Add date-range validation to prevent start date after end date and handle empty/malformed inputs gracefully
+- [ ] Add Vitest tests for Analytics invalid date-range error handling and edge cases
+- [ ] Verify Analytics filters and navigation in browser and ensure public home page remains regression-free
+- [ ] Save final validated checkpoint after closing all implementation gaps

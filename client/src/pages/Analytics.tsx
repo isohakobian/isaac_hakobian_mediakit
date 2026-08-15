@@ -19,13 +19,15 @@ export function Analytics() {
   const [activeTab, setActiveTab] = useState<string>("30d");
 
   const isAdmin = user?.role === "admin";
+  const [dateError, setDateError] = useState<string | null>(null);
+
   const queryInput = activeTab === "custom" && startDate && endDate
     ? { days: 30, startDate, endDate }
     : { days };
 
   const { data: dashboardData, isLoading, isError, error, refetch } = trpc.analytics.dashboard.useQuery(
     queryInput,
-    { enabled: !loading && isAdmin },
+    { enabled: !loading && isAdmin && !dateError },
   );
 
   if (!loading && !user) {
@@ -209,6 +211,11 @@ export function Analytics() {
               disabled={!startDate || !endDate}
               onClick={() => {
                 if (startDate && endDate) {
+                  if (new Date(startDate) > new Date(endDate)) {
+                    setDateError("Дата начала не может быть позже даты окончания");
+                    return;
+                  }
+                  setDateError(null);
                   setActiveTab("custom");
                   refetch();
                 }
@@ -217,7 +224,10 @@ export function Analytics() {
               Применить даты
             </Button>
           </div>
-          {activeTab === "custom" && startDate && endDate && (
+          {dateError && (
+            <p className="w-full text-xs text-destructive font-medium mt-1">{dateError}</p>
+          )}
+          {activeTab === "custom" && startDate && endDate && !dateError && (
             <span className="text-xs text-amber-700 font-medium">
               Фильтр: {startDate} — {endDate}
             </span>

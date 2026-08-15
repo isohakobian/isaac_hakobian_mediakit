@@ -113,11 +113,21 @@ export const appRouter = router({
         return { success: true };
       }),
     dashboard: adminProcedure
-      .input(z.object({
-        days: z.number().int().min(1).max(365).default(30),
-        startDate: z.string().optional(),
-        endDate: z.string().optional(),
-      }))
+      .input(
+        z.object({
+          days: z.number().int().min(1).max(365).default(30),
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+        }).refine(
+          (data) => {
+            if (data.startDate && data.endDate) {
+              return new Date(data.startDate) <= new Date(data.endDate);
+            }
+            return true;
+          },
+          { message: "Дата начала не может быть позже даты окончания" }
+        )
+      )
       .query(async ({ input }) => {
         return await getAnalyticsDashboard(input.days, input.startDate, input.endDate);
       }),
