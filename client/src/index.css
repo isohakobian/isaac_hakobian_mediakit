@@ -2,8 +2,8 @@
 @import "tw-animate-css";
 
 @keyframes editorial-drift {
-  0%, 100% { transform: scale(1.03) translate3d(-0.6%, 0, 0); }
-  50% { transform: scale(1.06) translate3d(0.6%, -0.4%, 0); }
+  0%, 100% { transform: scale(1.01) translate3d(-0.25%, 0, 0); }
+  50% { transform: scale(1.018) translate3d(0.25%, -0.15%, 0); }
 }
 
 @keyframes editorial-glow {
@@ -13,7 +13,21 @@
 
 .editorial-drift {
   animation: editorial-drift 20s ease-in-out infinite;
+  background-position: center 18%;
+  background-size: cover;
   will-change: transform;
+}
+
+@media (max-width: 1279px) and (min-width: 640px) {
+  .editorial-drift {
+    background-position: center 14%;
+  }
+}
+
+@media (max-width: 639px) {
+  .editorial-drift {
+    background-position: center 24%;
+  }
 }
 
 .editorial-glow {

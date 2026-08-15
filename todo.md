@@ -104,3 +104,13 @@
 
 - [x] Document mobile/tablet viewport QA results and accessibility/reduced-motion behavior in a dedicated QA record file
 - [x] Save final checkpoint after recording the responsive and accessibility QA file
+
+- [x] Add exact hover tooltips for Analytics charts and preserve readable number formatting
+- [x] Add save, apply, and delete controls for commonly used collaboration filter presets
+- [x] Persist collaboration filter presets locally without storing sensitive data
+- [x] Fix responsive hero background positioning/scale so the face remains visible on laptop screens
+- [x] Add tests, responsive QA, accessibility checks, build validation, and final checkpoint
+
+- [x] Verify keyboard-focus styling, non-hover chart summaries, aria-live feedback, and collaboration preset controls through rendered DOM/source QA
+- [x] Document verifiable laptop hero crop evidence and non-hover access behavior for new controls
+- [ ] Save fresh final checkpoint after this latest responsive and accessibility verification

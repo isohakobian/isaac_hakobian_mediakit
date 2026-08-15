@@ -718,7 +718,6 @@ export default function Home() {
           style={{
             backgroundImage:
               'url(/manus-storage/80DC245D-61F0-4786-B87F-DC079CB4BB2C_f4659d04.JPEG)',
-            backgroundPosition: "center",
           }}
         >
           <div className="absolute inset-0 bg-black/20"></div>

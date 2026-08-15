@@ -11,6 +11,29 @@ import { instagramAudience } from "@shared/instagramAudience";
 
 const COLORS = ["#aa7942", "#d4a574", "#8b6f47", "#c9a961", "#6b5436"];
 
+type ChartTooltipProps = {
+  active?: boolean;
+  payload?: Array<{ name?: string; value?: number | string; color?: string }>;
+  label?: string | number;
+};
+
+function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="min-w-36 rounded-xl border border-[#e6ded3] bg-white/95 p-3 text-xs shadow-xl backdrop-blur-sm">
+      {label !== undefined && <p className="mb-2 border-b border-[#eee6dd] pb-2 font-semibold text-[#211d19]">{String(label)}</p>}
+      <div className="space-y-1.5">
+        {payload.map((item, index) => (
+          <div key={`${item.name ?? "value"}-${index}`} className="flex items-center justify-between gap-4">
+            <span className="flex items-center gap-1.5 text-muted-foreground"><span className="h-2 w-2 rounded-full" style={{ backgroundColor: item.color ?? "#aa7942" }} />{item.name ?? "Значение"}</span>
+            <strong className="font-semibold text-[#211d19]">{typeof item.value === "number" ? item.value.toLocaleString("ru-RU") : String(item.value ?? "—")}</strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function Analytics() {
   const { user, loading } = useAuth();
   const [, setLocation] = useLocation();
@@ -153,6 +176,8 @@ export function Analytics() {
     if (event.eventType === "form_submit") activityMap[date].forms += 1;
   });
   const activityData = Object.values(activityMap).sort((a, b) => a.date.localeCompare(b.date));
+  const accessibleSummary = (items: Array<{ name: string; value: number }>) => items.map((item) => `${item.name}: ${item.value.toLocaleString("ru-RU")}`).join("; ");
+  const activitySummary = activityData.map((item) => `${item.date}: Всего событий ${item.events}, просмотры ${item.pageViews}, клики ${item.clicks}, заявки ${item.forms}`).join("; ");
 
   return (
     <div className="min-h-screen bg-background text-foreground py-12 px-6">
@@ -321,6 +346,7 @@ export function Analytics() {
                   <Bar dataKey="value" fill="#aa7942" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
+              <p className="sr-only">Значения контента по просмотрам: {accessibleSummary(instagramAudience.contentByViews)}</p>
             </Card>
             <Card className="p-6">
               <div className="mb-4 flex items-start justify-between gap-3"><div><h3 className="text-lg font-semibold">Контент по взаимодействиям</h3><p className="mt-1 text-xs text-muted-foreground">Какие форматы дают больше действий</p></div><ExternalLink className="h-4 w-4 text-[#aa7942]" /></div>
@@ -333,6 +359,7 @@ export function Analytics() {
                   <Bar dataKey="value" fill="#2f7d62" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
+              <p className="sr-only">Значения контента по взаимодействиям: {accessibleSummary(instagramAudience.contentByInteractions)}</p>
             </Card>
           </div>
           <Card className="mt-4 border-[#e6ded3] bg-[#fbfaf8] p-5">
@@ -353,19 +380,22 @@ export function Analytics() {
             {activityData.length === 0 ? (
               <div className="flex h-[300px] items-center justify-center rounded-xl border border-dashed border-border text-sm text-muted-foreground">Нет данных об активности за выбранный период.</div>
             ) : (
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={activityData} margin={{ top: 8, right: 12, left: 0, bottom: 8 }}>
+              <>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={activityData} margin={{ top: 8, right: 12, left: 0, bottom: 8 }} aria-label="Динамика событий, просмотров, кликов и заявок по дням">
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" tickFormatter={(value) => value.slice(5)} />
                   <YAxis allowDecimals={false} />
-                  <Tooltip />
+                  <Tooltip content={<ChartTooltip />} />
                   <Legend />
                   <Line type="monotone" dataKey="events" name="Всего событий" stroke="#333333" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
                   <Line type="monotone" dataKey="pageViews" name="Просмотры" stroke="#aa7942" strokeWidth={2} dot={false} />
                   <Line type="monotone" dataKey="clicks" name="Клики" stroke="#8b6f47" strokeWidth={2} dot={false} />
                   <Line type="monotone" dataKey="forms" name="Заявки" stroke="#2f7d62" strokeWidth={2} dot={false} />
-                </LineChart>
-              </ResponsiveContainer>
+                  </LineChart>
+                </ResponsiveContainer>
+                <p className="sr-only">Точные значения активности по дням: {activitySummary || "Нет данных"}</p>
+              </>
             )}
           </Card>
 
@@ -386,7 +416,7 @@ export function Analytics() {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis type="number" allowDecimals={false} />
                         <YAxis dataKey="name" type="category" width={70} />
-                        <Tooltip />
+                        <Tooltip content={<ChartTooltip />} />
                         <Bar dataKey="value" name="Посетители" fill="#aa7942" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
@@ -400,7 +430,7 @@ export function Analytics() {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis type="number" allowDecimals={false} />
                         <YAxis dataKey="name" type="category" width={70} />
-                        <Tooltip />
+                        <Tooltip content={<ChartTooltip />} />
                         <Bar dataKey="value" name="Посетители" fill="#d4a574" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
@@ -432,9 +462,10 @@ export function Analytics() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip content={<ChartTooltip />} />
               </PieChart>
             </ResponsiveContainer>
+            <p className="sr-only">Посетители по устройствам: {accessibleSummary(deviceData)}</p>
           </Card>
 
           {/* Language Distribution */}
@@ -445,10 +476,11 @@ export function Analytics() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip />
+                <Tooltip content={<ChartTooltip />} />
                 <Bar dataKey="value" fill="#aa7942" />
               </BarChart>
             </ResponsiveContainer>
+            <p className="sr-only">Посетители по языкам: {accessibleSummary(languageData)}</p>
           </Card>
 
           {/* Top Clicks */}
@@ -463,10 +495,11 @@ export function Analytics() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" />
                 <YAxis dataKey="name" type="category" width={190} />
-                <Tooltip />
+                <Tooltip content={<ChartTooltip />} />
                 <Bar dataKey="value" fill="#d4a574" />
               </BarChart>
             </ResponsiveContainer>
+            <p className="sr-only">Самые кликабельные элементы: {accessibleSummary(clickData)}</p>
           </Card>
 
           {/* Traffic Source */}
@@ -477,10 +510,11 @@ export function Analytics() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
                 <YAxis />
-                <Tooltip />
+                <Tooltip content={<ChartTooltip />} />
                 <Bar dataKey="value" fill="#8b6f47" />
               </BarChart>
             </ResponsiveContainer>
+            <p className="sr-only">Источники трафика: {accessibleSummary(referrerData)}</p>
           </Card>
         </div>
 

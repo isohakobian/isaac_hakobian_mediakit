@@ -11,11 +11,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { collaborationLanguages, filterCollaborations, type CollaborationLanguage, type CollaborationTranslation, type CollaborationTranslations, type ManagedCollaboration } from "@shared/collaborations";
+import { removeFilterPreset, upsertFilterPreset, type CollaborationFilterPreset } from "@shared/filterPresets";
 import { ArrowLeft, CalendarDays, Check, ExternalLink, Eye, EyeOff, FolderKanban, Instagram, Pencil, Plus, Save, Search, SlidersHorizontal, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import DashboardLayout from "@/components/DashboardLayout";
+
+const FILTER_PRESETS_STORAGE_KEY = "isaac-collaboration-filter-presets-v1";
+
+function loadFilterPresets(): CollaborationFilterPreset[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(FILTER_PRESETS_STORAGE_KEY) ?? "[]");
+    return Array.isArray(parsed) ? parsed.filter((item): item is CollaborationFilterPreset => Boolean(item?.id && item?.name)) : [];
+  } catch {
+    return [];
+  }
+}
 
 const languageLabels: Record<CollaborationLanguage, string> = {
   en: "English",
@@ -83,6 +96,8 @@ export function Collaborations() {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [isFiltering, setIsFiltering] = useState(false);
+  const [filterPresetName, setFilterPresetName] = useState("");
+  const [filterPresets, setFilterPresets] = useState<CollaborationFilterPreset[]>(() => loadFilterPresets());
 
   const collaborationsQuery = trpc.collaborations.list.useQuery(undefined, { enabled: isAdmin });
   const utils = trpc.useUtils();
@@ -127,6 +142,12 @@ export function Collaborations() {
   const activePreview = form.translations[previewLanguage];
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(FILTER_PRESETS_STORAGE_KEY, JSON.stringify(filterPresets));
+    }
+  }, [filterPresets]);
+
+  useEffect(() => {
     if (!hasFilters) {
       setIsFiltering(false);
       return;
@@ -136,6 +157,43 @@ export function Collaborations() {
     return () => window.clearTimeout(timeout);
   }, [fromDate, hasFilters, languageFilter, searchQuery, statusFilter, toDate]);
   const isSaving = createMutation.isPending || updateMutation.isPending;
+
+  const applyFilterPreset = (preset: CollaborationFilterPreset) => {
+    setSearchQuery(preset.query);
+    setStatusFilter(preset.status);
+    setLanguageFilter(preset.language);
+    setFromDate(preset.fromDate);
+    setToDate(preset.toDate);
+  };
+
+  const saveFilterPreset = () => {
+    const name = filterPresetName.trim();
+    if (!name) {
+      toast.error("Введите название набора фильтров");
+      return;
+    }
+    if (!hasFilters) {
+      toast.error("Сначала выберите хотя бы один фильтр");
+      return;
+    }
+    const preset: CollaborationFilterPreset = {
+      id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}`,
+      name,
+      query: searchQuery,
+      status: statusFilter,
+      language: languageFilter,
+      fromDate,
+      toDate,
+    };
+    setFilterPresets((current) => upsertFilterPreset(current, preset));
+    setFilterPresetName("");
+    toast.success("Набор фильтров сохранён");
+  };
+
+  const handleRemoveFilterPreset = (id: string) => {
+    setFilterPresets((current) => removeFilterPreset(current, id));
+    toast.success("Набор фильтров удалён");
+  };
 
   const updateTranslation = (language: CollaborationLanguage, field: keyof CollaborationTranslation, value: string) => {
     setForm((current) => ({
@@ -348,6 +406,13 @@ export function Collaborations() {
                       {hasFilters && <Button type="button" size="sm" variant="ghost" onClick={() => { setSearchQuery(""); setStatusFilter("all"); setLanguageFilter("all"); setFromDate(""); setToDate(""); }}>Сбросить</Button>}
                     </div>
                     <p className="flex min-h-5 items-center gap-2 text-xs text-muted-foreground" aria-live="polite"><span className={`transition-opacity duration-200 ${isFiltering ? "opacity-60" : "opacity-100"}`}>Показано {filteredItems.length} из {sortedItems.length}</span>{isFiltering && <span className="inline-flex items-center gap-1 text-[#8b6134]"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#aa7942]" /> Обновляем</span>}</p>
+                    <div className="flex flex-col gap-3 border-t border-[#e6ded3] pt-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex min-w-0 flex-wrap items-center gap-2" aria-label="Сохранённые наборы фильтров">
+                        <span className="text-xs font-medium text-muted-foreground">Быстрые наборы:</span>
+                        {filterPresets.length === 0 ? <span className="text-xs text-muted-foreground">Пока нет</span> : filterPresets.map((preset) => <span key={preset.id} className="inline-flex max-w-full items-center rounded-full border border-[#d9cbbd] bg-white pl-3 text-xs"><button type="button" onClick={() => applyFilterPreset(preset)} className="max-w-40 truncate rounded-sm py-1.5 pr-1 text-[#8b6134] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#aa7942] focus-visible:ring-offset-1" title={`Применить: ${preset.name}`}>{preset.name}</button><button type="button" onClick={() => handleRemoveFilterPreset(preset.id)} className="rounded-sm px-2 py-1.5 text-muted-foreground hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#aa7942] focus-visible:ring-offset-1" aria-label={`Удалить набор ${preset.name}`}>×</button></span>)}
+                      </div>
+                      <div className="flex w-full gap-2 sm:w-auto"><Input value={filterPresetName} onChange={(event) => setFilterPresetName(event.target.value)} onKeyDown={(event) => event.key === "Enter" && saveFilterPreset()} placeholder="Название набора" aria-label="Название нового набора фильтров" className="h-9 min-w-0 bg-white sm:w-40" /><Button type="button" size="sm" variant="outline" onClick={saveFilterPreset} disabled={!hasFilters || !filterPresetName.trim()}><Save className="mr-1.5 h-3.5 w-3.5" /> Сохранить</Button></div>
+                    </div>
                   </div>
                   {collaborationsQuery.isLoading ? <div className="flex items-center justify-center gap-3 py-8 text-center text-sm text-muted-foreground" aria-live="polite"><span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#aa7942]" /> Загружаем записи…</div> : sortedItems.length === 0 ? <div className="rounded-xl border border-dashed border-[#d9cbbd] px-5 py-8 text-center text-sm text-muted-foreground">Пока нет управляемых коллабораций. Создайте первую запись выше.</div> : filteredItems.length === 0 ? <div className="rounded-xl border border-dashed border-[#d9cbbd] px-5 py-8 text-center text-sm text-muted-foreground">Ничего не найдено. Измените запрос или сбросьте фильтры.</div> : <div className={`space-y-3 transition-opacity duration-200 ${isFiltering ? "opacity-60" : "opacity-100"}`}>{filteredItems.map((item) => {
                     const title = item.translations.ru?.name || item.translations.en.name;
