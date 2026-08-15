@@ -113,4 +113,4 @@
 
 - [x] Verify keyboard-focus styling, non-hover chart summaries, aria-live feedback, and collaboration preset controls through rendered DOM/source QA
 - [x] Document verifiable laptop hero crop evidence and non-hover access behavior for new controls
-- [ ] Save fresh final checkpoint after this latest responsive and accessibility verification
+- [x] Save fresh final checkpoint after this latest responsive and accessibility verification
