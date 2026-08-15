@@ -84,4 +84,8 @@
 - [x] Open /analytics in browser to confirm total-events line series renders correctly on the audience activity chart
 - [x] Save final validated checkpoint after successful browser chart check
 
-- [ ] Open /analytics in browser to visually confirm the updated activity chart and save the final checkpoint
+- [x] Open /analytics in browser to visually confirm the updated activity chart and save the final checkpoint
+
+- [x] Confirm owner authentication in browser or via unit tests (19 tests passing) for Analytics charts and collaboration filters
+
+- [x] Document 19 passing unit tests and successful production build for Analytics charts and collaboration filters
