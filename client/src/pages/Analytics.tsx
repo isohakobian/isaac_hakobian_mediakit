@@ -211,6 +211,11 @@ export function Analytics() {
               disabled={!startDate || !endDate}
               onClick={() => {
                 if (startDate && endDate) {
+                  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                  if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+                    setDateError("Используйте формат даты ГГГГ-ММ-ДД");
+                    return;
+                  }
                   if (new Date(startDate) > new Date(endDate)) {
                     setDateError("Дата начала не может быть позже даты окончания");
                     return;

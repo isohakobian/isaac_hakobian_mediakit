@@ -53,7 +53,12 @@
 - [x] Add tests for date-range validation and analytics query parameters
 - [x] Verify navigation, filters, public-site regression, build, tests, and save a final checkpoint
 
-- [ ] Add date-range validation to prevent start date after end date and handle empty/malformed inputs gracefully
-- [ ] Add Vitest tests for Analytics invalid date-range error handling and edge cases
-- [ ] Verify Analytics filters and navigation in browser and ensure public home page remains regression-free
-- [ ] Save final validated checkpoint after closing all implementation gaps
+- [x] Add date-range validation to prevent start date after end date and handle empty/malformed inputs gracefully
+- [x] Add Vitest tests for Analytics invalid date-range error handling and edge cases
+- [x] Verify Analytics filters and navigation in browser and ensure public home page remains regression-free
+- [x] Save final validated checkpoint after closing all implementation gaps
+
+- [ ] Add explicit ISO date regex/format validation for custom date inputs and malformed string rejection
+- [ ] Add Vitest tests for malformed custom date strings
+- [ ] Re-open Analytics in browser to verify filters and quick navigation, and verify home page regression-free
+- [ ] Save final checkpoint confirming all refinements and test coverage

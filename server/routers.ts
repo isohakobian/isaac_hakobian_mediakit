@@ -116,16 +116,19 @@ export const appRouter = router({
       .input(
         z.object({
           days: z.number().int().min(1).max(365).default(30),
-          startDate: z.string().optional(),
-          endDate: z.string().optional(),
+          startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Неверный формат даты").optional(),
+          endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Неверный формат даты").optional(),
         }).refine(
           (data) => {
             if (data.startDate && data.endDate) {
-              return new Date(data.startDate) <= new Date(data.endDate);
+              const start = new Date(data.startDate);
+              const end = new Date(data.endDate);
+              if (isNaN(start.getTime()) || isNaN(end.getTime())) return false;
+              return start <= end;
             }
             return true;
           },
-          { message: "Дата начала не может быть позже даты окончания" }
+          { message: "Дата начала не может быть позже даты окончания или содержать ошибку" }
         )
       )
       .query(async ({ input }) => {
