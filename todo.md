@@ -142,3 +142,6 @@
 - [x] Localize the full Collaboration Selector and brand brief form across en, ru, es, ar, and fr, and verify language switching
 - [x] Verify the selector and brief form language switch explicitly in the rendered homepage for en, ru, es, ar, and fr
 - [x] Add unit coverage for selector localization keys and audit remaining user-facing strings
+
+- [x] Redesign the Collaboration Selector so it feels visually integrated with the Quiet Luxury editorial media kit
+- [x] Complete documented desktop and mobile visual QA for the redesigned Collaboration Selector

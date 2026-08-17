@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ArrowRight, CheckCircle, Sparkles, Target, Layers } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import type { CollaborationLanguage } from "@shared/collaborations";
@@ -286,93 +285,95 @@ export function CollaborationSelector({ language }: SelectorProps) {
   };
 
   return (
-    <section dir={language === "ar" ? "rtl" : "ltr"} className="py-16 bg-[#fcfbfa] border-y border-[#f0ede6]" id="selector">
-      <div className="container max-w-5xl mx-auto px-4">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#aa7942]/10 text-[#aa7942] text-xs font-semibold tracking-wider uppercase mb-3">
-            <Sparkles className="h-3.5 w-3.5" /> {dict.badge}
-          </div>
-          <h2 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[#211d19]">
-            {dict.title}
-          </h2>
-          <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
-            {dict.subtitle}
-          </p>
-        </div>
+    <section dir={language === "ar" ? "rtl" : "ltr"} className="bg-white px-6 py-24 sm:py-28" id="selector">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-10 border-t border-[#ded8cf] pt-7 lg:grid-cols-[0.9fr_1.6fr] lg:gap-16">
+          <header className="max-w-md">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#aa7942]">{dict.badge}</p>
+            <h2 className="mt-5 font-serif text-4xl font-normal leading-[1.03] tracking-[-0.035em] text-[#211d19] sm:text-5xl">
+              {dict.title}
+            </h2>
+            <p className="mt-6 max-w-sm text-sm leading-7 text-[#6d655d] sm:text-base">
+              {dict.subtitle}
+            </p>
+          </header>
 
-        <div className="grid gap-8 lg:grid-cols-2">
-          {/* Step 1: Category */}
-          <Card className="border-[#e6ded3] shadow-sm bg-white">
-            <CardContent className="p-6 sm:p-8">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#aa7942] mb-4">
-                <Layers className="h-4 w-4" /> {dict.step1}
+          <div className="border-b border-[#ded8cf] lg:border-b-0 lg:border-s lg:ps-12">
+            <div className="border-t border-[#ded8cf] lg:border-t-0">
+              <div className="py-4">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8b6134]">01 / {dict.step1}</p>
               </div>
-              <div className="grid gap-3">
-                {dict.categories.map((cat) => (
+              <div className="border-y border-[#ded8cf]">
+                {dict.categories.map((cat, index) => (
                   <button
                     key={cat.id}
                     type="button"
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between ${
+                    aria-pressed={selectedCategory === cat.id}
+                    className={`group grid w-full grid-cols-[2rem_1fr] gap-3 border-b border-[#e9e3da] px-1 py-5 text-start transition-colors last:border-b-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#aa7942] sm:grid-cols-[2.5rem_1fr] sm:gap-4 ${
                       selectedCategory === cat.id
-                        ? "border-[#aa7942] bg-[#aa7942]/5 shadow-sm"
-                        : "border-[#eef2f6] hover:border-[#d9cbbd] bg-white"
+                        ? "bg-[#f4efe8]"
+                        : "bg-white hover:bg-[#faf8f5]"
                     }`}
                   >
-                    <div>
-                      <div className="font-medium text-sm text-[#211d19]">{cat.title}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">{cat.description}</div>
-                    </div>
-                    {selectedCategory === cat.id && <CheckCircle className="h-5 w-5 text-[#aa7942] shrink-0 ml-2" />}
+                    <span className={`pt-0.5 text-[10px] tracking-[0.16em] ${selectedCategory === cat.id ? "text-[#aa7942]" : "text-[#a69d92]"}`}>
+                      0{index + 1}
+                    </span>
+                    <span>
+                      <span className={`block text-sm font-medium transition-colors ${selectedCategory === cat.id ? "text-[#211d19]" : "text-[#4c453d] group-hover:text-[#211d19]"}`}>
+                        {cat.title}
+                      </span>
+                      <span className="mt-1 block text-xs leading-5 text-[#81786e]">{cat.description}</span>
+                    </span>
                   </button>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Step 2: Goal & Recommendation */}
-          <Card className="border-[#e6ded3] shadow-sm bg-white flex flex-col justify-between">
-            <CardContent className="p-6 sm:p-8">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#aa7942] mb-4">
-                <Target className="h-4 w-4" /> {dict.step2}
+            <div className="pt-12">
+              <div className="py-4">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8b6134]">02 / {dict.step2}</p>
               </div>
-              <div className="grid gap-3 mb-6">
-                {dict.goals.map((goal) => (
+              <div className="border-y border-[#ded8cf]">
+                {dict.goals.map((goal, index) => (
                   <button
                     key={goal.id}
                     type="button"
                     onClick={() => setSelectedGoal(goal.id)}
-                    className={`w-full text-left p-3.5 rounded-xl border transition-all flex items-center justify-between ${
+                    aria-pressed={selectedGoal === goal.id}
+                    className={`group grid w-full grid-cols-[2rem_1fr] gap-3 border-b border-[#e9e3da] px-1 py-4 text-start transition-colors last:border-b-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#aa7942] sm:grid-cols-[2.5rem_1fr] sm:gap-4 ${
                       selectedGoal === goal.id
-                        ? "border-[#aa7942] bg-[#aa7942]/5 shadow-sm"
-                        : "border-[#eef2f6] hover:border-[#d9cbbd] bg-white"
+                        ? "bg-[#f4efe8]"
+                        : "bg-white hover:bg-[#faf8f5]"
                     }`}
                   >
-                    <div className="font-medium text-sm text-[#211d19]">{goal.title}</div>
-                    {selectedGoal === goal.id && <CheckCircle className="h-4 w-4 text-[#aa7942] shrink-0 ml-2" />}
+                    <span className={`pt-0.5 text-[10px] tracking-[0.16em] ${selectedGoal === goal.id ? "text-[#aa7942]" : "text-[#a69d92]"}`}>
+                      0{index + 1}
+                    </span>
+                    <span className={`block text-sm font-medium transition-colors ${selectedGoal === goal.id ? "text-[#211d19]" : "text-[#4c453d] group-hover:text-[#211d19]"}`}>
+                      {goal.title}
+                    </span>
                   </button>
                 ))}
               </div>
-
-              {/* Recommendation Box */}
-              <div className="rounded-xl bg-[#f8f6f2] border border-[#e6ded3] p-4 text-sm">
-                <div className="text-xs font-semibold uppercase tracking-wider text-[#8b6134] mb-1">{dict.recommended}</div>
-                <div className="font-serif text-base font-medium text-[#211d19]">{activeGoalObj.format}</div>
-              </div>
-            </CardContent>
-
-            <div className="p-6 sm:p-8 pt-0">
-              <Button
-                type="button"
-                size="lg"
-                onClick={() => setIsModalOpen(true)}
-                className="w-full bg-[#211d19] text-white hover:bg-black py-6 text-sm font-medium tracking-wide shadow-md"
-              >
-                <span>{dict.cta}</span>
-                <ArrowRight className="ml-2 h-4 w-4 rtl:rotate-180" />
-              </Button>
             </div>
-          </Card>
+
+            <div aria-live="polite" className="mt-12 mb-12 border-s-2 border-[#aa7942] bg-[#211d19] px-6 py-7 text-white sm:px-8 sm:py-8">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#d2ad7b]">{dict.recommended}</p>
+              <p className="mt-4 max-w-xl font-serif text-2xl font-normal leading-tight sm:text-3xl">{activeGoalObj.format}</p>
+              <div className="mt-7">
+                <Button
+                  type="button"
+                  size="lg"
+                  onClick={() => setIsModalOpen(true)}
+                  className="h-auto rounded-none bg-[#aa7942] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.15em] text-white hover:bg-[#8b6134] focus-visible:ring-white"
+                >
+                  <span>{dict.cta}</span>
+                  <ArrowRight className="ms-3 h-4 w-4 rtl:rotate-180" />
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
