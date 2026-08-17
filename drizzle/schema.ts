@@ -105,3 +105,41 @@ export const backupOperations = mysqlTable("backupOperations", {
 
 export type BackupOperation = typeof backupOperations.$inferSelect;
 export type InsertBackupOperation = typeof backupOperations.$inferInsert;
+
+/**
+ * Brand collaboration briefing requests submitted from the public site.
+ */
+export const brandRequests = mysqlTable("brandRequests", {
+  id: int("id").autoincrement().primaryKey(),
+  brandName: varchar("brandName", { length: 255 }).notNull(),
+  contactName: varchar("contactName", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  telegram: varchar("telegram", { length: 128 }),
+  category: varchar("category", { length: 64 }).notNull(),
+  goal: varchar("goal", { length: 64 }).notNull(),
+  format: varchar("format", { length: 128 }).notNull(),
+  budget: varchar("budget", { length: 64 }),
+  description: text("description").notNull(),
+  status: mysqlEnum("status", ["new", "reviewing", "discussion", "confirmed", "archived"]).default("new").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BrandRequest = typeof brandRequests.$inferSelect;
+export type InsertBrandRequest = typeof brandRequests.$inferInsert;
+
+/**
+ * Case studies attached to collaboration records.
+ */
+export const caseStudies = mysqlTable("caseStudies", {
+  id: int("id").autoincrement().primaryKey(),
+  collaborationId: int("collaborationId").notNull(),
+  clientGoal: text("clientGoal").notNull(),
+  creativeDirection: text("creativeDirection").notNull(),
+  deliverablesJson: text("deliverablesJson").notNull(),
+  resultsSummary: text("resultsSummary"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CaseStudy = typeof caseStudies.$inferSelect;
+export type InsertCaseStudy = typeof caseStudies.$inferInsert;

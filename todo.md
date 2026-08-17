@@ -137,4 +137,4 @@
 - [x] Add persistent export/import operation history table with timestamp, type, counts, and status in Backup Center
 - [x] Implement automatic safety backup generation before starting any data restore
 - [x] Add live progress bar, stage indicator, and animated spinner during import execution
-- [ ] Write Vitest coverage for operation history and safety backup creation
+- [x] Write Vitest coverage for operation history and safety backup creation

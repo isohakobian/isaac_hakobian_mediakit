@@ -5,7 +5,8 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
 import { ENV } from "./_core/env";
-import { createManagedCollaboration, deleteManagedCollaboration, getAnalyticsDashboard, getManagedCollaborations, getPortableBackupAnalyticsChunk, getPortableBackupCore, getPortableBackupSummary, getPortableBackupImportDiff, getTestimonialsByLanguage, addAnalyticsEvent, updateManagedCollaboration, restorePortableBackupAnalyticsBatch, restorePortableBackupCollaborations, restorePortableBackupTestimonials, createBackupOperation, updateBackupOperation, getBackupOperationHistory, createPortableDatabaseSafetyBackup } from "./db";
+import { createManagedCollaboration, deleteManagedCollaboration, getAnalyticsDashboard, getManagedCollaborations, getPortableBackupAnalyticsChunk, getPortableBackupCore, getPortableBackupSummary, getPortableBackupImportDiff, getTestimonialsByLanguage, addAnalyticsEvent, updateManagedCollaboration, restorePortableBackupAnalyticsBatch, restorePortableBackupCollaborations, restorePortableBackupTestimonials, createBackupOperation, updateBackupOperation, getBackupOperationHistory, createPortableDatabaseSafetyBackup, createBrandRequest, getBrandRequests, updateBrandRequestStatus, getCaseStudiesForCollaboration, upsertCaseStudy } from "./db";
+import { notifyOwner } from "./_core/notification";
 import { BACKUP_PACKAGE_TYPE, BACKUP_SCHEMA_VERSION } from "@shared/backup";
 
 const ownerProcedure = adminProcedure.use(({ ctx, next }) => {
@@ -207,6 +208,75 @@ export const appRouter = router({
       )
       .query(async ({ input }) => {
         return await getAnalyticsDashboard(input.days, input.startDate, input.endDate);
+      }),
+  }),
+
+  brandRequests: router({
+    submit: publicProcedure
+      .input(
+        z.object({
+          brandName: z.string().min(1, "Укажите название бренда"),
+          contactName: z.string().min(1, "Укажите контактное лицо"),
+          email: z.string().email("Укажите корректный email"),
+          telegram: z.string().optional(),
+          category: z.string().min(1),
+          goal: z.string().min(1),
+          format: z.string().min(1),
+          budget: z.string().optional(),
+          description: z.string().min(1, "Опишите задачу"),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const id = await createBrandRequest({
+          ...input,
+          telegram: input.telegram ?? null,
+          budget: input.budget ?? null,
+          status: "new",
+        });
+        await notifyOwner({
+          title: `Новая заявка на сотрудничество: ${input.brandName}`,
+          content: `Категория: ${input.category}\nЦель: ${input.goal}\nФормат: ${input.format}\nEmail: ${input.email}`,
+        });
+        return { success: true, id };
+      }),
+    list: adminProcedure.query(async () => {
+      return await getBrandRequests();
+    }),
+    updateStatus: adminProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          status: z.enum(["new", "reviewing", "discussion", "confirmed", "archived"]),
+        })
+      )
+      .mutation(async ({ input }) => {
+        await updateBrandRequestStatus(input.id, input.status);
+        return { success: true };
+      }),
+  }),
+
+  caseStudies: router({
+    getForCollaboration: publicProcedure
+      .input(z.object({ collaborationId: z.number() }))
+      .query(async ({ input }) => {
+        return await getCaseStudiesForCollaboration(input.collaborationId);
+      }),
+    upsert: adminProcedure
+      .input(
+        z.object({
+          collaborationId: z.number(),
+          clientGoal: z.string(),
+          creativeDirection: z.string(),
+          deliverablesJson: z.string(),
+          resultsSummary: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        await upsertCaseStudy({
+          ...input,
+          resultsSummary: input.resultsSummary ?? null,
+        });
+        return { success: true };
       }),
   }),
 });

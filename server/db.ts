@@ -560,3 +560,46 @@ export async function getAnalyticsDashboard(days: number = 30, startDate?: strin
     events,
   };
 }
+
+import { brandRequests, caseStudies, InsertBrandRequest, BrandRequest, InsertCaseStudy, CaseStudy } from "../drizzle/schema";
+
+export async function createBrandRequest(input: InsertBrandRequest): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(brandRequests).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function getBrandRequests(limit = 100): Promise<BrandRequest[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  return db.select().from(brandRequests).orderBy(desc(brandRequests.createdAt)).limit(limit);
+}
+
+export async function updateBrandRequestStatus(id: number, status: "new" | "reviewing" | "discussion" | "confirmed" | "archived"): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(brandRequests).set({ status }).where(eq(brandRequests.id, id));
+}
+
+export async function getCaseStudiesForCollaboration(collaborationId: number): Promise<CaseStudy[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  return db.select().from(caseStudies).where(eq(caseStudies.collaborationId, collaborationId));
+}
+
+export async function upsertCaseStudy(input: InsertCaseStudy): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const existing = await db.select().from(caseStudies).where(eq(caseStudies.collaborationId, input.collaborationId));
+  if (existing.length > 0) {
+    await db.update(caseStudies).set({
+      clientGoal: input.clientGoal,
+      creativeDirection: input.creativeDirection,
+      deliverablesJson: input.deliverablesJson,
+      resultsSummary: input.resultsSummary,
+    }).where(eq(caseStudies.collaborationId, input.collaborationId));
+  } else {
+    await db.insert(caseStudies).values(input);
+  }
+}
