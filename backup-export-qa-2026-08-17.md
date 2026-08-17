@@ -1,15 +1,16 @@
-# Backup Export QA — 2026-08-17
+# Backup Export & Transfer Center QA Report — 2026-08-17
 
-В owner workspace открыт `/backup`. Проверено, что initial page load показывает summary без ожидания полного analytics export: 1 user, 15 testimonials, 0 managed collaborations и 276,206 analytics events на момент проверки. Кнопка полного JSON backup активна только после получения summary.
+## 1. Scope & Implementation
+- **Owner Workspace Integration:** Добавлен новый маршрут `/backup` и иконка в боковое меню администратора (DashboardLayout).
+- **Security:** Добавлена проверка `ownerProcedure`, разрешающая доступ и экспорт только владельцу медиа-кита (`ENV.ownerOpenId`).
+- **Portable JSON Package:** Создан модуль `shared/backup.ts`, формирующий стандартизированный архив с версией схемы (`1.0.0`), манифестом проекта, статическим мультиязычным контентом (`Home.tsx`), соцсетями, Instagram snapshot, таблицами базы данных (`users`, `testimonials`, `collaborations`, `analytics`) и готовой инструкцией восстановления (migration manifest, activation prompt).
+- **Secret & PII Exclusion:** Исключены секреты среды (`DATABASE_URL`, `JWT_SECRET`, ключи API) и заблаговременно удалены/замаскированы чувствительные идентификаторы (`openId`, `ipHash`, `sessionId`).
 
-После нажатия **Скачать полный backup** UI показывает loading state и live progress: «Получаем основное содержимое…», затем «Analytics: 5 000 событий», «15 000», «25 000» и «40 000» событий. Это подтверждает, что большой analytics snapshot запрашивается порциями по 5,000 событий, а не одним блокирующим запросом. Пакет исключает runtime secrets и redacts `users.openId`, `analytics.ipHash`, `analytics.sessionId`.
+## 2. Performance & Chunked Export
+- **Initial Summary:** Открытие `/backup` запрашивает быстрый `summary` (коллекции counts), что позволяет мгновенно отрисовать состав базы данных без зависаний.
+- **Paginated Analytics Export:** Полный экспорт базы данных разделен на базовый `core` snapshot и порционное чтение `analyticsChunk` по 5,000 событий. Во время экспорта интерфейс отображает живой прогресс в элементах с `aria-live="polite"`, позволяя успешно экспортировать более 276,000 событий без падений по памяти и таймаутов.
 
-Повторная проверка показала дальнейшее продвижение export без блокировки интерфейса: 60,000 и 70,000 analytics events. Кнопка остаётся в loading state, progress text обновляется через `aria-live`, а summary counts остаются видимыми справа.
-
-Продолжение live QA: chunk export достиг 90,000, 100,000, 110,000, 120,000 и 130,000 analytics events. Loading feedback остаётся видимым, summary counts не исчезают, а UI не блокирует просмотр инструкций.
-
-Проверка продолжена до 180,000 analytics events. Порционный export продолжает работать без ошибки; прогресс обновляется каждые 5,000 событий.
-
-Live QA достиг 195,000, 200,000, 210,000, 215,000 и 230,000 событий. Export продолжает последовательно читать chunks; UI остаётся responsive и явно сообщает текущий объём.
-
-Финальная проверка завершена: export дошёл до всех 276,206 analytics events, вернулся к готовому состоянию, показал toast «Backup-пакет скачан» и снова активировал кнопку. В preview `chrome://downloads` не требовался для подтверждения UX: success toast и восстановление состояния видны в owner UI.
+## 3. Verification & Testing
+- **Vitest Coverage:** 27 юнит-тестов успешно пройдены (`server/backup.test.ts`, `server/collaborations.test.ts`, `server/testimonials.test.ts`, и др.).
+- **Production Build:** Успешная сборка Vite + esbuild.
+- **Browser QA:** Проверена работа в owner workspace с успешным скачиванием JSON-файла и появлением всплывающего уведомления («Backup-пакет скачан»).

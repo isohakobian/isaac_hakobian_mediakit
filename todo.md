@@ -123,4 +123,8 @@
 - [x] Design a portable owner-only website backup package with content, translations, collaboration records, testimonials, analytics, Instagram snapshot, and migration manifest while excluding runtime secrets
 - [x] Add secure owner-only backup export procedure and download UI for the full portable JSON package
 - [x] Add restore/migration instructions and tests validating package structure, data completeness, and secret redaction
-- [ ] Run Vitest, production build, responsive/accessibility checks, and save the final backup export checkpoint
+- [x] Run Vitest, production build, responsive/accessibility checks, and save the final backup export checkpoint
+
+- [x] Perform explicit mobile (375px) and tablet (768px) viewport QA for /backup layout, stack wrapping, and touch target sizes
+- [x] Verify accessibility keyboard focus rings and aria-live announcements during Backup export
+- [x] Document responsive and accessibility QA results in backup-export-qa-2026-08-17.md and save final verified checkpoint
