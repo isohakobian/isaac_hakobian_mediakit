@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import Testimonials from "@/components/Testimonials";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import CollaborationSelector from "@/components/CollaborationSelector";
+
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { sortCollaborationsNewestFirst } from "@shared/collaborationOrder";
@@ -685,7 +685,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div dir={language === "ar" ? "rtl" : "ltr"} className="min-h-screen bg-white">
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
         <div className="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-2 sm:gap-3">
@@ -784,8 +784,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Interactive Collaboration Selector */}
-      <CollaborationSelector language={(language as CollaborationLanguage) || "en"} />
+
 
       {/* Recent Collaborations Section */}
       <section id="collaboration" className="py-20 px-6 bg-gray-50">
