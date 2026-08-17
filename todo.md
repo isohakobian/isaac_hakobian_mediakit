@@ -128,3 +128,8 @@
 - [x] Perform explicit mobile (375px) and tablet (768px) viewport QA for /backup layout, stack wrapping, and touch target sizes
 - [x] Verify accessibility keyboard focus rings and aria-live announcements during Backup export
 - [x] Document responsive and accessibility QA results in backup-export-qa-2026-08-17.md and save final verified checkpoint
+
+- [x] Implement server-side portable backup validation, preview diff, and secure owner-only database restore procedures
+- [x] Add JSON file upload and preview interface in Backup Center (/backup) with count summary and confirmation state
+- [x] Write Vitest coverage for backup import validation, preview, and restore logic
+- [ ] Run tests, production build, and save final checkpoint for the backup import release

@@ -26,8 +26,8 @@ export type BackupStaticContent = {
 };
 
 export type PortableBackupPackage = {
-  schemaVersion: string;
-  packageType: string;
+  schemaVersion: typeof BACKUP_SCHEMA_VERSION;
+  packageType: typeof BACKUP_PACKAGE_TYPE;
   exportedAt: string;
   project: {
     name: string;

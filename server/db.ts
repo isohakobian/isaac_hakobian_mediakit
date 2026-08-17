@@ -1,7 +1,9 @@
 import { eq, and, asc, count, desc, gt, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { Collaboration, InsertCollaboration, InsertUser, collaborations, users, testimonials, analytics, InsertAnalytics } from "../drizzle/schema";
+import { sql } from "drizzle-orm";
+import { Collaboration, InsertCollaboration, InsertUser, collaborations, users, testimonials, analytics, InsertAnalytics, InsertTestimonial } from "../drizzle/schema";
 import type { CollaborationTranslations, ManagedCollaboration } from "@shared/collaborations";
+import { buildBackupImportDiff } from "@shared/backupImport";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -237,6 +239,21 @@ export async function getPortableBackupSummary() {
   };
 }
 
+export async function getPortableBackupImportDiff(input: { testimonialsIds: number[]; collaborationsIds: number[]; analyticsIds: number[] }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const [testimonialRows, collaborationRows, analyticsRows] = await Promise.all([
+    db.select({ id: testimonials.id }).from(testimonials),
+    db.select({ id: collaborations.id }).from(collaborations),
+    db.select({ id: analytics.id }).from(analytics),
+  ]);
+  return {
+    testimonials: buildBackupImportDiff(input.testimonialsIds, testimonialRows.map((row) => row.id)),
+    collaborations: buildBackupImportDiff(input.collaborationsIds, collaborationRows.map((row) => row.id)),
+    analytics: buildBackupImportDiff(input.analyticsIds, analyticsRows.map((row) => row.id)),
+  };
+}
+
 const serializeBackupCollaboration = (row: Collaboration) => ({
   ...row,
   translations: (() => {
@@ -277,6 +294,137 @@ export async function getPortableBackupAnalyticsChunk(offset: number, limit: num
     .offset(offset);
 
   return rows.map(({ ipHash: _ipHash, sessionId: _sessionId, ...event }) => event);
+}
+
+function importDate(value: unknown, fallback = new Date()) {
+  if (value instanceof Date) return value;
+  if (typeof value === "string" && !Number.isNaN(new Date(value).getTime())) return new Date(value);
+  return fallback;
+}
+
+function importNullableText(value: unknown) {
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+function importPositiveId(value: unknown) {
+  return typeof value === "number" && Number.isInteger(value) && value > 0 ? value : undefined;
+}
+
+export function normalizePortableBackupTestimonial(raw: unknown): InsertTestimonial {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("Некорректная строка testimonial в backup");
+  const row = raw as Record<string, unknown>;
+  const brandName = typeof row.brandName === "string" ? row.brandName.trim() : "";
+  const quote = typeof row.quote === "string" ? row.quote : "";
+  const authorName = typeof row.authorName === "string" ? row.authorName.trim() : "";
+  if (!brandName || !quote || !authorName) throw new Error("В testimonial отсутствуют обязательные поля");
+  return {
+    ...(importPositiveId(row.id) ? { id: importPositiveId(row.id) } : {}),
+    brandName,
+    quote,
+    authorName,
+    authorRole: importNullableText(row.authorRole),
+    brandLogo: importNullableText(row.brandLogo),
+    rating: typeof row.rating === "number" && Number.isInteger(row.rating) ? row.rating : 5,
+    language: typeof row.language === "string" ? row.language.slice(0, 10) : "en",
+    isPublished: row.isPublished === 0 ? 0 : 1,
+    createdAt: importDate(row.createdAt),
+  };
+}
+
+export function normalizePortableBackupCollaboration(raw: unknown): InsertCollaboration {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("Некорректная строка collaboration в backup");
+  const row = raw as Record<string, unknown>;
+  const translations = row.translations;
+  const translationsJson = typeof translations === "string" ? translations : JSON.stringify(translations ?? {});
+  const mediaUrl = typeof row.mediaUrl === "string" ? row.mediaUrl.trim() : "";
+  const mediaTitle = typeof row.mediaTitle === "string" ? row.mediaTitle.trim() : "";
+  if (!mediaUrl || !mediaTitle || !translationsJson) throw new Error("В collaboration отсутствуют обязательные поля");
+  const createdAt = importDate(row.createdAt);
+  return {
+    ...(importPositiveId(row.id) ? { id: importPositiveId(row.id) } : {}),
+    translations: translationsJson,
+    mediaUrl,
+    mediaTitle,
+    publishedAt: row.publishedAt ? importDate(row.publishedAt) : null,
+    isPublished: row.isPublished === 0 ? 0 : 1,
+    createdAt,
+    updatedAt: importDate(row.updatedAt, createdAt),
+  };
+}
+
+export function normalizePortableBackupAnalytics(raw: unknown): InsertAnalytics {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("Некорректная строка analytics в backup");
+  const row = raw as Record<string, unknown>;
+  if (typeof row.eventType !== "string" || !row.eventType.trim()) throw new Error("В analytics отсутствует eventType");
+  return {
+    ...(importPositiveId(row.id) ? { id: importPositiveId(row.id) } : {}),
+    eventType: row.eventType.slice(0, 50),
+    eventData: importNullableText(row.eventData),
+    referrer: importNullableText(row.referrer),
+    userAgent: importNullableText(row.userAgent),
+    ipHash: null,
+    language: importNullableText(row.language),
+    deviceType: importNullableText(row.deviceType),
+    country: importNullableText(row.country),
+    region: importNullableText(row.region),
+    pageUrl: importNullableText(row.pageUrl),
+    sessionId: null,
+    timeOnPage: typeof row.timeOnPage === "number" && Number.isInteger(row.timeOnPage) ? row.timeOnPage : null,
+    createdAt: importDate(row.createdAt),
+  };
+}
+
+export async function restorePortableBackupTestimonials(rows: unknown[]) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  let restored = 0;
+  for (const raw of rows) {
+    const values = normalizePortableBackupTestimonial(raw);
+    await db.insert(testimonials).values(values).onDuplicateKeyUpdate({
+      set: {
+        brandName: values.brandName,
+        quote: values.quote,
+        authorName: values.authorName,
+        authorRole: values.authorRole,
+        brandLogo: values.brandLogo,
+        rating: values.rating,
+        language: values.language,
+        isPublished: values.isPublished,
+      },
+    });
+    restored += 1;
+  }
+  return restored;
+}
+
+export async function restorePortableBackupCollaborations(rows: unknown[]) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  let restored = 0;
+  for (const raw of rows) {
+    const values = normalizePortableBackupCollaboration(raw);
+    await db.insert(collaborations).values(values).onDuplicateKeyUpdate({
+      set: {
+        translations: values.translations,
+        mediaUrl: values.mediaUrl,
+        mediaTitle: values.mediaTitle,
+        publishedAt: values.publishedAt,
+        isPublished: values.isPublished,
+        updatedAt: values.updatedAt,
+      },
+    });
+    restored += 1;
+  }
+  return restored;
+}
+
+export async function restorePortableBackupAnalyticsBatch(rows: unknown[]) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const values: InsertAnalytics[] = rows.map(normalizePortableBackupAnalytics);
+  if (values.length === 0) return 0;
+  await db.insert(analytics).values(values).onDuplicateKeyUpdate({ set: { id: sql`${analytics.id}` } });
+  return values.length;
 }
 
 export async function getAnalyticsDashboard(days: number = 30, startDate?: string, endDate?: string) {

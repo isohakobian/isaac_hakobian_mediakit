@@ -5,11 +5,12 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
 import { ENV } from "./_core/env";
-import { createManagedCollaboration, deleteManagedCollaboration, getAnalyticsDashboard, getManagedCollaborations, getPortableBackupAnalyticsChunk, getPortableBackupCore, getPortableBackupSummary, getTestimonialsByLanguage, addAnalyticsEvent, updateManagedCollaboration } from "./db";
+import { createManagedCollaboration, deleteManagedCollaboration, getAnalyticsDashboard, getManagedCollaborations, getPortableBackupAnalyticsChunk, getPortableBackupCore, getPortableBackupSummary, getPortableBackupImportDiff, getTestimonialsByLanguage, addAnalyticsEvent, updateManagedCollaboration, restorePortableBackupAnalyticsBatch, restorePortableBackupCollaborations, restorePortableBackupTestimonials } from "./db";
+import { BACKUP_PACKAGE_TYPE, BACKUP_SCHEMA_VERSION } from "@shared/backup";
 
 const ownerProcedure = adminProcedure.use(({ ctx, next }) => {
   if (ctx.user.openId !== ENV.ownerOpenId) {
-    throw new TRPCError({ code: "FORBIDDEN", message: "Только владелец может экспортировать backup" });
+    throw new TRPCError({ code: "FORBIDDEN", message: "Только владелец может экспортировать или восстанавливать backup" });
   }
   return next({ ctx });
 });
@@ -74,6 +75,32 @@ export const appRouter = router({
         limit: input.limit,
         events: await getPortableBackupAnalyticsChunk(input.offset, input.limit),
       })),
+    validateImport: ownerProcedure
+      .input(z.object({
+        packageType: z.literal(BACKUP_PACKAGE_TYPE),
+        schemaVersion: z.literal(BACKUP_SCHEMA_VERSION),
+        exportedAt: z.string().datetime(),
+        projectTitle: z.string().min(1).max(255),
+        counts: z.object({ users: z.number().int().min(0), testimonials: z.number().int().min(0), collaborations: z.number().int().min(0), analytics: z.number().int().min(0) }),
+        staticLanguages: z.number().int().min(0).max(20),
+      }))
+      .mutation(({ input }) => ({ valid: true as const, ...input })),
+    previewImport: ownerProcedure
+      .input(z.object({
+        testimonialsIds: z.array(z.number().int().min(0)).max(500000),
+        collaborationsIds: z.array(z.number().int().min(0)).max(500000),
+        analyticsIds: z.array(z.number().int().min(0)).max(500000),
+      }))
+      .mutation(async ({ input }) => getPortableBackupImportDiff(input)),
+    restoreTestimonials: ownerProcedure
+      .input(z.object({ rows: z.array(z.record(z.string(), z.any())).max(1000) }))
+      .mutation(async ({ input }) => ({ restored: await restorePortableBackupTestimonials(input.rows) })),
+    restoreCollaborations: ownerProcedure
+      .input(z.object({ rows: z.array(z.record(z.string(), z.any())).max(1000) }))
+      .mutation(async ({ input }) => ({ restored: await restorePortableBackupCollaborations(input.rows) })),
+    restoreAnalyticsBatch: ownerProcedure
+      .input(z.object({ rows: z.array(z.record(z.string(), z.any())).min(1).max(1000) }))
+      .mutation(async ({ input }) => ({ restored: await restorePortableBackupAnalyticsBatch(input.rows) })),
   }),
 
   testimonials: router({
