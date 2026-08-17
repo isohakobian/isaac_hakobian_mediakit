@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import Testimonials from "@/components/Testimonials";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import CollaborationSelector from "@/components/CollaborationSelector";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { sortCollaborationsNewestFirst } from "@shared/collaborationOrder";
@@ -783,6 +784,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Interactive Collaboration Selector */}
+      <CollaborationSelector />
+
       {/* Recent Collaborations Section */}
       <section id="collaboration" className="py-20 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto">
@@ -810,10 +814,29 @@ export default function Home() {
                     <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{t.results}</p>
                     <p className="text-gray-700 font-medium">{item.results}</p>
                   </div>
-                  <blockquote className="italic text-gray-700 border-l-4 border-accent pl-4 break-words">
+                  <blockquote className="italic text-gray-700 border-l-4 border-accent pl-4 break-words mb-6">
                     {item.quoteLabel && <span className="not-italic text-xs text-gray-500 uppercase tracking-wide block mb-2">{item.quoteLabel}</span>}
                     "{item.quote}"
                   </blockquote>
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const modalTitle = document.getElementById("case-study-modal-title");
+                        const modalContent = document.getElementById("case-study-modal-content");
+                        if (modalTitle && modalContent) {
+                          modalTitle.innerText = item.name;
+                          modalContent.innerHTML = `<div class='space-y-4'><div><span class='text-xs uppercase tracking-wider text-[#aa7942] font-semibold'>Категория</span><p class='text-sm font-medium mt-1'>${item.category}</p></div><div><span class='text-xs uppercase tracking-wider text-[#aa7942] font-semibold'>Задача бренда (Client Goal)</span><p class='text-sm text-gray-700 mt-1 leading-relaxed'>${item.description}</p></div><div><span class='text-xs uppercase tracking-wider text-[#aa7942] font-semibold'>Формат кампании</span><p class='text-sm font-medium mt-1 text-gray-800'>${item.campaign}</p></div><div><span class='text-xs uppercase tracking-wider text-[#aa7942] font-semibold'>Подтвержденные результаты</span><p class='text-sm font-medium text-emerald-800 mt-1'>${item.results}</p></div><div class='p-3 rounded-lg bg-[#f8f6f2] border border-[#e6ded3] text-xs italic text-gray-700'>«${item.quote}»</div></div>`;
+                          const trigger = document.getElementById("case-study-modal-trigger");
+                          if (trigger) trigger.click();
+                        }
+                      }}
+                      className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#aa7942] hover:text-[#211d19] transition-colors py-2"
+                    >
+                      <span>Посмотреть полный case study</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
                 <div className="order-2 flex justify-center">
                   <InstagramEmbed url={item.url} title={item.title} />
@@ -1111,6 +1134,28 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Hidden trigger for case study dialog */}
+      <input type="checkbox" id="case-study-toggle" className="peer hidden" />
+      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden peer-checked:flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#e6ded3] relative animate-in fade-in zoom-in duration-200">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ede6]">
+            <h3 id="case-study-modal-title" className="font-serif text-2xl font-normal text-[#211d19]">Case Study</h3>
+            <label htmlFor="case-study-toggle" className="cursor-pointer text-muted-foreground hover:text-black p-1">
+              ✕
+            </label>
+          </div>
+          <div id="case-study-modal-content" className="text-sm text-gray-700 max-h-[70vh] overflow-y-auto pr-1">
+            {/* Dynamic content */}
+          </div>
+          <div className="mt-6 pt-4 border-t border-[#f0ede6] flex justify-end">
+            <label htmlFor="case-study-toggle" className="cursor-pointer bg-[#211d19] text-white px-5 py-2.5 rounded-xl text-xs font-medium hover:bg-black transition-colors">
+              Закрыть
+            </label>
+          </div>
+        </div>
+      </div>
+      <label id="case-study-modal-trigger" htmlFor="case-study-toggle" className="hidden" />
     </div>
   );
 }

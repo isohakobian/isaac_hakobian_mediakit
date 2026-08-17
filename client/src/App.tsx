@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import { Analytics } from "./pages/Analytics";
 import Collaborations from "./pages/Collaborations";
+import BrandRequests from "./pages/BrandRequests";
 import Backup from "./pages/Backup";
 
 function Router() {
@@ -16,6 +17,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/analytics"} component={Analytics} />
       <Route path={"/collaborations"} component={Collaborations} />
+      <Route path={"/brand-requests"} component={BrandRequests} />
       <Route path={"/backup"} component={Backup} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
