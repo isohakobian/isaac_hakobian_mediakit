@@ -23,7 +23,7 @@ function getManagedTranslation(item: ManagedCollaboration, language: Collaborati
   return { ...fallback, ...(item.translations[language] ?? {}) };
 }
 
-const translations = {
+export const translations = {
   en: {
     tagline: "Premium Men's Lifestyle Creator for Quality-Focused Brands",
     taglineSupport: "Cinematic short-form content that helps premium fitness, lifestyle, accessories, grooming, and wellness brands reach a discerning male audience through authentic product integration and measurable engagement.",
@@ -507,7 +507,7 @@ const translations = {
 };
 
 // Social links
-const socialLinks = {
+export const socialLinks = {
   instagram: "https://www.instagram.com/isaac_hakobian",
   instagramDirect: "https://ig.me/m/isaac_hakobian",
   email: "mailto:isohakobian@gmail.com",

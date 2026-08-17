@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import { Analytics } from "./pages/Analytics";
 import Collaborations from "./pages/Collaborations";
+import Backup from "./pages/Backup";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -15,6 +16,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/analytics"} component={Analytics} />
       <Route path={"/collaborations"} component={Collaborations} />
+      <Route path={"/backup"} component={Backup} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

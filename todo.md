@@ -119,3 +119,8 @@
 - [x] Implement enhanced filtering (search, category, status, language completeness) and sorting (newest, oldest, brand alphabetical) in /collaborations
 - [x] Run Vitest tests, production build, and verify responsiveness and accessibility for updated Collaboration Editor
 - [x] Save final checkpoint and synchronize with GitHub repository
+
+- [x] Design a portable owner-only website backup package with content, translations, collaboration records, testimonials, analytics, Instagram snapshot, and migration manifest while excluding runtime secrets
+- [x] Add secure owner-only backup export procedure and download UI for the full portable JSON package
+- [x] Add restore/migration instructions and tests validating package structure, data completeness, and secret redaction
+- [ ] Run Vitest, production build, responsive/accessibility checks, and save the final backup export checkpoint

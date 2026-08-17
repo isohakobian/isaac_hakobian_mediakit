@@ -1,4 +1,4 @@
-import { eq, and, desc, gt, gte, lte } from "drizzle-orm";
+import { eq, and, asc, count, desc, gt, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { Collaboration, InsertCollaboration, InsertUser, collaborations, users, testimonials, analytics, InsertAnalytics } from "../drizzle/schema";
 import type { CollaborationTranslations, ManagedCollaboration } from "@shared/collaborations";
@@ -216,6 +216,67 @@ export async function deleteManagedCollaboration(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
   await db.delete(collaborations).where(eq(collaborations.id, id));
+}
+
+export async function getPortableBackupSummary() {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+
+  const [userCount, testimonialCount, collaborationCount, analyticsCount] = await Promise.all([
+    db.select({ count: count() }).from(users),
+    db.select({ count: count() }).from(testimonials),
+    db.select({ count: count() }).from(collaborations),
+    db.select({ count: count() }).from(analytics),
+  ]);
+
+  return {
+    users: Number(userCount[0]?.count ?? 0),
+    testimonials: Number(testimonialCount[0]?.count ?? 0),
+    collaborations: Number(collaborationCount[0]?.count ?? 0),
+    analytics: Number(analyticsCount[0]?.count ?? 0),
+  };
+}
+
+const serializeBackupCollaboration = (row: Collaboration) => ({
+  ...row,
+  translations: (() => {
+    try {
+      return JSON.parse(row.translations);
+    } catch {
+      return { raw: row.translations };
+    }
+  })(),
+});
+
+export async function getPortableBackupCore() {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+
+  const [userRows, testimonialRows, collaborationRows] = await Promise.all([
+    db.select().from(users),
+    db.select().from(testimonials),
+    db.select().from(collaborations),
+  ]);
+
+  return {
+    users: userRows.map(({ openId: _openId, ...user }) => user),
+    testimonials: testimonialRows,
+    collaborations: collaborationRows.map(serializeBackupCollaboration),
+  };
+}
+
+export async function getPortableBackupAnalyticsChunk(offset: number, limit: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+
+  const rows = await db
+    .select()
+    .from(analytics)
+    .orderBy(asc(analytics.createdAt), asc(analytics.id))
+    .limit(limit)
+    .offset(offset);
+
+  return rows.map(({ ipHash: _ipHash, sessionId: _sessionId, ...event }) => event);
 }
 
 export async function getAnalyticsDashboard(days: number = 30, startDate?: string, endDate?: string) {

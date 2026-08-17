@@ -1,9 +1,18 @@
 import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
+import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
-import { createManagedCollaboration, deleteManagedCollaboration, getAnalyticsDashboard, getManagedCollaborations, getTestimonialsByLanguage, addAnalyticsEvent, updateManagedCollaboration } from "./db";
+import { ENV } from "./_core/env";
+import { createManagedCollaboration, deleteManagedCollaboration, getAnalyticsDashboard, getManagedCollaborations, getPortableBackupAnalyticsChunk, getPortableBackupCore, getPortableBackupSummary, getTestimonialsByLanguage, addAnalyticsEvent, updateManagedCollaboration } from "./db";
+
+const ownerProcedure = adminProcedure.use(({ ctx, next }) => {
+  if (ctx.user.openId !== ENV.ownerOpenId) {
+    throw new TRPCError({ code: "FORBIDDEN", message: "Только владелец может экспортировать backup" });
+  }
+  return next({ ctx });
+});
 
 const collaborationTranslationSchema = z.object({
   name: z.string().trim().min(1).max(255),
@@ -50,6 +59,21 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+  }),
+
+  backup: router({
+    summary: ownerProcedure.query(async () => getPortableBackupSummary()),
+    core: ownerProcedure.query(async () => ({
+      exportedAt: new Date().toISOString(),
+      database: await getPortableBackupCore(),
+    })),
+    analyticsChunk: ownerProcedure
+      .input(z.object({ offset: z.number().int().min(0).default(0), limit: z.number().int().min(1).max(5000).default(5000) }))
+      .query(async ({ input }) => ({
+        offset: input.offset,
+        limit: input.limit,
+        events: await getPortableBackupAnalyticsChunk(input.offset, input.limit),
+      })),
   }),
 
   testimonials: router({
