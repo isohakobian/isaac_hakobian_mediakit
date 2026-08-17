@@ -132,4 +132,9 @@
 - [x] Implement server-side portable backup validation, preview diff, and secure owner-only database restore procedures
 - [x] Add JSON file upload and preview interface in Backup Center (/backup) with count summary and confirmation state
 - [x] Write Vitest coverage for backup import validation, preview, and restore logic
-- [ ] Run tests, production build, and save final checkpoint for the backup import release
+- [x] Run tests, production build, and save final checkpoint for the backup import release
+
+- [x] Add persistent export/import operation history table with timestamp, type, counts, and status in Backup Center
+- [x] Implement automatic safety backup generation before starting any data restore
+- [x] Add live progress bar, stage indicator, and animated spinner during import execution
+- [ ] Write Vitest coverage for operation history and safety backup creation

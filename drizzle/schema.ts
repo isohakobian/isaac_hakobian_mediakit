@@ -84,3 +84,24 @@ export const collaborations = mysqlTable("collaborations", {
 
 export type Collaboration = typeof collaborations.$inferSelect;
 export type InsertCollaboration = typeof collaborations.$inferInsert;
+
+/**
+ * Owner-only history of portable backup exports, imports, and automatic safety backups.
+ */
+export const backupOperations = mysqlTable("backupOperations", {
+  id: int("id").autoincrement().primaryKey(),
+  operationType: mysqlEnum("operationType", ["export", "import", "safety_backup"]).notNull(),
+  status: mysqlEnum("status", ["started", "success", "failed"]).default("started").notNull(),
+  fileName: varchar("fileName", { length: 255 }),
+  stage: varchar("stage", { length: 120 }),
+  progress: int("progress").default(0).notNull(),
+  processedRecords: int("processedRecords").default(0).notNull(),
+  totalRecords: int("totalRecords").default(0).notNull(),
+  recordSummary: text("recordSummary"),
+  errorMessage: text("errorMessage"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+
+export type BackupOperation = typeof backupOperations.$inferSelect;
+export type InsertBackupOperation = typeof backupOperations.$inferInsert;

@@ -5,7 +5,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
 import { ENV } from "./_core/env";
-import { createManagedCollaboration, deleteManagedCollaboration, getAnalyticsDashboard, getManagedCollaborations, getPortableBackupAnalyticsChunk, getPortableBackupCore, getPortableBackupSummary, getPortableBackupImportDiff, getTestimonialsByLanguage, addAnalyticsEvent, updateManagedCollaboration, restorePortableBackupAnalyticsBatch, restorePortableBackupCollaborations, restorePortableBackupTestimonials } from "./db";
+import { createManagedCollaboration, deleteManagedCollaboration, getAnalyticsDashboard, getManagedCollaborations, getPortableBackupAnalyticsChunk, getPortableBackupCore, getPortableBackupSummary, getPortableBackupImportDiff, getTestimonialsByLanguage, addAnalyticsEvent, updateManagedCollaboration, restorePortableBackupAnalyticsBatch, restorePortableBackupCollaborations, restorePortableBackupTestimonials, createBackupOperation, updateBackupOperation, getBackupOperationHistory, createPortableDatabaseSafetyBackup } from "./db";
 import { BACKUP_PACKAGE_TYPE, BACKUP_SCHEMA_VERSION } from "@shared/backup";
 
 const ownerProcedure = adminProcedure.use(({ ctx, next }) => {
@@ -75,6 +75,29 @@ export const appRouter = router({
         limit: input.limit,
         events: await getPortableBackupAnalyticsChunk(input.offset, input.limit),
       })),
+    history: ownerProcedure.query(async () => getBackupOperationHistory(30)),
+    startOperation: ownerProcedure
+      .input(z.object({ operationType: z.enum(["export", "import", "safety_backup"]), fileName: z.string().max(255).optional(), stage: z.string().max(120).optional(), totalRecords: z.number().int().min(0).default(0), recordSummary: z.string().max(10000).optional() }))
+      .mutation(async ({ input }) => ({ id: await createBackupOperation({ ...input, status: "started", progress: 0, processedRecords: 0 }) })),
+    updateOperation: ownerProcedure
+      .input(z.object({ id: z.number().int().positive(), status: z.enum(["started", "success", "failed"]).optional(), stage: z.string().max(120).optional(), progress: z.number().int().min(0).max(100).optional(), processedRecords: z.number().int().min(0).optional(), totalRecords: z.number().int().min(0).optional(), recordSummary: z.string().max(10000).optional(), errorMessage: z.string().max(5000).optional(), completedAt: z.string().datetime().optional() }))
+      .mutation(async ({ input }) => {
+        const { id, completedAt, ...data } = input;
+        await updateBackupOperation(id, { ...data, ...(completedAt ? { completedAt: new Date(completedAt) } : {}) });
+        return { success: true as const };
+      }),
+    createSafetyBackup: ownerProcedure
+      .mutation(async () => {
+        const operationId = await createBackupOperation({ operationType: "safety_backup", status: "started", stage: "Собираем текущий snapshot", progress: 0, processedRecords: 0, totalRecords: 0 });
+        try {
+          const backup = await createPortableDatabaseSafetyBackup();
+          await updateBackupOperation(operationId, { status: "success", stage: "Safety backup сохранён", progress: 100, processedRecords: backup.summary.analytics, totalRecords: backup.summary.analytics, recordSummary: JSON.stringify(backup.summary), completedAt: new Date() });
+          return { operationId, ...backup };
+        } catch (error) {
+          await updateBackupOperation(operationId, { status: "failed", stage: "Safety backup не создан", errorMessage: error instanceof Error ? error.message : "Unknown safety backup error", completedAt: new Date() });
+          throw error;
+        }
+      }),
     validateImport: ownerProcedure
       .input(z.object({
         packageType: z.literal(BACKUP_PACKAGE_TYPE),

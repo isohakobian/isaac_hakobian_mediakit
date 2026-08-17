@@ -1,10 +1,12 @@
 import { eq, and, asc, count, desc, gt, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { sql } from "drizzle-orm";
-import { Collaboration, InsertCollaboration, InsertUser, collaborations, users, testimonials, analytics, InsertAnalytics, InsertTestimonial } from "../drizzle/schema";
+import { Collaboration, InsertCollaboration, InsertUser, collaborations, users, testimonials, analytics, InsertAnalytics, InsertTestimonial, backupOperations, InsertBackupOperation } from "../drizzle/schema";
 import type { CollaborationTranslations, ManagedCollaboration } from "@shared/collaborations";
 import { buildBackupImportDiff } from "@shared/backupImport";
 import { ENV } from './_core/env';
+import { storagePut } from "./storage";
+import { createSafetyBackupEnvelope } from "@shared/backupOperations";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -218,6 +220,39 @@ export async function deleteManagedCollaboration(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
   await db.delete(collaborations).where(eq(collaborations.id, id));
+}
+
+export async function createBackupOperation(input: InsertBackupOperation) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(backupOperations).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function updateBackupOperation(id: number, input: Partial<Omit<InsertBackupOperation, "id" | "createdAt">>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(backupOperations).set(input).where(eq(backupOperations.id, id));
+}
+
+export async function getBackupOperationHistory(limit = 25) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  return db.select().from(backupOperations).orderBy(desc(backupOperations.createdAt), desc(backupOperations.id)).limit(limit);
+}
+
+export async function createPortableDatabaseSafetyBackup() {
+  const summary = await getPortableBackupSummary();
+  const core = await getPortableBackupCore();
+  const analyticsRows: unknown[] = [];
+  for (let offset = 0; offset < summary.analytics; offset += 5000) {
+    analyticsRows.push(...await getPortableBackupAnalyticsChunk(offset, 5000));
+  }
+  const generatedAt = new Date().toISOString();
+  const fileName = `isaac-media-kit-safety-${generatedAt.replace(/[:.]/g, "-")}.json`;
+  const payload = JSON.stringify(createSafetyBackupEnvelope({ generatedAt, database: { ...core, analytics: analyticsRows } }));
+  const uploaded = await storagePut(`isaac-hakobian/safety-backups/${fileName}`, payload, "application/json");
+  return { ...uploaded, fileName, summary };
 }
 
 export async function getPortableBackupSummary() {
