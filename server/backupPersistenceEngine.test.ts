@@ -42,7 +42,7 @@ describe("in-memory database engine persistence test for backup operations", () 
     };
 
     const getHistory = async (limit = 25) => {
-      return [...dbTable].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, limit);
+      return [...dbTable].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime() || b.id - a.id).slice(0, limit);
     };
 
     // 1. Create safety backup operation

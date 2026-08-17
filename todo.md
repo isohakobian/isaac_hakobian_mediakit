@@ -138,3 +138,7 @@
 - [x] Implement automatic safety backup generation before starting any data restore
 - [x] Add live progress bar, stage indicator, and animated spinner during import execution
 - [x] Write Vitest coverage for operation history and safety backup creation
+
+- [x] Localize the full Collaboration Selector and brand brief form across en, ru, es, ar, and fr, and verify language switching
+- [x] Verify the selector and brief form language switch explicitly in the rendered homepage for en, ru, es, ar, and fr
+- [x] Add unit coverage for selector localization keys and audit remaining user-facing strings

@@ -41,7 +41,7 @@ describe("verified persistence engine and safety backup creation unit test", () 
     };
 
     const getHistory = async (limit = 25) => {
-      return [...table].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, limit);
+      return [...table].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime() || b.id - a.id).slice(0, limit);
     };
 
     // Simulate safety backup before restore

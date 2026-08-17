@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Mail, Instagram, ArrowRight, Linkedin, MessageCircle, Youtube, Tv, Music, TrendingUp, Send } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import Testimonials from "@/components/Testimonials";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -785,7 +785,7 @@ export default function Home() {
       </section>
 
       {/* Interactive Collaboration Selector */}
-      <CollaborationSelector />
+      <CollaborationSelector language={(language as CollaborationLanguage) || "en"} />
 
       {/* Recent Collaborations Section */}
       <section id="collaboration" className="py-20 px-6 bg-gray-50">

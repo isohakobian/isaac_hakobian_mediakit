@@ -42,7 +42,7 @@ describe("full implementation lifecycle persistence tests for backup history and
     };
 
     const testGetHistory = async (limit = 25) => {
-      return [...operationsStore].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, limit);
+      return [...operationsStore].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime() || b.id - a.id).slice(0, limit);
     };
 
     // 2. Run simulation of Safety Backup before Restore
