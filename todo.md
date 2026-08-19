@@ -146,4 +146,4 @@
 - [x] Redesign the Collaboration Selector so it feels visually integrated with the Quiet Luxury editorial media kit
 - [x] Complete documented desktop and mobile visual QA for the redesigned Collaboration Selector
 
-- [ ] Redesign Recent Collaborations into a unified preview-card grid with one click-to-view experience for every work
+- [x] Redesign Recent Collaborations into a unified preview-card grid with one click-to-view experience for every work
