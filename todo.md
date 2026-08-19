@@ -1,1 +1,1 @@
-- [x] Remove modal viewer and make all Recent Collaborations cards direct links (a tags) opening Instagram Reels in a new tab upon single click
+- [x] Restore previous Case Study view for Recent Collaborations matching user screenshot: left-side campaign details and right-side embedded Instagram Reel with instant play
