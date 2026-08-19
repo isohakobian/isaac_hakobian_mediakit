@@ -1,1 +1,1 @@
-- [x] Fix Recent Collaborations card links to correctly open each Instagram Reel in a new browser tab with target="_blank" and rel="noopener noreferrer" so they reliably open upon click
+- [x] Implement single-click in-page Reel viewer so clicking any Recent Collaborations card opens and autoplays the video directly inside the MediaKit without external tabs or extra clicks
