@@ -1,1 +1,1 @@
-- [x] Update Recent Collaborations viewer so clicking play launches the Reel inside the site without opening external windows or extra redirects
+- [ ] Simplify Recent Collaborations so clicking a work card immediately opens the viewer with auto-playing video, removing all external redirect buttons and extra clicks
