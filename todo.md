@@ -1,1 +1,1 @@
-- [ ] Simplify Recent Collaborations so clicking a work card immediately opens the viewer with auto-playing video, removing all external redirect buttons and extra clicks
+- [x] Simplify Recent Collaborations so clicking a work card immediately opens the viewer with auto-playing video, removing all external redirect buttons and extra clicks
