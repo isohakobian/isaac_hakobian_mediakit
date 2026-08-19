@@ -1,1 +1,1 @@
-- [x] Revert Recent Collaborations cards to direct single-click links opening Instagram Reels in the same tab without a modal viewer
+- [x] Fix Recent Collaborations card links to correctly open each Instagram Reel in a new browser tab with target="_blank" and rel="noopener noreferrer" so they reliably open upon click

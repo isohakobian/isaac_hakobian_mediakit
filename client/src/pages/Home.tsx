@@ -860,7 +860,7 @@ export default function Home() {
               <a
                 key={`${item.title}-${item.url}`}
                 href={item.url}
-                target="_self"
+                target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackClick("collaboration-view")}
                 className="group flex h-full flex-col text-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#aa7942]"
