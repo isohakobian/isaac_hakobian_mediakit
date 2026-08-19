@@ -585,6 +585,8 @@ export const socialLinks = {
 
 // Instagram Embed Component - supports both Reels and Posts
 const InstagramEmbed = ({ url, title }: { url: string; title: string }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+
   const getInstagramPath = (instagramUrl: string) => {
     const match = instagramUrl.match(/\/(reel|p)\/([^/?]+)/);
     return match ? `${match[1]}/${match[2]}` : null;
@@ -594,29 +596,36 @@ const InstagramEmbed = ({ url, title }: { url: string; title: string }) => {
   if (!instagramPath) return null;
 
   return (
-    <div className="w-full max-w-[420px] mx-auto">
-      <div className="aspect-[9/16] bg-black rounded-[8px] overflow-hidden shadow-sm border border-gray-200">
-        <iframe
-          src={`https://www.instagram.com/${instagramPath}/embed/`}
-          width="100%"
-          height="100%"
-          frameBorder="0"
-          scrolling="no"
-          allowFullScreen
-          loading="lazy"
-          title={title}
-          className="w-full h-full"
-        />
+    <div className="w-full max-w-[380px] mx-auto">
+      <div className="relative aspect-[9/16] bg-[#1a1714] rounded-lg overflow-hidden shadow-xl border border-white/10 flex items-center justify-center">
+        {!isPlaying ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-[radial-gradient(circle_at_center,rgba(170,121,66,0.35),transparent_70%),linear-gradient(145deg,#211d19_0%,#110f0d_100%)]">
+            <button
+              type="button"
+              onClick={() => setIsPlaying(true)}
+              className="group/btn flex h-20 w-20 items-center justify-center rounded-full border border-white/40 bg-white/15 text-white backdrop-blur-md transition-all duration-300 hover:scale-105 hover:bg-[#aa7942] hover:border-white shadow-2xl"
+              aria-label={`Play video: ${title}`}
+            >
+              <Play className="ms-1 h-7 w-7 fill-current transition-transform group-hover/btn:scale-110" aria-hidden="true" />
+            </button>
+            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-white/80">{title}</p>
+            <p className="mt-1 text-[10px] tracking-wider text-white/50">Click to play instantly</p>
+          </div>
+        ) : (
+          <iframe
+            src={`https://www.instagram.com/${instagramPath}/embed/?autoplay=1`}
+            width="100%"
+            height="100%"
+            frameBorder="0"
+            scrolling="no"
+            allow="autoplay; encrypted-media; fullscreen"
+            allowFullScreen
+            loading="eager"
+            title={title}
+            className="w-full h-full"
+          />
+        )}
       </div>
-
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-4 inline-flex w-full items-center justify-center gap-2 border border-gray-300 px-4 py-3 text-sm font-medium text-gray-800 hover:border-accent hover:text-accent transition-colors"
-      >
-        View on Instagram
-      </a>
     </div>
   );
 };
