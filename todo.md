@@ -1,1 +1,1 @@
-- [x] Restore previous Case Study view for Recent Collaborations matching user screenshot: left-side campaign details and right-side embedded Instagram Reel with instant play
+- [x] Replace grid card view with direct inline Case Study sections on homepage showing campaign details on the left and embedded Instagram Reel on the right

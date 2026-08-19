@@ -619,24 +619,7 @@ export default function Home() {
   const { data: managedCollaborations } = trpc.collaborations.publicList.useQuery();
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
-  const [selectedCollaboration, setSelectedCollaboration] = useState<CollaborationDisplayItem | null>(null);
-
   const t = translations[language as keyof typeof translations] || translations.en;
-
-  useEffect(() => {
-    if (!selectedCollaboration) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSelectedCollaboration(null);
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    document.body.classList.add("overflow-hidden");
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.classList.remove("overflow-hidden");
-    };
-  }, [selectedCollaboration]);
 
   // Keep Recent Collaborations in newest-first order. Add each new collaboration above the existing entries.
   const collaborations: CollaborationDisplayItem[] = [
@@ -859,10 +842,10 @@ export default function Home() {
 
 
 
-      {/* Recent Collaborations Section */}
+      {/* Recent Collaborations Section - Direct Inline Case Studies */}
       <section id="collaboration" className="bg-[#f4f1ec] px-6 py-20 sm:py-24">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex flex-col gap-5 border-b border-[#d8d0c6] pb-8 sm:mb-14 sm:flex-row sm:items-end sm:justify-between">
+          <div className="mb-16 flex flex-col gap-5 border-b border-[#d8d0c6] pb-8 sm:mb-20 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#aa7942]">{t.mediaLabel}</p>
               <h2 className="max-w-2xl text-4xl font-normal leading-[0.98] text-[#211d19] sm:text-6xl" style={{ fontFamily: "Playfair Display, serif" }}>
@@ -872,45 +855,68 @@ export default function Home() {
             <p className="max-w-xs text-sm leading-relaxed text-[#746e67] sm:text-right">{t.collaborationCtaText}</p>
           </div>
 
-          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-20">
             {orderedCollaborations.map((item, index) => (
-              <button
+              <div
                 key={`${item.title}-${item.url}`}
-                type="button"
-                onClick={() => {
-                  setSelectedCollaboration(item);
-                  trackClick("collaboration-view");
-                }}
-                className="group flex h-full flex-col text-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#aa7942]"
-                aria-label={`${t.viewWork}: ${item.title}`}
+                className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 lg:gap-12 items-center bg-[#f8f6f2] border border-[#d8d0c6] p-6 sm:p-10 shadow-sm"
               >
-                <div className="relative aspect-[4/5] overflow-hidden bg-[#211d19]">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_18%,rgba(170,121,66,0.55),transparent_38%),linear-gradient(145deg,#211d19_8%,#4b4034_100%)] transition-transform duration-700 ease-out group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-black/10 transition-colors duration-500 group-hover:bg-black/0" />
-                  <div className="relative flex h-full flex-col justify-between p-5 text-white sm:p-6">
-                    <div className="flex items-center justify-between gap-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#ead4b7]">
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                      <span>{item.publishedAt ?? t.mediaLabel}</span>
+                {/* Left side: Details */}
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-4 mb-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#aa7942]">
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <span>•</span>
+                    <span>{item.category}</span>
+                    {item.publishedAt && (
+                      <>
+                        <span>•</span>
+                        <span>{item.publishedAt}</span>
+                      </>
+                    )}
+                  </div>
+
+                  <h3 className="text-3xl sm:text-4xl font-normal text-[#211d19] mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
+                    {item.title}
+                  </h3>
+
+                  <p className="text-sm leading-relaxed text-[#746e67] mb-8">
+                    {item.description}
+                  </p>
+
+                  <div className="grid gap-5 border-y border-[#d8d0c6] py-6 mb-8">
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#aa7942]">{t.campaignType}</p>
+                      <p className="mt-1.5 text-sm leading-relaxed text-[#211d19]">{item.campaign}</p>
                     </div>
                     <div>
-                      <span className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/45 bg-white/10 backdrop-blur-sm transition-colors group-hover:bg-[#aa7942]">
-                        <Play className="ms-0.5 h-4 w-4 fill-current" aria-hidden="true" />
-                      </span>
-                      <h3 className="max-w-[15rem] text-2xl font-normal leading-tight sm:text-3xl" style={{ fontFamily: "Playfair Display, serif" }}>
-                        {item.title}
-                      </h3>
-                      <p className="mt-2 text-xs uppercase tracking-[0.14em] text-white/70">{item.category}</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#aa7942]">{t.results}</p>
+                      <p className="mt-1.5 text-sm leading-relaxed text-[#211d19]">{item.results}</p>
                     </div>
                   </div>
-                </div>
-                <div className="flex flex-1 items-start justify-between gap-4 border-x border-b border-[#d8d0c6] bg-[#f8f6f2] p-4 sm:p-5">
+
+                  <blockquote className="border-s-2 border-[#aa7942] ps-4 text-sm italic leading-relaxed text-[#746e67] mb-8">
+                    “{item.quote}”
+                  </blockquote>
+
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#aa7942]">{item.campaign}</p>
-                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#746e67]">{item.results}</p>
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => trackClick("collaboration-view")}
+                      className="inline-flex items-center gap-2 bg-[#211d19] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-colors hover:bg-[#aa7942] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#aa7942]"
+                    >
+                      <Instagram className="h-4 w-4" /> {t.openOnInstagram}
+                    </a>
                   </div>
-                  <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-[#aa7942] transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" aria-hidden="true" />
                 </div>
-              </button>
+
+                {/* Right side: Embedded Reel */}
+                <div className="relative flex items-center justify-center bg-[#211d19] p-6 sm:p-10 rounded-sm shadow-inner min-h-[32rem]">
+                  <InstagramEmbed url={item.url} title={item.title} />
+                  <p className="pointer-events-none absolute bottom-4 left-0 right-0 text-center text-[10px] uppercase tracking-[0.18em] text-white/45">{item.title}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -1204,65 +1210,7 @@ export default function Home() {
         </div>
       </footer>
 
-      {selectedCollaboration && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="collaboration-viewer-title"
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-[#211d19]/80 p-4 backdrop-blur-sm"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setSelectedCollaboration(null);
-          }}
-        >
-          <div className="grid max-h-[92vh] w-full max-w-5xl overflow-y-auto bg-[#f8f6f2] shadow-2xl lg:grid-cols-[minmax(16rem,0.85fr)_minmax(22rem,1.15fr)]">
-            <div className="relative flex min-h-[26rem] items-center justify-center bg-[#211d19] p-6 sm:p-10">
-              <InstagramEmbed url={selectedCollaboration.url} title={selectedCollaboration.title} />
-              <p className="pointer-events-none absolute bottom-4 left-0 right-0 text-center text-[10px] uppercase tracking-[0.18em] text-white/45">{selectedCollaboration.title}</p>
-            </div>
-            <div className="relative flex flex-col p-6 sm:p-10">
-              <button
-                type="button"
-                aria-label={t.close}
-                onClick={() => setSelectedCollaboration(null)}
-                className="absolute end-5 top-5 inline-flex h-9 w-9 items-center justify-center border border-[#d8d0c6] text-[#746e67] transition-colors hover:border-[#211d19] hover:text-[#211d19] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#aa7942]"
-              >
-                <X className="h-4 w-4" aria-hidden="true" />
-              </button>
-              <p className="mb-3 pe-12 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#aa7942]">{selectedCollaboration.category}</p>
-              <h2 id="collaboration-viewer-title" className="max-w-md text-4xl font-normal leading-none text-[#211d19] sm:text-5xl" style={{ fontFamily: "Playfair Display, serif" }}>
-                {selectedCollaboration.title}
-              </h2>
-              <p className="mt-4 text-sm leading-relaxed text-[#746e67]">{selectedCollaboration.description}</p>
 
-              <div className="my-6 grid gap-4 border-y border-[#d8d0c6] py-5">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#aa7942]">CAMPAIGN TYPE</p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-[#211d19]">{selectedCollaboration.campaign}</p>
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#aa7942]">RESULTS</p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-[#211d19]">{selectedCollaboration.results}</p>
-                </div>
-              </div>
-
-              <blockquote className="mb-6 border-s-2 border-[#aa7942] ps-4 text-sm italic leading-relaxed text-[#746e67]">
-                “{selectedCollaboration.quote}”
-              </blockquote>
-
-              <div className="mt-auto pt-2">
-                <a
-                  href={selectedCollaboration.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 bg-[#211d19] px-5 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-colors hover:bg-[#aa7942] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#aa7942]"
-                >
-                  <Instagram className="h-4 w-4" /> View more on Instagram
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );
