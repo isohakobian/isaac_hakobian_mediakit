@@ -1,1 +1,1 @@
-- [x] Replace grid card view with direct inline Case Study sections on homepage showing campaign details on the left and embedded Instagram Reel on the right
+- [x] Replace Instagram iframe embed with a native HTML5 video player component supporting direct inline playback without Watch on Instagram links

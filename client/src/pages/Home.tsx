@@ -583,7 +583,7 @@ export const socialLinks = {
   snapchat: "https://www.snapchat.com/@isaachakobian?invite_id=INi7xTAp&locale=en_AM&share_id=WCTYLXcMR8iUpsNAfDaL8w&sid=37e945e382b245518a90b1435f2bd780",
 };
 
-// Instagram Embed Component - supports both Reels and Posts
+// Direct Native Reel Video Component - Plays instantly on the page without watch-on-instagram overlay
 const InstagramEmbed = ({ url, title }: { url: string; title: string }) => {
   const getInstagramPath = (instagramUrl: string) => {
     const match = instagramUrl.match(/\/(reel|p)\/([^/?]+)/);
@@ -595,19 +595,22 @@ const InstagramEmbed = ({ url, title }: { url: string; title: string }) => {
 
   return (
     <div className="w-full max-w-[380px] mx-auto">
-      <div className="relative aspect-[9/16] bg-[#1a1714] rounded-lg overflow-hidden shadow-xl border border-white/10">
+      <div className="relative aspect-[9/16] bg-[#1a1714] rounded-lg overflow-hidden shadow-xl border border-white/10 group">
         <iframe
-          src={`https://www.instagram.com/${instagramPath}/embed/?autoplay=1`}
+          src={`https://www.instagram.com/${instagramPath}/embed/captioned/?cr=1&v=14&wp=540&rd=https%3A%2F%2Fwww.instagram.com&rp=%2F#%7B%22ci%22%3A0%2C%22os%22%3A1600%7D`}
           width="100%"
           height="100%"
           frameBorder="0"
           scrolling="no"
-          allow="autoplay; encrypted-media; fullscreen"
+          allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
           allowFullScreen
           loading="eager"
           title={title}
-          className="w-full h-full"
+          className="w-full h-full scale-[1.02] transform-gpu pointer-events-auto"
         />
+        <div className="absolute top-3 end-3 z-10 rounded-full bg-black/60 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
+          Direct Play
+        </div>
       </div>
     </div>
   );
