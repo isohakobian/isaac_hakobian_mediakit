@@ -1,1 +1,1 @@
-- [x] Simplify Recent Collaborations so clicking a work card immediately opens the viewer with auto-playing video, removing all external redirect buttons and extra clicks
+- [x] Revert Recent Collaborations cards to direct single-click links opening Instagram Reels in the same tab without a modal viewer
