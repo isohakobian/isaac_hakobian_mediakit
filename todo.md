@@ -1,1 +1,1 @@
-- [x] Implement single-click in-page Reel viewer so clicking any Recent Collaborations card opens and autoplays the video directly inside the MediaKit without external tabs or extra clicks
+- [x] Remove modal viewer and make all Recent Collaborations cards direct links (a tags) opening Instagram Reels in a new tab upon single click
