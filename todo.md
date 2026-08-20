@@ -1,1 +1,1 @@
-- [x] Replace Instagram iframe embed with a native HTML5 video player component supporting direct inline playback without Watch on Instagram links
+- [x] Restore clean original Instagram embed component using direct URLs with native playback and no artificial badges
