@@ -1,1 +1,1 @@
-- [x] Restore clean original Instagram embed component using direct URLs with native playback and no artificial badges
+- [x] Add category filter tabs (Grooming, Lifestyle, Travel) for Recent Collaborations with smooth animations and prominent view/reach metrics on cards
