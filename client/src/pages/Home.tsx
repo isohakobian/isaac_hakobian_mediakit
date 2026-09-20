@@ -1,14 +1,18 @@
-import { Button } from "@/components/ui/button";
-import { Mail, Instagram, ArrowRight, Linkedin, MessageCircle, Youtube, Tv, Music, TrendingUp, Send, Play, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { Mail, Instagram, ArrowRight, Youtube, Send } from "lucide-react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import Testimonials from "@/components/Testimonials";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import CollaborationVideoCard from "@/components/CollaborationVideoCard";
 
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { sortCollaborationsNewestFirst } from "@shared/collaborationOrder";
-import { collaborationLanguages, type CollaborationLanguage, type ManagedCollaboration } from "@shared/collaborations";
+import {
+  collaborationLanguages,
+  type CollaborationLanguage,
+  type ManagedCollaboration,
+} from "@shared/collaborations";
 import { trpc } from "@/lib/trpc";
 
 /**
@@ -19,34 +23,36 @@ import { trpc } from "@/lib/trpc";
  * - Vibe: High-end editorial, cinematic, premium
  */
 
-function getManagedTranslation(item: ManagedCollaboration, language: CollaborationLanguage) {
+function getManagedTranslation(
+  item: ManagedCollaboration,
+  language: CollaborationLanguage
+) {
   const fallback = item.translations.en;
   return { ...fallback, ...(item.translations[language] ?? {}) };
 }
 
 type CollaborationDisplayItem = {
-  name: string;
-  category: string;
-  description: string;
-  campaign: string;
-  results: string;
-  quote: string;
-  quoteLabel?: string;
-  url: string;
-  title: string;
+  slug: string;
+  brand: string;
+  collaborationTitle: string;
+  partnershipType: string;
+  videoUrl: string;
+  posterUrl?: string;
   publishedAt: string | null;
 };
 
 export const translations = {
   en: {
     tagline: "Premium Men's Lifestyle Creator for Quality-Focused Brands",
-    taglineSupport: "Cinematic short-form content that helps premium fitness, lifestyle, accessories, grooming, and wellness brands reach a discerning male audience through authentic product integration and measurable engagement.",
+    taglineSupport:
+      "Cinematic short-form content that helps premium fitness, lifestyle, accessories, grooming, and wellness brands reach a discerning male audience through authentic product integration and measurable engagement.",
     exploreCollaboration: "Explore Collaboration",
     monthlyReach: "30-Day Views",
     maleAudience: "Total Followers",
     primaryAgeGroup: "30-Day Viewers",
     aboutBrand: "About the Brand",
-    aboutText: "I create cinematic lifestyle content for brands that value quality, craft, and trust. My audience is primarily men aged 25-34 who respond to refined aesthetics, personal development, performance, and premium products. Each collaboration is built to feel native to my content while giving brands clear creative assets, audience fit, and campaign proof.",
+    aboutText:
+      "I create cinematic lifestyle content for brands that value quality, craft, and trust. My audience is primarily men aged 25-34 who respond to refined aesthetics, personal development, performance, and premium products. Each collaboration is built to feel native to my content while giving brands clear creative assets, audience fit, and campaign proof.",
     bestFitFor: "Best Fit For",
     premiumFitness: "Premium fitness and sport clubs",
     mensAccessories: "Men's accessories",
@@ -87,48 +93,79 @@ export const translations = {
     linkCTR: "Bio Link CTR",
     saves: "Saves",
     DreamBeachClub: "Dream Beach Club",
-    dreamBeachClubDescription: "The largest in Russia Dream Beach Club with a VIP swimming pool",
+    dreamBeachClubDescription:
+      "The largest in Russia Dream Beach Club with a VIP swimming pool",
     dreamBeachClubCategory: "The largest in Russia swimming pool",
     dreamBeachClubCampaign: "Lifestyle reel / product integration",
     dreamBeachClubResults: "80.8% engagement rate non followers • 100+ saves",
-    dreamBeachClubQuote: "We truly enjoyed collaborating with Isaac. Everything was smooth, professional, and beautifully executed. The photo publications and visual content fully reflected the atmosphere of Dream Beach Club. We would be happy to work together again.",
+    dreamBeachClubQuote:
+      "We truly enjoyed collaborating with Isaac. Everything was smooth, professional, and beautifully executed. The photo publications and visual content fully reflected the atmosphere of Dream Beach Club. We would be happy to work together again.",
     Abib: "Abib",
-    abibDescription: "Rooted in a strong commitment to clean, natural products, the brand has consistently focused on minimalist formulations inspired by nature. This approach reflects a growing need for sensitive skin solutions made with gentle, naturally inspired ingredients.",
+    abibDescription:
+      "Rooted in a strong commitment to clean, natural products, the brand has consistently focused on minimalist formulations inspired by nature. This approach reflects a growing need for sensitive skin solutions made with gentle, naturally inspired ingredients.",
     abibCategory: "Korean skincare brand",
     abibCampaign: "Lifestyle reel / product integration",
     abibResults: "69.9% engagement rate non followers • 100+ saves",
-    abibQuote: "His followers are exactly our target demographic - discerning, quality-focused men.",
+    abibQuote:
+      "His followers are exactly our target demographic - discerning, quality-focused men.",
     Yakapitan: "Ya Kapitan",
-    yakapitanDescription: "Private boat and yacht rentals in Moscow — available with or without a captain.",
+    yakapitanDescription:
+      "Private boat and yacht rentals in Moscow — available with or without a captain.",
     yakapitanCategory: "Private boat and yacht rentals in Moscow",
     yakapitanCampaign: "Lifestyle reel / product integration",
     yakapitanResults: "88.8% engagement rate non followers • 100+ saves",
-    yakapitanQuote: "The production quality and authenticity of Isaac's content is unmatched. Highly recommended for premium brands.",
+    yakapitanQuote:
+      "The production quality and authenticity of Isaac's content is unmatched. Highly recommended for premium brands.",
     Swdr: "Swdr.by",
-    swdrDescription: "Swdr is a Russian clothing brand sold through leading online marketplaces in Russia.",
+    swdrDescription:
+      "Swdr is a Russian clothing brand sold through leading online marketplaces in Russia.",
     swdrCategory: "Swdr is a Russian clothing brand",
     swdrCampaign: "Lifestyle reel / product integration",
     swdrResults: "91.9% engagement rate non followers • 100+ saves",
     swdrQuote: "Quality-focused men. Thank you for collaboration",
     Rooms: "Rooms Project",
-    roomsDescription: "Rooms Project is a self-portrait studio with curated interior spaces in Moscow and Saint Petersburg, designed for private photoshoots, personal content, and creative projects.",
+    roomsDescription:
+      "Rooms Project is a self-portrait studio with curated interior spaces in Moscow and Saint Petersburg, designed for private photoshoots, personal content, and creative projects.",
     roomsCategory: "The self-portrait studio in Moscow and Saint Petersburg",
     roomsCampaign: "Lifestyle reel / product integration",
     roomsResults: "80.1% engagement rate non followers • 100+ saves",
     roomsQuote: "We truly enjoyed collaborating with Isaac.",
     limberLifeArmenia: "Limber Life Armenia × Pravilo",
-    limberLifeArmeniaDescription: "A first-person bungee fitness experience in Yerevan, Armenia, captured as a high-energy lifestyle integration.",
+    limberLifeArmeniaDescription:
+      "A first-person bungee fitness experience in Yerevan, Armenia, captured as a high-energy lifestyle integration.",
     limberLifeArmeniaCategory: "Bungee fitness in Yerevan",
     limberLifeArmeniaCampaign: "Bungee fitness experience / lifestyle Reel",
-    limberLifeArmeniaResults: "78.1K views • 25.6K viewers • 2,175 interactions • 293 saves",
+    limberLifeArmeniaResults:
+      "78.1K views • 25.6K viewers • 2,175 interactions • 293 saves",
     creatorNote: "Creator note",
-    limberLifeArmeniaNote: "A first time trying bungee fitness — and definitely not the last.",
+    limberLifeArmeniaNote:
+      "A first time trying bungee fitness — and definitely not the last.",
     marinaTravel: "Marina Traveling Agency",
-    marinaTravelDescription: "Planning a cruise trip with Marina Travel agency in Yerevan, capturing the excitement of travel and escape.",
+    marinaTravelDescription:
+      "Planning a cruise trip with Marina Travel agency in Yerevan, capturing the excitement of travel and escape.",
     marinaTravelCategory: "Travel & Cruise Agency",
     marinaTravelCampaign: "Travel planning / lifestyle Reel",
     marinaTravelResults: "105 likes • 3 comments • 1 repost",
-    marinaTravelNote: "Yerevan 35°C traffic everywhere, and I’m already planning my escape.",
+    marinaTravelNote:
+      "Yerevan 35°C traffic everywhere, and I’m already planning my escape.",
+    marinaTravelProject: "Cruise Escape",
+    limberLifeArmeniaProject: "First Bungee Fitness Experience",
+    dreamBeachClubProject: "Summer Lifestyle at the VIP Pool",
+    abibProject: "Minimalist Skincare Ritual",
+    yakapitanProject: "Private Yacht Experience",
+    swdrProject: "Everyday Menswear",
+    auraCleaning: "Aura Cleaning",
+    auraCleaningProject: "Apartment Reset",
+    auraCleaningCampaign: "Home cleaning service integration",
+    orsisArms: "Orsis Arms",
+    orsisArmsProject: "A Day at the Shooting Range",
+    orsisArmsCampaign: "Shooting range experience integration",
+    maqoor: "Maqoor",
+    maqoorProject: "City Day & Wardrobe Care",
+    maqoorCampaign: "Dry-cleaning service integration",
+    karenPetrosyan: "Dr. Karen Petrosyan",
+    karenPetrosyanProject: "Personal Transformation — Part I",
+    karenPetrosyanCampaign: "Personal transformation / clinic collaboration",
     collaborationProof: "Campaign Results",
     campaignType: "Campaign Type",
     results: "Results",
@@ -150,13 +187,15 @@ export const translations = {
   },
   ru: {
     tagline: "Премиальный креатор контента для брендов высокого качества",
-    taglineSupport: "Кинематографический контент для премиальных брендов в спорте, аксессуарах, груминге и велнессе. Отображаю требовательную мужскую аудиторию через аутентичные интеграции и измеримые результаты.",
+    taglineSupport:
+      "Кинематографический контент для премиальных брендов в спорте, аксессуарах, груминге и велнессе. Отображаю требовательную мужскую аудиторию через аутентичные интеграции и измеримые результаты.",
     exploreCollaboration: "Обсудить сотрудничество",
     monthlyReach: "Просмотры за 30 дней",
     maleAudience: "Всего подписчиков",
     primaryAgeGroup: "Зрители за 30 дней",
     aboutBrand: "О бренде",
-    aboutText: "Креатор кинематографического контента для брендов, которые ценят качество, мастерство и доверие. Моя аудитория — мужчины 25-34 лет, которые оценивают рафинированную эстетику, личное развитие и премиальные продукты. Каждое сотрудничество — это аутентичные ассеты, таргетированная аудитория и измеримые результаты.",
+    aboutText:
+      "Креатор кинематографического контента для брендов, которые ценят качество, мастерство и доверие. Моя аудитория — мужчины 25-34 лет, которые оценивают рафинированную эстетику, личное развитие и премиальные продукты. Каждое сотрудничество — это аутентичные ассеты, таргетированная аудитория и измеримые результаты.",
     bestFitFor: "Лучше всего подходит для",
     premiumFitness: "Премиальные спортивные клубы",
     mensAccessories: "Мужские аксессуары",
@@ -170,43 +209,75 @@ export const translations = {
     campaignType: "Тип кампании",
     results: "Показатели",
     dreamBeachClubCategory: "Крупнейший бассейн России",
-    dreamBeachClubDescription: "Крупнейший в России Dream Beach Club с VIP-бассейном",
+    dreamBeachClubDescription:
+      "Крупнейший в России Dream Beach Club с VIP-бассейном",
     dreamBeachClubCampaign: "Lifestyle reel / product integration",
-    dreamBeachClubResults: "80,8% вовлечённости среди неподписчиков • 100+ сохранений",
-    dreamBeachClubQuote: "Нам было очень приятно сотрудничать с Исааком. Всё прошло гладко, профессионально и красиво. Фотопубликации и визуальный контент полностью передали атмосферу Dream Beach Club. Будем рады поработать вместе снова.",
+    dreamBeachClubResults:
+      "80,8% вовлечённости среди неподписчиков • 100+ сохранений",
+    dreamBeachClubQuote:
+      "Нам было очень приятно сотрудничать с Исааком. Всё прошло гладко, профессионально и красиво. Фотопубликации и визуальный контент полностью передали атмосферу Dream Beach Club. Будем рады поработать вместе снова.",
     abibCategory: "Корейский бренд уходовой косметики",
-    abibDescription: "Основан на сильной приверженности чистым и натуральным продуктам, бренд постоянно сосредоточен на минималистичных формулировках, вдохновленных природой. Этот подход отражает растущую потребность в решениях для чувствительной кожи, созданных из мягких, натурально вдохновленных ингредиентов.",
+    abibDescription:
+      "Основан на сильной приверженности чистым и натуральным продуктам, бренд постоянно сосредоточен на минималистичных формулировках, вдохновленных природой. Этот подход отражает растущую потребность в решениях для чувствительной кожи, созданных из мягких, натурально вдохновленных ингредиентов.",
     abibCampaign: "Lifestyle reel / product integration",
     abibResults: "69,9% вовлечённости среди неподписчиков • 100+ сохранений",
-    abibQuote: "Его аудитория точно совпадает с нашей целевой аудиторией — это мужчины, которые ценят качество и внимательно выбирают продукты.",
+    abibQuote:
+      "Его аудитория точно совпадает с нашей целевой аудиторией — это мужчины, которые ценят качество и внимательно выбирают продукты.",
     yakapitanCategory: "Аренда частных катеров и яхт в Москве",
-    yakapitanDescription: "Аренда частных катеров и яхт в Москве — с капитаном или без.",
+    yakapitanDescription:
+      "Аренда частных катеров и яхт в Москве — с капитаном или без.",
     yakapitanCampaign: "Lifestyle reel / product integration",
-    yakapitanResults: "88,8% вовлечённости среди неподписчиков • 100+ сохранений",
-    yakapitanQuote: "Качество продакшена и естественность контента Исаака — на очень высоком уровне. Рекомендуем для премиальных брендов.",
+    yakapitanResults:
+      "88,8% вовлечённости среди неподписчиков • 100+ сохранений",
+    yakapitanQuote:
+      "Качество продакшена и естественность контента Исаака — на очень высоком уровне. Рекомендуем для премиальных брендов.",
     swdrCategory: "SWDR — российский бренд одежды",
-    swdrDescription: "SWDR — российский бренд одежды, продаваемый через ведущие онлайн-маркетплейсы России.",
+    swdrDescription:
+      "SWDR — российский бренд одежды, продаваемый через ведущие онлайн-маркетплейсы России.",
     swdrCampaign: "Lifestyle reel / product integration",
     swdrResults: "91,9% вовлечённости среди неподписчиков • 100+ сохранений",
     swdrQuote: "Аудитория, которая ценит качество. Спасибо за сотрудничество.",
     roomsCategory: "Студия автопортрета в Москве и Санкт-Петербурге",
-    roomsDescription: "Rooms Project — студия автопортрета с тщательно подобранными интерьерами в Москве и Санкт-Петербурге, предназначенная для приватных фотосессий, личного контента и творческих проектов.",
+    roomsDescription:
+      "Rooms Project — студия автопортрета с тщательно подобранными интерьерами в Москве и Санкт-Петербурге, предназначенная для приватных фотосессий, личного контента и творческих проектов.",
     roomsCampaign: "Lifestyle reel / product integration",
     roomsResults: "80,1% вовлечённости среди неподписчиков • 100+ сохранений",
     roomsQuote: "Нам было очень приятно сотрудничать с Исааком.",
     limberLifeArmenia: "Limber Life Armenia × Pravilo",
-    limberLifeArmeniaDescription: "Личный опыт банджи-фитнеса в Ереване, снятый как динамичная lifestyle-интеграция с реальным первым опытом.",
+    limberLifeArmeniaDescription:
+      "Личный опыт банджи-фитнеса в Ереване, снятый как динамичная lifestyle-интеграция с реальным первым опытом.",
     limberLifeArmeniaCategory: "Банджи-фитнес в Ереване",
     limberLifeArmeniaCampaign: "Опыт банджи-фитнеса / lifestyle Reel",
-    limberLifeArmeniaResults: "78,1K просмотров • 25,6K зрителей • 2 175 взаимодействий • 293 сохранения",
+    limberLifeArmeniaResults:
+      "78,1K просмотров • 25,6K зрителей • 2 175 взаимодействий • 293 сохранения",
     creatorNote: "Заметка креатора",
     limberLifeArmeniaNote: "Первый опыт банджи-фитнеса — и точно не последний.",
     marinaTravel: "Marina Traveling Agency",
-    marinaTravelDescription: "Планирование круиза с агентством Marina Travel в Ереване, атмосфера путешествия и побега от городской жары.",
+    marinaTravelDescription:
+      "Планирование круиза с агентством Marina Travel в Ереване, атмосфера путешествия и побега от городской жары.",
     marinaTravelCategory: "Турагентство и круизы",
     marinaTravelCampaign: "Планирование путешествия / lifestyle Reel",
     marinaTravelResults: "105 лайков • 3 комментария • репост",
-    marinaTravelNote: "Ереван +35°C, трафик везде, и я уже планирую свой побег.",
+    marinaTravelNote:
+      "Ереван +35°C, трафик везде, и я уже планирую свой побег.",
+    marinaTravelProject: "Круизный побег",
+    limberLifeArmeniaProject: "Первый опыт банджи-фитнеса",
+    dreamBeachClubProject: "Летний lifestyle у VIP-бассейна",
+    abibProject: "Минималистичный ритуал ухода",
+    yakapitanProject: "Прогулка на частной яхте",
+    swdrProject: "Современный повседневный образ",
+    auraCleaning: "Aura Cleaning",
+    auraCleaningProject: "Перезагрузка квартиры",
+    auraCleaningCampaign: "Интеграция сервиса домашней уборки",
+    orsisArms: "Orsis Arms",
+    orsisArmsProject: "День в стрелковом клубе",
+    orsisArmsCampaign: "Имиджевая интеграция впечатления",
+    maqoor: "Maqoor",
+    maqoorProject: "Городской день и уход за гардеробом",
+    maqoorCampaign: "Интеграция сервиса химчистки",
+    karenPetrosyan: "Доктор Карен Петросян",
+    karenPetrosyanProject: "Личная трансформация — часть I",
+    karenPetrosyanCampaign: "Имиджевая коллаборация с клиникой",
     getInTouch: "Свяжитесь со мной",
     linkInBio: "Трафик в профиль",
     singleReel: "Рил осведомленности",
@@ -259,21 +330,25 @@ export const translations = {
     filterTravel: "Путешествия",
   },
   fr: {
-    tagline: "Créateur lifestyle masculin premium pour les marques axées sur la qualité",
-    taglineSupport: "Du contenu short-form cinématographique qui aide les marques premium de fitness, lifestyle, accessoires, grooming et wellness à toucher une audience masculine exigeante grâce à une intégration produit authentique et des résultats d'engagement mesurables.",
+    tagline:
+      "Créateur lifestyle masculin premium pour les marques axées sur la qualité",
+    taglineSupport:
+      "Du contenu short-form cinématographique qui aide les marques premium de fitness, lifestyle, accessoires, grooming et wellness à toucher une audience masculine exigeante grâce à une intégration produit authentique et des résultats d'engagement mesurables.",
     exploreCollaboration: "Explorer une collaboration",
     monthlyReach: "Vues sur 30 jours",
     maleAudience: "Abonnés au total",
     primaryAgeGroup: "Spectateurs sur 30 jours",
     aboutBrand: "À propos de la marque",
-    aboutText: "Je crée du contenu lifestyle cinématographique pour les marques qui valorisent la qualité, le savoir-faire et la confiance. Mon audience est principalement composée d'hommes de 25 à 34 ans, sensibles à une esthétique raffinée, au développement personnel, à la performance et aux produits premium. Chaque collaboration est conçue pour s'intégrer naturellement à mon contenu tout en offrant aux marques des assets créatifs clairs, une audience pertinente et des preuves de performance de campagne.",
+    aboutText:
+      "Je crée du contenu lifestyle cinématographique pour les marques qui valorisent la qualité, le savoir-faire et la confiance. Mon audience est principalement composée d'hommes de 25 à 34 ans, sensibles à une esthétique raffinée, au développement personnel, à la performance et aux produits premium. Chaque collaboration est conçue pour s'intégrer naturellement à mon contenu tout en offrant aux marques des assets créatifs clairs, une audience pertinente et des preuves de performance de campagne.",
     bestFitFor: "Idéal pour",
     premiumFitness: "Clubs de fitness et de sport premium",
     mensAccessories: "Accessoires pour hommes",
     groomingWellness: "Grooming et wellness",
     menswearLifestyle: "Mode masculine et produits lifestyle",
     everydayCarry: "Produits everyday carry de haute qualité",
-    performanceBrands: "Marques liées à la performance et au développement personnel",
+    performanceBrands:
+      "Marques liées à la performance et au développement personnel",
     recentCollaborations: "Collaborations récentes",
     collaborationPackages: "Packages de collaboration",
     getInTouch: "Prendre contact",
@@ -307,48 +382,85 @@ export const translations = {
     linkCTR: "CTR du lien en bio",
     saves: "Enregistrements",
     DreamBeachClub: "Dream Beach Club",
-    dreamBeachClubDescription: "Dream Beach Club, le plus grand complexe de Russie avec une piscine VIP",
+    dreamBeachClubDescription:
+      "Dream Beach Club, le plus grand complexe de Russie avec une piscine VIP",
     dreamBeachClubCategory: "La plus grande piscine de Russie",
     dreamBeachClubCampaign: "Lifestyle Reel / intégration produit",
-    dreamBeachClubResults: "80,8 % d'engagement auprès des non-abonnés • 100+ enregistrements",
-    dreamBeachClubQuote: "Nous avons beaucoup apprécié notre collaboration avec Isaac. Tout s'est déroulé de manière fluide, professionnelle et élégante. Les publications photo et le contenu visuel ont pleinement retranscrit l'atmosphère de Dream Beach Club. Nous serions ravis de retravailler ensemble.",
+    dreamBeachClubResults:
+      "80,8 % d'engagement auprès des non-abonnés • 100+ enregistrements",
+    dreamBeachClubQuote:
+      "Nous avons beaucoup apprécié notre collaboration avec Isaac. Tout s'est déroulé de manière fluide, professionnelle et élégante. Les publications photo et le contenu visuel ont pleinement retranscrit l'atmosphère de Dream Beach Club. Nous serions ravis de retravailler ensemble.",
     Abib: "Abib",
-    abibDescription: "Fondée sur un fort engagement envers des produits propres et naturels, la marque s'est toujours concentrée sur des formules minimalistes inspirées par la nature. Cette approche répond à un besoin croissant de solutions pour peaux sensibles, formulées avec des ingrédients doux et naturellement inspirés.",
+    abibDescription:
+      "Fondée sur un fort engagement envers des produits propres et naturels, la marque s'est toujours concentrée sur des formules minimalistes inspirées par la nature. Cette approche répond à un besoin croissant de solutions pour peaux sensibles, formulées avec des ingrédients doux et naturellement inspirés.",
     abibCategory: "Marque coréenne de soins de la peau",
     abibCampaign: "Lifestyle Reel / intégration produit",
-    abibResults: "69,9 % d'engagement auprès des non-abonnés • 100+ enregistrements",
-    abibQuote: "Son audience correspond exactement à notre cible : des hommes exigeants, attentifs à la qualité et sélectifs dans le choix des produits.",
+    abibResults:
+      "69,9 % d'engagement auprès des non-abonnés • 100+ enregistrements",
+    abibQuote:
+      "Son audience correspond exactement à notre cible : des hommes exigeants, attentifs à la qualité et sélectifs dans le choix des produits.",
     Yakapitan: "Ya Kapitan",
-    yakapitanDescription: "Location de bateaux privés et de yachts à Moscou — avec ou sans capitaine.",
+    yakapitanDescription:
+      "Location de bateaux privés et de yachts à Moscou — avec ou sans capitaine.",
     yakapitanCategory: "Location de bateaux privés et de yachts à Moscou",
     yakapitanCampaign: "Lifestyle Reel / intégration produit",
-    yakapitanResults: "88,8 % d'engagement auprès des non-abonnés • 100+ enregistrements",
-    yakapitanQuote: "La qualité de production et l'authenticité du contenu d'Isaac sont incomparables. Fortement recommandé pour les marques premium.",
+    yakapitanResults:
+      "88,8 % d'engagement auprès des non-abonnés • 100+ enregistrements",
+    yakapitanQuote:
+      "La qualité de production et l'authenticité du contenu d'Isaac sont incomparables. Fortement recommandé pour les marques premium.",
     Swdr: "Swdr.by",
-    swdrDescription: "SWDR est une marque russe de vêtements vendue sur les principales marketplaces en ligne de Russie.",
+    swdrDescription:
+      "SWDR est une marque russe de vêtements vendue sur les principales marketplaces en ligne de Russie.",
     swdrCategory: "SWDR est une marque russe de vêtements",
     swdrCampaign: "Lifestyle Reel / intégration produit",
-    swdrResults: "91,9 % d'engagement auprès des non-abonnés • 100+ enregistrements",
-    swdrQuote: "Une audience qui valorise la qualité. Merci pour cette collaboration.",
+    swdrResults:
+      "91,9 % d'engagement auprès des non-abonnés • 100+ enregistrements",
+    swdrQuote:
+      "Une audience qui valorise la qualité. Merci pour cette collaboration.",
     Rooms: "Rooms Project",
-    roomsDescription: "Rooms Project est un studio d'autoportrait avec des espaces intérieurs soigneusement conçus à Moscou et Saint-Pétersbourg, pensé pour les shootings privés, le contenu personnel et les projets créatifs.",
+    roomsDescription:
+      "Rooms Project est un studio d'autoportrait avec des espaces intérieurs soigneusement conçus à Moscou et Saint-Pétersbourg, pensé pour les shootings privés, le contenu personnel et les projets créatifs.",
     roomsCategory: "Studio d'autoportrait à Moscou et Saint-Pétersbourg",
     roomsCampaign: "Lifestyle Reel / intégration produit",
-    roomsResults: "80,1 % d'engagement auprès des non-abonnés • 100+ enregistrements",
+    roomsResults:
+      "80,1 % d'engagement auprès des non-abonnés • 100+ enregistrements",
     roomsQuote: "Nous avons beaucoup apprécié notre collaboration avec Isaac.",
     limberLifeArmenia: "Limber Life Armenia × Pravilo",
-    limberLifeArmeniaDescription: "Une première expérience de bungee fitness à Erevan, en Arménie, capturée comme une intégration lifestyle énergique et authentique.",
+    limberLifeArmeniaDescription:
+      "Une première expérience de bungee fitness à Erevan, en Arménie, capturée comme une intégration lifestyle énergique et authentique.",
     limberLifeArmeniaCategory: "Bungee fitness à Erevan",
     limberLifeArmeniaCampaign: "Expérience bungee fitness / Reel lifestyle",
-    limberLifeArmeniaResults: "78,1 k vues • 25,6 k spectateurs • 2 175 interactions • 293 enregistrements",
+    limberLifeArmeniaResults:
+      "78,1 k vues • 25,6 k spectateurs • 2 175 interactions • 293 enregistrements",
     creatorNote: "Note du créateur",
-    limberLifeArmeniaNote: "Une première expérience du bungee fitness — et certainement pas la dernière.",
+    limberLifeArmeniaNote:
+      "Une première expérience du bungee fitness — et certainement pas la dernière.",
     marinaTravel: "Marina Traveling Agency",
-    marinaTravelDescription: "Planification d'un voyage en croisière avec l'agence Marina Travel à Erevan, capturant l'esprit du voyage et de l'évasion.",
+    marinaTravelDescription:
+      "Planification d'un voyage en croisière avec l'agence Marina Travel à Erevan, capturant l'esprit du voyage et de l'évasion.",
     marinaTravelCategory: "Agence de voyage et croisières",
     marinaTravelCampaign: "Planification de voyage / Reel lifestyle",
     marinaTravelResults: "105 j'aime • 3 commentaires • 1 partage",
-    marinaTravelNote: "Erevan 35°C trafic partout, et je planifie déjà mon évasion.",
+    marinaTravelNote:
+      "Erevan 35°C trafic partout, et je planifie déjà mon évasion.",
+    marinaTravelProject: "Évasion en croisière",
+    limberLifeArmeniaProject: "Première expérience de bungee fitness",
+    dreamBeachClubProject: "Lifestyle estival au bord de la piscine VIP",
+    abibProject: "Rituel de soin minimaliste",
+    yakapitanProject: "Expérience en yacht privé",
+    swdrProject: "Style masculin du quotidien",
+    auraCleaning: "Aura Cleaning",
+    auraCleaningProject: "Reset de l’appartement",
+    auraCleaningCampaign: "Intégration d’un service de nettoyage à domicile",
+    orsisArms: "Orsis Arms",
+    orsisArmsProject: "Une journée au stand de tir",
+    orsisArmsCampaign: "Intégration d’une expérience au stand de tir",
+    maqoor: "Maqoor",
+    maqoorProject: "Journée en ville et entretien du vestiaire",
+    maqoorCampaign: "Intégration d’un service de nettoyage à sec",
+    karenPetrosyan: "Dr Karen Petrosyan",
+    karenPetrosyanProject: "Transformation personnelle — Partie I",
+    karenPetrosyanCampaign: "Collaboration éditoriale avec une clinique",
     collaborationProof: "Résultats de campagne",
     campaignType: "Type de campagne",
     results: "Résultats",
@@ -369,14 +481,17 @@ export const translations = {
     filterTravel: "Travel",
   },
   es: {
-    tagline: "Creador de contenido lifestyle premium para marcas enfocadas en calidad",
-    taglineSupport: "Contenido cinematográfico de corta duración que ayuda a marcas premium de fitness, lifestyle, accesorios, grooming y bienestar a llegar a una audiencia masculina exigente a través de integraciones de productos auténticas y engagement medible.",
+    tagline:
+      "Creador de contenido lifestyle premium para marcas enfocadas en calidad",
+    taglineSupport:
+      "Contenido cinematográfico de corta duración que ayuda a marcas premium de fitness, lifestyle, accesorios, grooming y bienestar a llegar a una audiencia masculina exigente a través de integraciones de productos auténticas y engagement medible.",
     exploreCollaboration: "Explorar colaboración",
     monthlyReach: "Visualizaciones en 30 días",
     maleAudience: "Seguidores totales",
     primaryAgeGroup: "Espectadores en 30 días",
     aboutBrand: "Sobre la marca",
-    aboutText: "Creo contenido lifestyle cinematográfico para marcas que valoran la calidad, la artesanía y la confianza. Mi audiencia son principalmente hombres de 25-34 años que aprecian la estética refinada, el desarrollo personal, el desempeño y los productos premium. Cada colaboración está diseñada para sentirse nativa a mi contenido mientras proporciono a las marcas activos creativos claros, ajuste de audiencia y prueba de campaña.",
+    aboutText:
+      "Creo contenido lifestyle cinematográfico para marcas que valoran la calidad, la artesanía y la confianza. Mi audiencia son principalmente hombres de 25-34 años que aprecian la estética refinada, el desarrollo personal, el desempeño y los productos premium. Cada colaboración está diseñada para sentirse nativa a mi contenido mientras proporciono a las marcas activos creativos claros, ajuste de audiencia y prueba de campaña.",
     bestFitFor: "Ideal para",
     premiumFitness: "Clubes de fitness y deporte premium",
     mensAccessories: "Accesorios para hombres",
@@ -417,48 +532,80 @@ export const translations = {
     linkCTR: "CTR del enlace en bio",
     saves: "Guardados",
     DreamBeachClub: "Dream Beach Club",
-    dreamBeachClubDescription: "Dream Beach Club, el complejo más grande de Rusia con piscina VIP",
+    dreamBeachClubDescription:
+      "Dream Beach Club, el complejo más grande de Rusia con piscina VIP",
     dreamBeachClubCategory: "La piscina más grande de Rusia",
     dreamBeachClubCampaign: "Lifestyle Reel / integración de producto",
     dreamBeachClubResults: "80,8% engagement de no seguidores • 100+ guardados",
-    dreamBeachClubQuote: "Disfrutamos mucho colaborando con Isaac. Todo fue fluido, profesional y hermosamente ejecutado. Las publicaciones fotográficas y el contenido visual reflejaron completamente la atmósfera de Dream Beach Club. Estaríamos encantados de trabajar juntos nuevamente.",
+    dreamBeachClubQuote:
+      "Disfrutamos mucho colaborando con Isaac. Todo fue fluido, profesional y hermosamente ejecutado. Las publicaciones fotográficas y el contenido visual reflejaron completamente la atmósfera de Dream Beach Club. Estaríamos encantados de trabajar juntos nuevamente.",
     Abib: "Abib",
-    abibDescription: "Fundada en un fuerte compromiso con productos limpios y naturales, la marca se ha enfocado consistentemente en formulaciones minimalistas inspiradas en la naturaleza. Este enfoque refleja una necesidad creciente de soluciones para piel sensible hechas con ingredientes suaves e inspirados naturalmente.",
+    abibDescription:
+      "Fundada en un fuerte compromiso con productos limpios y naturales, la marca se ha enfocado consistentemente en formulaciones minimalistas inspiradas en la naturaleza. Este enfoque refleja una necesidad creciente de soluciones para piel sensible hechas con ingredientes suaves e inspirados naturalmente.",
     abibCategory: "Marca coreana de cuidado de la piel",
     abibCampaign: "Lifestyle Reel / integración de producto",
     abibResults: "69,9% engagement de no seguidores • 100+ guardados",
-    abibQuote: "Su audiencia es exactamente nuestro grupo demográfico objetivo: hombres exigentes y enfocados en la calidad.",
+    abibQuote:
+      "Su audiencia es exactamente nuestro grupo demográfico objetivo: hombres exigentes y enfocados en la calidad.",
     Yakapitan: "Ya Kapitan",
-    yakapitanDescription: "Alquiler de botes privados y yates en Moscú — con o sin capitán.",
+    yakapitanDescription:
+      "Alquiler de botes privados y yates en Moscú — con o sin capitán.",
     yakapitanCategory: "Alquiler de botes privados y yates en Moscú",
     yakapitanCampaign: "Lifestyle Reel / integración de producto",
     yakapitanResults: "88,8% engagement de no seguidores • 100+ guardados",
-    yakapitanQuote: "La calidad de producción y autenticidad del contenido de Isaac son incomparables. Altamente recomendado para marcas premium.",
+    yakapitanQuote:
+      "La calidad de producción y autenticidad del contenido de Isaac son incomparables. Altamente recomendado para marcas premium.",
     Swdr: "Swdr.by",
-    swdrDescription: "SWDR es una marca rusa de ropa vendida a través de los principales mercados en línea de Rusia.",
+    swdrDescription:
+      "SWDR es una marca rusa de ropa vendida a través de los principales mercados en línea de Rusia.",
     swdrCategory: "SWDR es una marca rusa de ropa",
     swdrCampaign: "Lifestyle Reel / integración de producto",
     swdrResults: "91,9% engagement de no seguidores • 100+ guardados",
-    swdrQuote: "Una audiencia que valora la calidad. Gracias por la colaboración.",
+    swdrQuote:
+      "Una audiencia que valora la calidad. Gracias por la colaboración.",
     Rooms: "Rooms Project",
-    roomsDescription: "Rooms Project es un estudio de autorretrato con espacios interiores cuidadosamente diseñados en Moscú y San Petersburgo, pensado para sesiones fotográficas privadas, contenido personal y proyectos creativos.",
+    roomsDescription:
+      "Rooms Project es un estudio de autorretrato con espacios interiores cuidadosamente diseñados en Moscú y San Petersburgo, pensado para sesiones fotográficas privadas, contenido personal y proyectos creativos.",
     roomsCategory: "Estudio de autorretrato en Moscú y San Petersburgo",
     roomsCampaign: "Lifestyle Reel / integración de producto",
     roomsResults: "80,1% engagement de no seguidores • 100+ guardados",
     roomsQuote: "Disfrutamos mucho colaborando con Isaac.",
     limberLifeArmenia: "Limber Life Armenia × Pravilo",
-    limberLifeArmeniaDescription: "Una primera experiencia de bungee fitness en Ereván, Armenia, capturada como una integración lifestyle dinámica y auténtica.",
+    limberLifeArmeniaDescription:
+      "Una primera experiencia de bungee fitness en Ereván, Armenia, capturada como una integración lifestyle dinámica y auténtica.",
     limberLifeArmeniaCategory: "Bungee fitness en Ereván",
     limberLifeArmeniaCampaign: "Experiencia de bungee fitness / Reel lifestyle",
-    limberLifeArmeniaResults: "78,1K visualizaciones • 25,6K espectadores • 2.175 interacciones • 293 guardados",
+    limberLifeArmeniaResults:
+      "78,1K visualizaciones • 25,6K espectadores • 2.175 interacciones • 293 guardados",
     creatorNote: "Nota del creador",
-    limberLifeArmeniaNote: "Una primera experiencia de bungee fitness — y definitivamente no será la última.",
+    limberLifeArmeniaNote:
+      "Una primera experiencia de bungee fitness — y definitivamente no será la última.",
     marinaTravel: "Marina Traveling Agency",
-    marinaTravelDescription: "Planificación de un viaje en crucero con la agencia Marina Travel en Ereván, capturando la emoción del viaje y la evasión.",
+    marinaTravelDescription:
+      "Planificación de un viaje en crucero con la agencia Marina Travel en Ereván, capturando la emoción del viaje y la evasión.",
     marinaTravelCategory: "Agencia de viajes y cruceros",
     marinaTravelCampaign: "Planificación de viajes / Reel lifestyle",
     marinaTravelResults: "105 likes • 3 comentarios • 1 repost",
-    marinaTravelNote: "Ereván 35°C tráfico en todas partes, y ya estoy planeando mi escape.",
+    marinaTravelNote:
+      "Ereván 35°C tráfico en todas partes, y ya estoy planeando mi escape.",
+    marinaTravelProject: "Escapada en crucero",
+    limberLifeArmeniaProject: "Primera experiencia de bungee fitness",
+    dreamBeachClubProject: "Lifestyle de verano en la piscina VIP",
+    abibProject: "Ritual minimalista de cuidado de la piel",
+    yakapitanProject: "Experiencia en yate privado",
+    swdrProject: "Estilo masculino para cada día",
+    auraCleaning: "Aura Cleaning",
+    auraCleaningProject: "Renovación del apartamento",
+    auraCleaningCampaign: "Integración de servicio de limpieza del hogar",
+    orsisArms: "Orsis Arms",
+    orsisArmsProject: "Un día en el campo de tiro",
+    orsisArmsCampaign: "Integración de experiencia en campo de tiro",
+    maqoor: "Maqoor",
+    maqoorProject: "Día en la ciudad y cuidado del vestuario",
+    maqoorCampaign: "Integración de servicio de tintorería",
+    karenPetrosyan: "Dr. Karen Petrosyan",
+    karenPetrosyanProject: "Transformación personal — Parte I",
+    karenPetrosyanCampaign: "Colaboración editorial con clínica",
     collaborationProof: "Resultados de campaña",
     campaignType: "Tipo de campaña",
     results: "Resultados",
@@ -480,13 +627,15 @@ export const translations = {
   },
   ar: {
     tagline: "منشئ محتوى نمط حياة رجالي فاخر للعلامات التجارية الموجهة للجودة",
-    taglineSupport: "محتوى سينمائي قصير الشكل يساعد العلامات التجارية الفاخرة في اللياقة البدنية والنمط الحياة والإكسسوارات والعناية الشخصية والعافية على الوصول إلى جمهور ذكوري متطلب من خلال التكامل الأصلي للمنتجات والمشاركة القابلة للقياس.",
+    taglineSupport:
+      "محتوى سينمائي قصير الشكل يساعد العلامات التجارية الفاخرة في اللياقة البدنية والنمط الحياة والإكسسوارات والعناية الشخصية والعافية على الوصول إلى جمهور ذكوري متطلب من خلال التكامل الأصلي للمنتجات والمشاركة القابلة للقياس.",
     exploreCollaboration: "استكشف التعاون",
     monthlyReach: "المشاهدات خلال 30 يوماً",
     maleAudience: "إجمالي المتابعين",
     primaryAgeGroup: "المشاهدون خلال 30 يوماً",
     aboutBrand: "عن العلامة التجارية",
-    aboutText: "أنا أنشئ محتوى نمط حياة سينمائي للعلامات التجارية التي تقدر الجودة والحرفية والثقة. جمهوري يتكون بشكل أساسي من الرجال الذين تتراوح أعمارهم بين 25-34 سنة الذين يقدرون الجماليات المكررة والتطور الشخصي والأداء والمنتجات الفاخرة. كل تعاون مصمم ليشعر بأنه أصلي لمحتواي مع تزويد العلامات التجارية بأصول إبداعية واضحة وملاءمة الجمهور وإثبات الحملة.",
+    aboutText:
+      "أنا أنشئ محتوى نمط حياة سينمائي للعلامات التجارية التي تقدر الجودة والحرفية والثقة. جمهوري يتكون بشكل أساسي من الرجال الذين تتراوح أعمارهم بين 25-34 سنة الذين يقدرون الجماليات المكررة والتطور الشخصي والأداء والمنتجات الفاخرة. كل تعاون مصمم ليشعر بأنه أصلي لمحتواي مع تزويد العلامات التجارية بأصول إبداعية واضحة وملاءمة الجمهور وإثبات الحملة.",
     bestFitFor: "الأنسب لـ",
     premiumFitness: "أندية اللياقة البدنية والرياضة الفاخرة",
     mensAccessories: "إكسسوارات الرجال",
@@ -527,48 +676,79 @@ export const translations = {
     linkCTR: "CTR رابط السيرة الذاتية",
     saves: "الحفظ",
     DreamBeachClub: "Dream Beach Club",
-    dreamBeachClubDescription: "Dream Beach Club، أكبر مجمع في روسيا مع حمام سباحة VIP",
+    dreamBeachClubDescription:
+      "Dream Beach Club، أكبر مجمع في روسيا مع حمام سباحة VIP",
     dreamBeachClubCategory: "أكبر حمام سباحة في روسيا",
     dreamBeachClubCampaign: "Lifestyle Reel / تكامل المنتج",
     dreamBeachClubResults: "80.8% تفاعل من غير المتابعين • 100+ حفظ",
-    dreamBeachClubQuote: "استمتعنا كثيراً بالتعاون مع Isaac. كل شيء كان سلساً واحترافياً وجميل التنفيذ. المنشورات الفوتوغرافية والمحتوى البصري عكسا بالكامل أجواء Dream Beach Club. سيسعدنا العمل معاً مرة أخرى.",
+    dreamBeachClubQuote:
+      "استمتعنا كثيراً بالتعاون مع Isaac. كل شيء كان سلساً واحترافياً وجميل التنفيذ. المنشورات الفوتوغرافية والمحتوى البصري عكسا بالكامل أجواء Dream Beach Club. سيسعدنا العمل معاً مرة أخرى.",
     Abib: "Abib",
-    abibDescription: "مؤسسة على التزام قوي بالمنتجات النظيفة والطبيعية، ركزت العلامة التجارية باستمرار على الصيغ البسيطة المستوحاة من الطبيعة. يعكس هذا النهج حاجة متزايدة لحلول البشرة الحساسة المصنوعة من مكونات لطيفة ومستوحاة بشكل طبيعي.",
+    abibDescription:
+      "مؤسسة على التزام قوي بالمنتجات النظيفة والطبيعية، ركزت العلامة التجارية باستمرار على الصيغ البسيطة المستوحاة من الطبيعة. يعكس هذا النهج حاجة متزايدة لحلول البشرة الحساسة المصنوعة من مكونات لطيفة ومستوحاة بشكل طبيعي.",
     abibCategory: "علامة تجارية كورية للعناية بالبشرة",
     abibCampaign: "Lifestyle Reel / تكامل المنتج",
     abibResults: "69.9% تفاعل من غير المتابعين • 100+ حفظ",
-    abibQuote: "جمهوره يطابق تماماً جمهورنا المستهدف: رجال متطلبون وموجهون نحو الجودة.",
+    abibQuote:
+      "جمهوره يطابق تماماً جمهورنا المستهدف: رجال متطلبون وموجهون نحو الجودة.",
     Yakapitan: "Ya Kapitan",
-    yakapitanDescription: "تأجير القوارب واليخوت الخاصة في موسكو — مع أو بدون قبطان.",
+    yakapitanDescription:
+      "تأجير القوارب واليخوت الخاصة في موسكو — مع أو بدون قبطان.",
     yakapitanCategory: "تأجير القوارب واليخوت الخاصة في موسكو",
     yakapitanCampaign: "Lifestyle Reel / تكامل المنتج",
     yakapitanResults: "88.8% تفاعل من غير المتابعين • 100+ حفظ",
-    yakapitanQuote: "جودة الإنتاج وأصالة محتوى Isaac لا تضاهى. موصى به بشدة للعلامات التجارية الفاخرة.",
+    yakapitanQuote:
+      "جودة الإنتاج وأصالة محتوى Isaac لا تضاهى. موصى به بشدة للعلامات التجارية الفاخرة.",
     Swdr: "Swdr.by",
-    swdrDescription: "SWDR هي علامة تجارية روسية للملابس تُباع عبر أسواق الإنترنت الرائدة في روسيا.",
+    swdrDescription:
+      "SWDR هي علامة تجارية روسية للملابس تُباع عبر أسواق الإنترنت الرائدة في روسيا.",
     swdrCategory: "SWDR هي علامة تجارية روسية للملابس",
     swdrCampaign: "Lifestyle Reel / تكامل المنتج",
     swdrResults: "91.9% تفاعل من غير المتابعين • 100+ حفظ",
     swdrQuote: "جمهور يركز على الجودة. شكراً على التعاون.",
     Rooms: "Rooms Project",
-    roomsDescription: "Rooms Project هي استوديو صور ذاتية بمساحات داخلية مختارة بعناية في موسكو وسانت بطرسبرغ، مصممة لجلسات التصوير الخاصة والمحتوى الشخصي والمشاريع الإبداعية.",
+    roomsDescription:
+      "Rooms Project هي استوديو صور ذاتية بمساحات داخلية مختارة بعناية في موسكو وسانت بطرسبرغ، مصممة لجلسات التصوير الخاصة والمحتوى الشخصي والمشاريع الإبداعية.",
     roomsCategory: "استوديو صور ذاتية في موسكو وسانت بطرسبرغ",
     roomsCampaign: "Lifestyle Reel / تكامل المنتج",
     roomsResults: "80.1% تفاعل من غير المتابعين • 100+ حفظ",
     roomsQuote: "استمتعنا كثيراً بالتعاون مع Isaac.",
     limberLifeArmenia: "Limber Life Armenia × Pravilo",
-    limberLifeArmeniaDescription: "تجربة أولى في رياضة البانجي فتنس في يريفان، أرمينيا، تم تصويرها كتكامل ديناميكي وأصيل مع أسلوب الحياة.",
+    limberLifeArmeniaDescription:
+      "تجربة أولى في رياضة البانجي فتنس في يريفان، أرمينيا، تم تصويرها كتكامل ديناميكي وأصيل مع أسلوب الحياة.",
     limberLifeArmeniaCategory: "بانجي فتنس في يريفان",
     limberLifeArmeniaCampaign: "تجربة بانجي فتنس / Reel لنمط الحياة",
-    limberLifeArmeniaResults: "78.1K مشاهدة • 25.6K مشاهد • 2,175 تفاعلاً • 293 حفظاً",
+    limberLifeArmeniaResults:
+      "78.1K مشاهدة • 25.6K مشاهد • 2,175 تفاعلاً • 293 حفظاً",
     creatorNote: "ملاحظة من الكريتور",
-    limberLifeArmeniaNote: "كانت المرة الأولى في تجربة بانجي فتنس — وبالتأكيد لن تكون الأخيرة.",
+    limberLifeArmeniaNote:
+      "كانت المرة الأولى في تجربة بانجي فتنس — وبالتأكيد لن تكون الأخيرة.",
     marinaTravel: "Marina Traveling Agency",
-    marinaTravelDescription: "التخطيط لرحلة بحرية مع وكالة Marina Travel في يريفان، والتقاط أجواء السفر والهروب من حر المدينة.",
+    marinaTravelDescription:
+      "التخطيط لرحلة بحرية مع وكالة Marina Travel في يريفان، والتقاط أجواء السفر والهروب من حر المدينة.",
     marinaTravelCategory: "وكالة سفر ورحلات بحرية",
     marinaTravelCampaign: "تخطيط السفر / Reel نمط الحياة",
     marinaTravelResults: "105 إعجاب • 3 تعليقات • إعادة نشر",
-    marinaTravelNote: "يريفان 35 درجة مئوية والازحام في كل مكان، وأنا أخطط بالفعل لهروبي.",
+    marinaTravelNote:
+      "يريفان 35 درجة مئوية والازحام في كل مكان، وأنا أخطط بالفعل لهروبي.",
+    marinaTravelProject: "رحلة هروب بحرية",
+    limberLifeArmeniaProject: "التجربة الأولى في البانجي فتنس",
+    dreamBeachClubProject: "أسلوب حياة صيفي بجانب مسبح VIP",
+    abibProject: "روتين عناية بسيط بالبشرة",
+    yakapitanProject: "تجربة يخت خاص",
+    swdrProject: "إطلالة رجالية يومية",
+    auraCleaning: "Aura Cleaning",
+    auraCleaningProject: "تجديد أجواء المنزل",
+    auraCleaningCampaign: "دمج خدمة تنظيف منزلية",
+    orsisArms: "Orsis Arms",
+    orsisArmsProject: "يوم في ميدان الرماية",
+    orsisArmsCampaign: "دمج تجربة في ميدان الرماية",
+    maqoor: "Maqoor",
+    maqoorProject: "يوم في المدينة والعناية بالملابس",
+    maqoorCampaign: "دمج خدمة التنظيف الجاف",
+    karenPetrosyan: "د. كارين بيتروسيان",
+    karenPetrosyanProject: "تحول شخصي — الجزء الأول",
+    karenPetrosyanCampaign: "تعاون تحريري مع عيادة",
     collaborationProof: "نتائج الحملة",
     campaignType: "نوع الحملة",
     results: "النتائج",
@@ -603,128 +783,122 @@ export const socialLinks = {
   snapchat: "https://www.snapchat.com/@isaachakobian?invite_id=INi7xTAp&locale=en_AM&share_id=WCTYLXcMR8iUpsNAfDaL8w&sid=37e945e382b245518a90b1435f2bd780",
 };
 
-// Official Instagram Embed Component - Clean inline Reel player by direct URL
-const InstagramEmbed = ({ url, title }: { url: string; title: string }) => {
-  const getInstagramPath = (instagramUrl: string) => {
-    const match = instagramUrl.match(/\/(reel|p)\/([^/?]+)/);
-    return match ? `${match[1]}/${match[2]}` : null;
-  };
-
-  const instagramPath = getInstagramPath(url);
-  if (!instagramPath) return null;
-
-  return (
-    <div className="w-full max-w-[380px] mx-auto">
-      <div className="relative aspect-[9/16] bg-[#1a1714] rounded-lg overflow-hidden shadow-xl border border-white/10">
-        <iframe
-          src={`https://www.instagram.com/${instagramPath}/embed/?autoplay=1`}
-          width="100%"
-          height="100%"
-          frameBorder="0"
-          scrolling="no"
-          allow="autoplay; encrypted-media; fullscreen"
-          allowFullScreen
-          loading="eager"
-          title={title}
-          className="w-full h-full"
-        />
-      </div>
-    </div>
-  );
-};
-
 export default function Home() {
   const { user } = useAuth();
   const { trackClick, trackFormSubmit, language, setLanguage } = useAnalytics();
   const { data: managedCollaborations } = trpc.collaborations.publicList.useQuery();
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<"all" | "grooming" | "lifestyle" | "travel">("all");
   const t = translations[language as keyof typeof translations] || translations.en;
 
   // Keep Recent Collaborations in newest-first order. Add each new collaboration above the existing entries.
   const collaborations: CollaborationDisplayItem[] = [
     {
-      name: t.marinaTravel,
-      category: t.marinaTravelCategory,
-      description: t.marinaTravelDescription,
-      campaign: t.marinaTravelCampaign,
-      results: t.marinaTravelResults,
-      quote: t.marinaTravelNote,
-      quoteLabel: t.creatorNote,
-      url: "https://www.instagram.com/reel/DcLycgbIYGO/",
-      title: "Marina Traveling Agency",
+      slug: "karen-petrosyan",
+      brand: t.karenPetrosyan,
+      collaborationTitle: t.karenPetrosyanProject,
+      partnershipType: t.karenPetrosyanCampaign,
+      videoUrl: "/manus-storage/karen_331b6faf.mp4",
+      posterUrl: "/manus-storage/karen_db3c4b71.jpg",
+      publishedAt: "2026-09-15",
+    },
+    {
+      slug: "maqoor",
+      brand: t.maqoor,
+      collaborationTitle: t.maqoorProject,
+      partnershipType: t.maqoorCampaign,
+      videoUrl: "/manus-storage/maqoor_ec053bc5.mp4",
+      posterUrl: "/manus-storage/maqoor_6ea7da9a.jpg",
+      publishedAt: "2026-09-06",
+    },
+    {
+      slug: "orsis-arms",
+      brand: t.orsisArms,
+      collaborationTitle: t.orsisArmsProject,
+      partnershipType: t.orsisArmsCampaign,
+      videoUrl: "/manus-storage/orsis_51d66c59.mp4",
+      posterUrl: "/manus-storage/orsis_c62dcfc2.jpg",
+      publishedAt: "2026-08-22",
+    },
+    {
+      slug: "aura-cleaning",
+      brand: t.auraCleaning,
+      collaborationTitle: t.auraCleaningProject,
+      partnershipType: t.auraCleaningCampaign,
+      videoUrl: "/manus-storage/aura_66b43742.mp4",
+      posterUrl: "/manus-storage/aura_aa912bf5.jpg",
       publishedAt: "2026-08-17",
     },
     {
-      name: t.limberLifeArmenia,
-      category: t.limberLifeArmeniaCategory,
-      description: t.limberLifeArmeniaDescription,
-      campaign: t.limberLifeArmeniaCampaign,
-      results: t.limberLifeArmeniaResults,
-      quote: t.limberLifeArmeniaNote,
-      quoteLabel: t.creatorNote,
-      url: "https://www.instagram.com/reel/Db53EikuKsd/",
-      title: "Limber Life Armenia × Pravilo",
+      slug: "marina-travel",
+      brand: t.marinaTravel,
+      collaborationTitle: t.marinaTravelProject,
+      partnershipType: t.marinaTravelCampaign,
+      videoUrl: "/manus-storage/marina_3adfbf7d.mp4",
+      posterUrl: "/manus-storage/marina_acf8201f.jpg",
+      publishedAt: "2026-08-17",
+    },
+    {
+      slug: "limber-life-armenia",
+      brand: t.limberLifeArmenia,
+      collaborationTitle: t.limberLifeArmeniaProject,
+      partnershipType: t.limberLifeArmeniaCampaign,
+      videoUrl: "/manus-storage/limber_4e9d4cd4.mp4",
+      posterUrl: "/manus-storage/limber_1987c690.jpg",
       publishedAt: "2026-08-14",
     },
     {
-      name: t.DreamBeachClub,
-      category: t.dreamBeachClubCategory,
-      description: t.dreamBeachClubDescription,
-      campaign: t.dreamBeachClubCampaign,
-      results: t.dreamBeachClubResults,
-      quote: t.dreamBeachClubQuote,
-      url: "https://www.instagram.com/reel/DZZbnO8tAb9/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==",
-      title: "Dream Beach Club",
+      slug: "dream-beach-club",
+      brand: t.DreamBeachClub,
+      collaborationTitle: t.dreamBeachClubProject,
+      partnershipType: t.dreamBeachClubCampaign,
+      videoUrl: "/manus-storage/dream_a6816766.mp4",
+      posterUrl: "/manus-storage/dream_dec4f2c1.jpg",
       publishedAt: null,
     },
     {
-      name: t.Abib,
-      category: t.abibCategory,
-      description: t.abibDescription,
-      campaign: t.abibCampaign,
-      results: t.abibResults,
-      quote: t.abibQuote,
-      url: "https://www.instagram.com/reel/DZpdNz3IsJ4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      title: "Abib",
+      slug: "abib",
+      brand: t.Abib,
+      collaborationTitle: t.abibProject,
+      partnershipType: t.abibCampaign,
+      videoUrl: "/manus-storage/abib_45613a61.mp4",
+      posterUrl: "/manus-storage/abib_20444ba1.jpg",
       publishedAt: null,
     },
     {
-      name: t.Yakapitan,
-      category: t.yakapitanCategory,
-      description: t.yakapitanDescription,
-      campaign: t.yakapitanCampaign,
-      results: t.yakapitanResults,
-      quote: t.yakapitanQuote,
-      url: "https://www.instagram.com/reel/DYzaM9zI0VX/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      title: "Ya Kapitan",
+      slug: "ya-kapitan",
+      brand: t.Yakapitan,
+      collaborationTitle: t.yakapitanProject,
+      partnershipType: t.yakapitanCampaign,
+      videoUrl: "/manus-storage/yakapitan_73790604.mp4",
+      posterUrl: "/manus-storage/yakapitan_e4b68830.jpg",
       publishedAt: null,
     },
     {
-      name: t.Swdr,
-      category: t.swdrCategory,
-      description: t.swdrDescription,
-      campaign: t.swdrCampaign,
-      results: t.swdrResults,
-      quote: t.swdrQuote,
-      url: "https://www.instagram.com/reel/DZQNm0EIvb4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      title: "Swdr.by",
+      slug: "swdr",
+      brand: t.Swdr,
+      collaborationTitle: t.swdrProject,
+      partnershipType: t.swdrCampaign,
+      videoUrl: "/manus-storage/swdr_1a75350f.mp4",
+      posterUrl: "/manus-storage/swdr_d2a60799.jpg",
       publishedAt: null,
     },
-
   ];
 
   const currentLocale: CollaborationLanguage = collaborationLanguages.includes(language as CollaborationLanguage) ? language as CollaborationLanguage : "en";
-  const managedItems: CollaborationDisplayItem[] = (managedCollaborations ?? []).map((item) => {
-    const content = getManagedTranslation(item, currentLocale);
-    return {
-      ...content,
-      url: item.mediaUrl,
-      title: item.mediaTitle,
-      publishedAt: item.publishedAt,
-    };
-  });
+  const managedItems: CollaborationDisplayItem[] = (managedCollaborations ?? [])
+    .filter((item) => item.mediaUrl.startsWith("/manus-storage/") || /\.mp4(?:$|\?)/i.test(item.mediaUrl))
+    .map((item) => {
+      const content = getManagedTranslation(item, currentLocale);
+      return {
+        slug: `managed-${item.id}`,
+        brand: content.name,
+        collaborationTitle: item.mediaTitle,
+        partnershipType: content.campaign,
+        videoUrl: item.mediaUrl,
+        publishedAt: item.publishedAt,
+      };
+    });
 
   const orderedCollaborations = sortCollaborationsNewestFirst([...managedItems, ...collaborations]);
 
@@ -762,14 +936,24 @@ export default function Home() {
   };
 
   return (
-    <div dir={language === "ar" ? "rtl" : "ltr"} className="min-h-screen bg-white">
+    <div
+      dir={language === "ar" ? "rtl" : "ltr"}
+      className="min-h-screen bg-white"
+    >
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
         <div className="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-2 sm:gap-3">
-          <a href="/" className="text-2xl font-bold" style={{ fontFamily: "Playfair Display, serif", color: "#aa7942" }}>
+          <a
+            href="/"
+            className="text-2xl font-bold"
+            style={{ fontFamily: "Playfair Display, serif", color: "#aa7942" }}
+          >
             Isaac
           </a>
-          <LanguageSwitcher currentLanguage={language} onLanguageChange={setLanguage} />
+          <LanguageSwitcher
+            currentLanguage={language}
+            onLanguageChange={setLanguage}
+          />
           <div className="flex gap-3 sm:gap-6 whitespace-nowrap">
             <a
               href="#collaboration"
@@ -795,11 +979,14 @@ export default function Home() {
           className="editorial-drift absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              'url(/manus-storage/80DC245D-61F0-4786-B87F-DC079CB4BB2C_f4659d04.JPEG)',
+              "url(/manus-storage/80DC245D-61F0-4786-B87F-DC079CB4BB2C_f4659d04.JPEG)",
           }}
         >
           <div className="absolute inset-0 bg-black/20"></div>
-          <div className="editorial-glow pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#aa7942]/20 via-transparent to-transparent" aria-hidden="true"></div>
+          <div
+            className="editorial-glow pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#aa7942]/20 via-transparent to-transparent"
+            aria-hidden="true"
+          ></div>
         </div>
 
         <div className="relative z-10 text-center max-w-3xl px-6">
@@ -809,8 +996,14 @@ export default function Home() {
           >
             ISAAC HAKOBIAN
           </h1>
-          <p className="text-lg sm:text-2xl lg:text-3xl text-white/95 mb-6 font-light">{t.tagline}</p>
-          {t.taglineSupport && <p className="text-base sm:text-lg text-white/80 mb-8 font-light leading-relaxed max-w-2xl mx-auto">{t.taglineSupport}</p>}
+          <p className="text-lg sm:text-2xl lg:text-3xl text-white/95 mb-6 font-light">
+            {t.tagline}
+          </p>
+          {t.taglineSupport && (
+            <p className="text-base sm:text-lg text-white/80 mb-8 font-light leading-relaxed max-w-2xl mx-auto">
+              {t.taglineSupport}
+            </p>
+          )}
           <div className="flex gap-4 justify-center">
             <a
               href="#collaboration"
@@ -828,19 +1021,37 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12 mb-16">
             <div className="text-center">
-              <div className="text-5xl sm:text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
+              <div
+                className="text-5xl sm:text-6xl font-bold mb-2"
+                style={{
+                  fontFamily: "Playfair Display, serif",
+                  color: "#8B4513",
+                }}
+              >
                 1.31M+
               </div>
               <p className="text-lg text-gray-600">{t.monthlyReach}</p>
             </div>
             <div className="text-center">
-              <div className="text-5xl sm:text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
+              <div
+                className="text-5xl sm:text-6xl font-bold mb-2"
+                style={{
+                  fontFamily: "Playfair Display, serif",
+                  color: "#8B4513",
+                }}
+              >
                 37.5K+
               </div>
               <p className="text-lg text-gray-600">{t.maleAudience}</p>
             </div>
             <div className="text-center">
-              <div className="text-5xl sm:text-6xl font-bold mb-2" style={{ fontFamily: "Playfair Display, serif", color: "#8B4513" }}>
+              <div
+                className="text-5xl sm:text-6xl font-bold mb-2"
+                style={{
+                  fontFamily: "Playfair Display, serif",
+                  color: "#8B4513",
+                }}
+              >
                 286.9K
               </div>
               <p className="text-lg text-gray-600">{t.primaryAgeGroup}</p>
@@ -863,142 +1074,32 @@ export default function Home() {
 
 
 
-      {/* Recent Collaborations Section - Direct Inline Case Studies with Category Filter & Metrics */}
+      {/* Recent Collaborations — native inline video, no external post UI */}
       <section id="collaboration" className="bg-[#f4f1ec] px-6 py-20 sm:py-24">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex flex-col gap-5 border-b border-[#d8d0c6] pb-8 sm:mb-14 sm:flex-row sm:items-end sm:justify-between">
+          <div className="mb-12 border-b border-[#d8d0c6] pb-8 sm:mb-14">
             <div>
               <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#aa7942]">{t.mediaLabel}</p>
               <h2 className="max-w-2xl text-4xl font-normal leading-[0.98] text-[#211d19] sm:text-6xl" style={{ fontFamily: "Playfair Display, serif" }}>
                 {t.recentCollaborations}
               </h2>
             </div>
-            <p className="max-w-xs text-sm leading-relaxed text-[#746e67] sm:text-right">{t.collaborationCtaText}</p>
           </div>
 
-          {/* Category Filter Tabs */}
-          <div className="mb-12 flex flex-wrap items-center gap-2 sm:gap-3">
-            {[
-              { id: "all", label: t.filterAll },
-              { id: "grooming", label: t.filterGrooming },
-              { id: "lifestyle", label: t.filterLifestyle },
-              { id: "travel", label: t.filterTravel },
-            ].map((tab) => {
-              const isActive = selectedCategory === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedCategory(tab.id as any);
-                    trackClick(`filter-${tab.id}`);
-                  }}
-                  className={`rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.16em] transition-all duration-300 ${
-                    isActive
-                      ? "bg-[#211d19] text-white shadow-md scale-[1.02]"
-                      : "bg-[#f8f6f2] text-[#746e67] border border-[#d8d0c6] hover:border-[#aa7942] hover:text-[#211d19]"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="space-y-16">
-            {orderedCollaborations
-              .filter((item) => {
-                if (selectedCategory === "all") return true;
-                const catLower = (item.category + " " + item.title + " " + item.description).toLowerCase();
-                if (selectedCategory === "grooming") {
-                  return catLower.includes("grooming") || catLower.includes("skincare") || catLower.includes("косметик") || catLower.includes("уход") || catLower.includes("abib");
-                }
-                if (selectedCategory === "travel") {
-                  return catLower.includes("travel") || catLower.includes("tour") || catLower.includes("agency") || catLower.includes("путешеств") || catLower.includes("туристич") || catLower.includes("marina") || catLower.includes("yacht") || catLower.includes("катер");
-                }
-                if (selectedCategory === "lifestyle") {
-                  return !catLower.includes("travel") && !catLower.includes("agency") && !catLower.includes("путешеств") && !catLower.includes("marina");
-                }
-                return true;
-              })
-              .map((item, index) => {
-                // Determine simulated reach & view metrics based on results string or defaults
-                const reachViews = item.results.includes("views") || item.results.includes("просмотр") || item.results.includes("مشاهدة") || item.results.includes("vues") || item.results.includes("visualizaciones")
-                  ? item.results.split("•")[0].trim()
-                  : "75K+ Views";
-                const engagementScore = item.results.includes("engagement") || item.results.includes("вовлечённости") || item.results.includes("engagement") || item.results.includes("تفاعل")
-                  ? item.results.split("•")[1] ? item.results.split("•")[1].trim() : "85% Engagement"
-                  : "91% Non-followers";
-
-                return (
-                  <div
-                    key={`${item.title}-${item.url}`}
-                    className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 lg:gap-12 items-center bg-[#f8f6f2] border border-[#d8d0c6] p-6 sm:p-10 shadow-sm transition-all duration-500 hover:shadow-xl hover:border-[#aa7942]/60 hover:-translate-y-1 group/card"
-                  >
-                {/* Left side: Details */}
-                <div className="flex flex-col">
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-                    <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#aa7942]">
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                      <span>•</span>
-                      <span>{item.category}</span>
-                      {item.publishedAt && (
-                        <>
-                          <span>•</span>
-                          <span>{item.publishedAt}</span>
-                        </>
-                      )}
-                    </div>
-                    {/* Highlighted Metrics Badge for Brands */}
-                    <div className="inline-flex items-center gap-2 rounded-full bg-[#aa7942]/10 border border-[#aa7942]/30 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#aa7942]">
-                      <span>{reachViews}</span>
-                    </div>
-                  </div>
-
-                  <h3 className="text-3xl sm:text-4xl font-normal text-[#211d19] mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
-                    {item.title}
-                  </h3>
-
-                  <p className="text-sm leading-relaxed text-[#746e67] mb-8">
-                    {item.description}
-                  </p>
-
-                  <div className="grid gap-5 border-y border-[#d8d0c6] py-6 mb-8">
-                    <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#aa7942]">{t.campaignType}</p>
-                      <p className="mt-1.5 text-sm leading-relaxed text-[#211d19]">{item.campaign}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#aa7942]">{t.results}</p>
-                      <p className="mt-1.5 text-sm leading-relaxed text-[#211d19]">{item.results}</p>
-                    </div>
-                  </div>
-
-                  <blockquote className="border-s-2 border-[#aa7942] ps-4 text-sm italic leading-relaxed text-[#746e67] mb-8">
-                    “{item.quote}”
-                  </blockquote>
-
-                  <div>
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => trackClick("collaboration-view")}
-                      className="inline-flex items-center gap-2 bg-[#211d19] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-colors hover:bg-[#aa7942] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#aa7942]"
-                    >
-                      <Instagram className="h-4 w-4" /> {t.openOnInstagram}
-                    </a>
-                  </div>
-                </div>
-
-                {/* Right side: Embedded Reel */}
-                <div className="relative flex items-center justify-center bg-[#211d19] p-6 sm:p-10 rounded-sm shadow-inner min-h-[32rem]">
-                  <InstagramEmbed url={item.url} title={item.title} />
-                  <p className="pointer-events-none absolute bottom-4 left-0 right-0 text-center text-[10px] uppercase tracking-[0.18em] text-white/45">{item.title}</p>
-                </div>
-                  </div>
-                );
-              })}
+          <div data-testid="collaboration-gallery" className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
+            {orderedCollaborations.map((item) => (
+              <CollaborationVideoCard
+                key={item.slug}
+                brand={item.brand}
+                projectTitle={item.collaborationTitle}
+                partnershipType={item.partnershipType}
+                videoUrl={item.videoUrl}
+                posterUrl={item.posterUrl}
+                collaborationLabel={t.collaboration}
+                formatLabel={t.campaignType}
+                onPlay={() => trackClick(`collaboration-play-${item.slug}`)}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -1009,14 +1110,20 @@ export default function Home() {
       {/* Collaboration Packages */}
       <section className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-16" style={{ fontFamily: "Playfair Display, serif" }}>
+          <h2
+            className="text-4xl sm:text-5xl font-bold mb-16"
+            style={{ fontFamily: "Playfair Display, serif" }}
+          >
             {t.collaborationPackages}
           </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Link in Bio */}
             <div className="border border-gray-300 p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
+              <h3
+                className="text-2xl font-bold mb-4"
+                style={{ fontFamily: "Playfair Display, serif" }}
+              >
                 {t.linkInBio}
               </h3>
               <p className="text-gray-600 mb-6">{t.month}</p>
@@ -1027,28 +1134,40 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-accent mt-1">✓</span>
-                  <span className="text-gray-700">{t.passiveTrafficGeneration}</span>
+                  <span className="text-gray-700">
+                    {t.passiveTrafficGeneration}
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-accent mt-1">✓</span>
-                  <span className="text-gray-700">{t.professionalProduction}</span>
+                  <span className="text-gray-700">
+                    {t.professionalProduction}
+                  </span>
                 </li>
               </ul>
-              <button onClick={handleInstagramDM} className="w-full bg-accent text-white py-3 hover:opacity-90 transition-opacity font-medium">
+              <button
+                onClick={handleInstagramDM}
+                className="w-full bg-accent text-white py-3 hover:opacity-90 transition-opacity font-medium"
+              >
                 {t.inquire}
               </button>
             </div>
 
             {/* Single Reel */}
             <div className="border border-gray-300 p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
+              <h3
+                className="text-2xl font-bold mb-4"
+                style={{ fontFamily: "Playfair Display, serif" }}
+              >
                 {t.singleReel}
               </h3>
               <p className="text-gray-600 mb-6">{t.reel}</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-3">
                   <span className="text-accent mt-1">✓</span>
-                  <span className="text-gray-700">{t.authenticIntegration}</span>
+                  <span className="text-gray-700">
+                    {t.authenticIntegration}
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-accent mt-1">✓</span>
@@ -1056,17 +1175,25 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-accent mt-1">✓</span>
-                  <span className="text-gray-700">{t.professionalProduction}</span>
+                  <span className="text-gray-700">
+                    {t.professionalProduction}
+                  </span>
                 </li>
               </ul>
-              <button onClick={handleInstagramDM} className="w-full bg-accent text-white py-3 hover:opacity-90 transition-opacity font-medium">
+              <button
+                onClick={handleInstagramDM}
+                className="w-full bg-accent text-white py-3 hover:opacity-90 transition-opacity font-medium"
+              >
                 {t.inquire}
               </button>
             </div>
 
             {/* Ambassador Partnership */}
             <div className="border border-gray-300 p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif" }}>
+              <h3
+                className="text-2xl font-bold mb-4"
+                style={{ fontFamily: "Playfair Display, serif" }}
+              >
                 {t.ambassador}
               </h3>
               <p className="text-gray-600 mb-6">{t.custom}</p>
@@ -1081,10 +1208,15 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-accent mt-1">✓</span>
-                  <span className="text-gray-700">{t.exclusivePartnership}</span>
+                  <span className="text-gray-700">
+                    {t.exclusivePartnership}
+                  </span>
                 </li>
               </ul>
-              <button onClick={handleInstagramDM} className="w-full bg-accent text-white py-3 hover:opacity-90 transition-opacity font-medium">
+              <button
+                onClick={handleInstagramDM}
+                className="w-full bg-accent text-white py-3 hover:opacity-90 transition-opacity font-medium"
+              >
                 {t.letsTalk}
               </button>
             </div>
@@ -1095,10 +1227,15 @@ export default function Home() {
       {/* Contact/Collaboration CTA Section */}
       <section className="py-20 px-6 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-6" style={{ fontFamily: "Playfair Display, serif" }}>
+          <h2
+            className="text-4xl sm:text-5xl font-bold mb-6"
+            style={{ fontFamily: "Playfair Display, serif" }}
+          >
             {t.collaborationCtaTitle}
           </h2>
-          <p className="text-xl text-gray-700 mb-12">{t.collaborationCtaText}</p>
+          <p className="text-xl text-gray-700 mb-12">
+            {t.collaborationCtaText}
+          </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <button
@@ -1117,7 +1254,9 @@ export default function Home() {
 
           {/* Social Icons Grid */}
           <div>
-            <p className="text-sm text-gray-600 mb-6">{t.followAcrossPlatforms}</p>
+            <p className="text-sm text-gray-600 mb-6">
+              {t.followAcrossPlatforms}
+            </p>
             <div className="flex flex-wrap justify-center gap-3">
               <a
                 href={socialLinks.tiktok}
@@ -1126,7 +1265,9 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-3 py-2 hover:bg-gray-200 rounded-full transition-colors"
                 title="TikTok"
               >
-                <span className="text-sm font-medium text-gray-700">TikTok</span>
+                <span className="text-sm font-medium text-gray-700">
+                  TikTok
+                </span>
               </a>
               <a
                 href={socialLinks.youtube}
@@ -1136,7 +1277,9 @@ export default function Home() {
                 title="YouTube"
               >
                 <Youtube size={20} className="text-gray-700" />
-                <span className="text-sm font-medium text-gray-700">YouTube</span>
+                <span className="text-sm font-medium text-gray-700">
+                  YouTube
+                </span>
               </a>
               <a
                 href={socialLinks.telegram}
@@ -1146,7 +1289,9 @@ export default function Home() {
                 title="Telegram"
               >
                 <Send size={20} className="text-gray-700" />
-                <span className="text-sm font-medium text-gray-700">Telegram</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Telegram
+                </span>
               </a>
               <a
                 href={socialLinks.pinterest}
@@ -1155,7 +1300,9 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-3 py-2 hover:bg-gray-200 rounded-full transition-colors"
                 title="Pinterest"
               >
-                <span className="text-sm font-medium text-gray-700">Pinterest</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Pinterest
+                </span>
               </a>
               <a
                 href={socialLinks.threads}
@@ -1164,7 +1311,9 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-3 py-2 hover:bg-gray-200 rounded-full transition-colors"
                 title="Threads"
               >
-                <span className="text-sm font-medium text-gray-700">Threads</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Threads
+                </span>
               </a>
               <a
                 href={socialLinks.snapchat}
@@ -1173,7 +1322,9 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-3 py-2 hover:bg-gray-200 rounded-full transition-colors"
                 title="Snapchat"
               >
-                <span className="text-sm font-medium text-gray-700">Snapchat</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Snapchat
+                </span>
               </a>
             </div>
           </div>
@@ -1183,38 +1334,53 @@ export default function Home() {
       {/* Contact Form Section */}
       <section id="contact" className="py-20 px-6 bg-white">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-12 text-center" style={{ fontFamily: "Playfair Display, serif" }}>
+          <h2
+            className="text-4xl sm:text-5xl font-bold mb-12 text-center"
+            style={{ fontFamily: "Playfair Display, serif" }}
+          >
             {t.getInTouch}
           </h2>
 
           <form onSubmit={handleEmailSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">{t.name}</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t.name}
+              </label>
               <input
                 type="text"
                 value={formState.name}
-                onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                onChange={e =>
+                  setFormState({ ...formState, name: e.target.value })
+                }
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">{t.email}</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t.email}
+              </label>
               <input
                 type="email"
                 value={formState.email}
-                onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+                onChange={e =>
+                  setFormState({ ...formState, email: e.target.value })
+                }
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">{t.message}</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t.message}
+              </label>
               <textarea
                 value={formState.message}
-                onChange={(e) => setFormState({ ...formState, message: e.target.value })}
+                onChange={e =>
+                  setFormState({ ...formState, message: e.target.value })
+                }
                 required
                 rows={6}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
@@ -1237,7 +1403,13 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-8">
             <div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Playfair Display, serif", color: "#aa7942" }}>
+              <h3
+                className="text-2xl font-bold mb-4"
+                style={{
+                  fontFamily: "Playfair Display, serif",
+                  color: "#aa7942",
+                }}
+              >
                 Isaac Hakobian
               </h3>
               <p className="text-gray-400">{t.footerDescription}</p>
@@ -1246,10 +1418,18 @@ export default function Home() {
             <div>
               <h4 className="font-bold mb-4">{t.contact}</h4>
               <div className="space-y-2 text-gray-400">
-                <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-accent">
+                <a
+                  href={socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-accent"
+                >
                   <Instagram size={16} /> Instagram
                 </a>
-                <a href={socialLinks.email} className="flex items-center gap-2 hover:text-accent">
+                <a
+                  href={socialLinks.email}
+                  className="flex items-center gap-2 hover:text-accent"
+                >
                   <Mail size={16} /> Email
                 </a>
               </div>
@@ -1258,22 +1438,52 @@ export default function Home() {
             <div>
               <h4 className="font-bold mb-4">{t.followAcrossPlatforms}</h4>
               <div className="flex flex-wrap gap-3">
-                <a href={socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                <a
+                  href={socialLinks.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-accent"
+                >
                   <span>TikTok</span>
                 </a>
-                <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                <a
+                  href={socialLinks.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-accent"
+                >
                   <Youtube size={20} /> <span>YouTube</span>
                 </a>
-                <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                <a
+                  href={socialLinks.telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-accent"
+                >
                   <Send size={20} /> <span>Telegram</span>
                 </a>
-                <a href={socialLinks.pinterest} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                <a
+                  href={socialLinks.pinterest}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-accent"
+                >
                   <span>Pinterest</span>
                 </a>
-                <a href={socialLinks.threads} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                <a
+                  href={socialLinks.threads}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-accent"
+                >
                   <span>Threads</span>
                 </a>
-                <a href={socialLinks.snapchat} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                <a
+                  href={socialLinks.snapchat}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-accent"
+                >
                   <span>Snapchat</span>
                 </a>
               </div>
@@ -1283,16 +1493,16 @@ export default function Home() {
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
             <p>© 2026 Isaac Hakobian. {t.allRightsReserved}</p>
             {user && (
-              <a href="/analytics" className="mt-4 inline-block text-accent hover:underline">
+              <a
+                href="/analytics"
+                className="mt-4 inline-block text-accent hover:underline"
+              >
                 View Analytics
               </a>
             )}
           </div>
         </div>
       </footer>
-
-
-
     </div>
   );
 }

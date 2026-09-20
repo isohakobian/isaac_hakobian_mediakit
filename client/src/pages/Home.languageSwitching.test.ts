@@ -48,16 +48,39 @@ describe("Home language switching", () => {
     for (const language of ["en", "ru", "es", "ar", "fr"] as const) {
       testState.language = language;
       const markup = renderToStaticMarkup(React.createElement(Home));
-      const normalizedMarkup = markup.replace(/&#x27;/g, "'").replace(/&amp;/g, "&");
+      const normalizedMarkup = markup
+        .replace(/&#x27;/g, "'")
+        .replace(/&amp;/g, "&");
       const homepageCopy = translations[language];
 
       expect(normalizedMarkup).toContain(homepageCopy.tagline);
       expect(normalizedMarkup).toContain(homepageCopy.mediaLabel);
       // expect(normalizedMarkup).toContain(homepageCopy.viewWork);
-      expect(normalizedMarkup).toContain(`dir="${language === "ar" ? "rtl" : "ltr"}"`);
+      expect(normalizedMarkup).toContain(
+        `dir="${language === "ar" ? "rtl" : "ltr"}"`
+      );
+
+      const galleryStart = normalizedMarkup.indexOf(
+        'data-testid="collaboration-gallery"'
+      );
+      const galleryEnd = normalizedMarkup.indexOf(
+        homepageCopy.collaborationPackages,
+        galleryStart
+      );
+      const galleryMarkup = normalizedMarkup.slice(galleryStart, galleryEnd);
+
+      expect(galleryStart).toBeGreaterThan(-1);
+      expect(galleryMarkup.match(/<video/g) ?? []).toHaveLength(10);
+      expect(galleryMarkup).not.toContain("<iframe");
+      expect(galleryMarkup).not.toContain("<a ");
+      expect(galleryMarkup).not.toContain(homepageCopy.results);
 
       if (language === "en") {
         expect(normalizedMarkup).toContain("Marina Traveling Agency");
+        expect(normalizedMarkup).toContain("Aura Cleaning");
+        expect(normalizedMarkup).toContain("Orsis Arms");
+        expect(normalizedMarkup).toContain("Maqoor");
+        expect(normalizedMarkup).toContain("Dr. Karen Petrosyan");
         expect(normalizedMarkup).not.toContain("Rooms Project");
       }
     }
