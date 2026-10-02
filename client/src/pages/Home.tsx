@@ -80,7 +80,7 @@ export const translations = {
     reelStoriesLink: "from $800",
     custom: "Custom",
     brandLinkInProfile: "Brand link in profile bio",
-    monthlyReachValue: "1.31M+ views in the last 30 days",
+    monthlyReachValue: "2.9M+ views in the last 30 days",
     passiveTrafficGeneration: "Passive traffic generation",
     professionalProduction: "Professional production",
     authenticIntegration: "Authentic integration",
@@ -296,7 +296,7 @@ export const translations = {
     reelStoriesLink: "от 25.000",
     custom: "Индивидуально",
     brandLinkInProfile: "Ссылка на бренд в профиле",
-    monthlyReachValue: "1,31M+ просмотров за последние 30 дней",
+    monthlyReachValue: "2,9M+ просмотров за последние 30 дней",
     passiveTrafficGeneration: "Пассивная генерация трафика",
     professionalProduction: "Профессиональное производство",
     authenticIntegration: "Аутентичная интеграция",
@@ -369,7 +369,7 @@ export const translations = {
     reelStoriesLink: "à partir de €650",
     custom: "Sur demande",
     brandLinkInProfile: "Lien de la marque dans la bio du profil",
-    monthlyReachValue: "1,31M+ vues sur les 30 derniers jours",
+    monthlyReachValue: "2,9M+ vues sur les 30 derniers jours",
     passiveTrafficGeneration: "Génération passive de trafic",
     professionalProduction: "Production professionnelle",
     authenticIntegration: "Intégration authentique",
@@ -519,7 +519,7 @@ export const translations = {
     reelStoriesLink: "desde $650",
     custom: "Personalizado",
     brandLinkInProfile: "Enlace de marca en bio del perfil",
-    monthlyReachValue: "1,31M+ visualizaciones en los últimos 30 días",
+    monthlyReachValue: "2,9M+ visualizaciones en los últimos 30 días",
     passiveTrafficGeneration: "Generación pasiva de tráfico",
     professionalProduction: "Producción profesional",
     authenticIntegration: "Integración auténtica",
@@ -663,7 +663,7 @@ export const translations = {
     reelStoriesLink: "من 650 ريال سعودي",
     custom: "حسب الطلب",
     brandLinkInProfile: "رابط العلامة التجارية في السيرة الذاتية للملف الشخصي",
-    monthlyReachValue: "1.31M+ مشاهدة خلال آخر 30 يوماً",
+    monthlyReachValue: "2.9M+ مشاهدة خلال آخر 30 يوماً",
     passiveTrafficGeneration: "توليد حركة مرور سلبية",
     professionalProduction: "إنتاج احترافي",
     authenticIntegration: "تكامل أصلي",
@@ -1028,7 +1028,7 @@ export default function Home() {
                   color: "#8B4513",
                 }}
               >
-                1.31M+
+                2.9M+
               </div>
               <p className="text-lg text-gray-600">{t.monthlyReach}</p>
             </div>
