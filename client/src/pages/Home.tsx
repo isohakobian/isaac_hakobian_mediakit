@@ -1040,7 +1040,7 @@ export default function Home() {
                   color: "#8B4513",
                 }}
               >
-                37.5K+
+                40.8K+
               </div>
               <p className="text-lg text-gray-600">{t.maleAudience}</p>
             </div>
