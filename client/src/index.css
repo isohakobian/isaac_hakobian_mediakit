@@ -223,4 +223,169 @@
       max-width: 1280px; /* Standard content width */
     }
   }
+}/* Quiet Luxury AI concierge */
+@keyframes concierge-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes concierge-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(1deg);
+  }
+}
+
+@keyframes concierge-pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.75;
+  }
+  70%,
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@keyframes concierge-scan {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(-8px);
+  }
+  50% {
+    opacity: 0.85;
+    transform: translateY(8px);
+  }
+}
+
+.concierge-robot {
+  animation: concierge-enter 420ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.concierge-robot--closed {
+  animation: concierge-enter 420ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.concierge-panel {
+  transform-origin: bottom left;
+  animation: concierge-enter 260ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.concierge-robot--closed .concierge-orb {
+  animation: concierge-float 4.8s ease-in-out infinite;
+}
+
+.concierge-orb {
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.concierge-orb__shine {
+  position: absolute;
+  inset: -40% 45% 40% -15%;
+  z-index: -1;
+  transform: rotate(28deg);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.9),
+    transparent
+  );
+  opacity: 0.55;
+}
+
+.concierge-robot-face {
+  position: relative;
+  display: block;
+  width: 34px;
+  height: 25px;
+  border: 1px solid rgba(18, 22, 23, 0.55);
+  border-radius: 11px 11px 13px 13px;
+  background: linear-gradient(145deg, #252b2d, #080a0b);
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.24),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.concierge-robot-eye {
+  position: absolute;
+  top: 9px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #d9b98c;
+  box-shadow: 0 0 7px rgba(217, 185, 140, 0.95);
+}
+
+.concierge-robot-eye--left {
+  left: 8px;
+}
+.concierge-robot-eye--right {
+  right: 8px;
+}
+
+.concierge-robot-mouth {
+  position: absolute;
+  bottom: 5px;
+  left: 12px;
+  width: 9px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(217, 185, 140, 0.75);
+}
+
+.concierge-antenna {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  width: 2px;
+  height: 7px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #292e30;
+}
+
+.concierge-antenna::before {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #c7a074;
+  box-shadow: 0 0 8px rgba(199, 160, 116, 0.9);
+  content: "";
+}
+
+.concierge-ping {
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #c7a074;
+  animation: concierge-pulse 1.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .concierge-robot,
+  .concierge-robot--closed,
+  .concierge-panel,
+  .concierge-robot--closed .concierge-orb,
+  .concierge-ping {
+    animation: none;
+  }
 }

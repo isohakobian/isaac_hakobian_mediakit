@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import Testimonials from "@/components/Testimonials";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import CollaborationVideoCard from "@/components/CollaborationVideoCard";
+import ConciergeRobot from "@/components/ConciergeRobot";
 
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -940,6 +941,10 @@ export default function Home() {
       dir={language === "ar" ? "rtl" : "ltr"}
       className="min-h-screen bg-white"
     >
+      <ConciergeRobot
+        language={language}
+        onAction={action => trackClick(action)}
+      />
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
         <div className="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-2 sm:gap-3">
