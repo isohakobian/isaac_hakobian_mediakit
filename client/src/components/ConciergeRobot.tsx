@@ -6,6 +6,7 @@ type ConciergeLanguage = "en" | "ru" | "es" | "ar" | "fr";
 type ConciergeRobotProps = {
   language: string;
   onAction?: (action: string) => void;
+  initiallyOpen?: boolean;
 };
 
 const copy: Record<
@@ -69,13 +70,6 @@ const copy: Record<
   },
 };
 
-const corners = [
-  "bottom-5 left-5 sm:left-8",
-  "bottom-5 right-5 sm:right-8",
-  "top-24 left-5 sm:left-8",
-  "top-24 right-5 sm:right-8",
-];
-
 function scrollToContact(action: string, onAction?: (value: string) => void) {
   onAction?.(action);
   document
@@ -91,9 +85,9 @@ function scrollToContact(action: string, onAction?: (value: string) => void) {
 export default function ConciergeRobot({
   language,
   onAction,
+  initiallyOpen = false,
 }: ConciergeRobotProps) {
-  const [corner] = useState(() => Math.floor(Math.random() * corners.length));
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(initiallyOpen);
   const [visible, setVisible] = useState(false);
   const text = copy[(language in copy ? language : "en") as ConciergeLanguage];
 
@@ -104,7 +98,7 @@ export default function ConciergeRobot({
 
   return (
     <aside
-      className={`concierge-robot fixed z-[60] transition-opacity duration-300 ${corners[corner]} ${open ? "concierge-robot--open" : "concierge-robot--closed"} ${visible ? "opacity-100" : "pointer-events-none opacity-0"}`}
+      className={`concierge-robot fixed bottom-5 right-5 z-[60] transition-opacity duration-300 sm:bottom-8 sm:right-8 ${open ? "concierge-robot--open" : "concierge-robot--closed"} ${visible ? "opacity-100" : "pointer-events-none opacity-0"}`}
       dir={language === "ar" ? "rtl" : "ltr"}
       aria-label={text.greeting}
     >
@@ -172,7 +166,10 @@ export default function ConciergeRobot({
         aria-label={open ? text.close : text.open}
       >
         <span className="concierge-orb__shine" aria-hidden="true" />
-        <span className="concierge-robot-face" aria-hidden="true">
+        <span
+          className={`concierge-robot-face ${open ? "concierge-robot-face--happy" : "concierge-robot-face--idle"}`}
+          aria-hidden="true"
+        >
           <span className="concierge-robot-eye concierge-robot-eye--left" />
           <span className="concierge-robot-eye concierge-robot-eye--right" />
           <span className="concierge-robot-mouth" />
