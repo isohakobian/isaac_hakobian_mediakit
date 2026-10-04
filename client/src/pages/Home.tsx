@@ -776,21 +776,31 @@ export const socialLinks = {
   instagram: "https://www.instagram.com/isaac_hakobian",
   instagramDirect: "https://ig.me/m/isaac_hakobian",
   email: "mailto:isohakobian@gmail.com",
-  tiktok: "https://www.tiktok.com/@isaachakobian?is_from_webapp=1&sender_device=pc",
+  tiktok:
+    "https://www.tiktok.com/@isaachakobian?is_from_webapp=1&sender_device=pc",
   youtube: "https://www.youtube.com/watch?v=-sqJm8NNIQk",
   telegram: "https://t.me/feelsbyisaac",
-  pinterest: "https://ru.pinterest.com/isohakobian/?invite_code=137a9867795341eb8f82205cd77a4703&sender=606860255946808450",
-  threads: "https://www.threads.com/@isaac_hakobian?xmt=AQG0EtpGINI1vvrZxWnawTI88VQpZJfVSu0sCtv8Gtip2Us",
-  snapchat: "https://www.snapchat.com/@isaachakobian?invite_id=INi7xTAp&locale=en_AM&share_id=WCTYLXcMR8iUpsNAfDaL8w&sid=37e945e382b245518a90b1435f2bd780",
+  pinterest:
+    "https://ru.pinterest.com/isohakobian/?invite_code=137a9867795341eb8f82205cd77a4703&sender=606860255946808450",
+  threads:
+    "https://www.threads.com/@isaac_hakobian?xmt=AQG0EtpGINI1vvrZxWnawTI88VQpZJfVSu0sCtv8Gtip2Us",
+  snapchat:
+    "https://www.snapchat.com/@isaachakobian?invite_id=INi7xTAp&locale=en_AM&share_id=WCTYLXcMR8iUpsNAfDaL8w&sid=37e945e382b245518a90b1435f2bd780",
 };
 
 export default function Home() {
   const { user } = useAuth();
   const { trackClick, trackFormSubmit, language, setLanguage } = useAnalytics();
-  const { data: managedCollaborations } = trpc.collaborations.publicList.useQuery();
-  const [formState, setFormState] = useState({ name: "", email: "", message: "" });
+  const { data: managedCollaborations } =
+    trpc.collaborations.publicList.useQuery();
+  const [formState, setFormState] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
   const [submitted, setSubmitted] = useState(false);
-  const t = translations[language as keyof typeof translations] || translations.en;
+  const t =
+    translations[language as keyof typeof translations] || translations.en;
 
   // Keep Recent Collaborations in newest-first order. Add each new collaboration above the existing entries.
   const collaborations: CollaborationDisplayItem[] = [
@@ -886,10 +896,18 @@ export default function Home() {
     },
   ];
 
-  const currentLocale: CollaborationLanguage = collaborationLanguages.includes(language as CollaborationLanguage) ? language as CollaborationLanguage : "en";
+  const currentLocale: CollaborationLanguage = collaborationLanguages.includes(
+    language as CollaborationLanguage
+  )
+    ? (language as CollaborationLanguage)
+    : "en";
   const managedItems: CollaborationDisplayItem[] = (managedCollaborations ?? [])
-    .filter((item) => item.mediaUrl.startsWith("/manus-storage/") || /\.mp4(?:$|\?)/i.test(item.mediaUrl))
-    .map((item) => {
+    .filter(
+      item =>
+        item.mediaUrl.startsWith("/manus-storage/") ||
+        /\.mp4(?:$|\?)/i.test(item.mediaUrl)
+    )
+    .map(item => {
       const content = getManagedTranslation(item, currentLocale);
       return {
         slug: `managed-${item.id}`,
@@ -901,7 +919,10 @@ export default function Home() {
       };
     });
 
-  const orderedCollaborations = sortCollaborationsNewestFirst([...managedItems, ...collaborations]);
+  const orderedCollaborations = sortCollaborationsNewestFirst([
+    ...managedItems,
+    ...collaborations,
+  ]);
 
   const handleInstagramDM = () => {
     window.open(socialLinks.instagramDirect, "_blank");
@@ -911,18 +932,27 @@ export default function Home() {
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/trpc/system.sendEmail?input=" + encodeURIComponent(JSON.stringify({
-        to: "isohakobian@gmail.com",
-        subject: `Collaboration Inquiry from ${formState.name}`,
-        message: formState.message,
-        senderEmail: formState.email,
-      })), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        "/api/trpc/system.sendEmail?input=" +
+          encodeURIComponent(
+            JSON.stringify({
+              to: "isohakobian@gmail.com",
+              subject: `Collaboration Inquiry from ${formState.name}`,
+              message: formState.message,
+              senderEmail: formState.email,
+            })
+          ),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (response.ok) {
-        trackFormSubmit("contact-form", { email: formState.email, name: formState.name });
+        trackFormSubmit("contact-form", {
+          email: formState.email,
+          name: formState.name,
+        });
         setSubmitted(true);
         setFormState({ name: "", email: "", message: "" });
         toast.success(t.thankYou);
@@ -1066,33 +1096,44 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section className="py-20 px-6 bg-gray-50">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-8" style={{ fontFamily: "Playfair Display, serif" }}>
+      <section id="about" className="py-20 px-6 bg-gray-50">
+        <div className="mx-auto flex max-w-5xl justify-center">
+          <div className="w-full text-center">
+            <h2
+              className="mx-auto mb-8 max-w-4xl text-4xl font-bold sm:text-5xl"
+              style={{ fontFamily: "Playfair Display, serif" }}
+            >
               {t.aboutBrand}
             </h2>
-            <p className="text-lg text-gray-700 leading-relaxed max-w-3xl">{t.aboutText}</p>
+            <p className="mx-auto max-w-3xl text-center text-lg leading-relaxed text-gray-700">
+              {t.aboutText}
+            </p>
           </div>
         </div>
       </section>
-
-
 
       {/* Recent Collaborations — native inline video, no external post UI */}
       <section id="collaboration" className="bg-[#f4f1ec] px-6 py-20 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 border-b border-[#d8d0c6] pb-8 sm:mb-14">
             <div>
-              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#aa7942]">{t.mediaLabel}</p>
-              <h2 className="max-w-2xl text-4xl font-normal leading-[0.98] text-[#211d19] sm:text-6xl" style={{ fontFamily: "Playfair Display, serif" }}>
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#aa7942]">
+                {t.mediaLabel}
+              </p>
+              <h2
+                className="max-w-2xl text-4xl font-normal leading-[0.98] text-[#211d19] sm:text-6xl"
+                style={{ fontFamily: "Playfair Display, serif" }}
+              >
                 {t.recentCollaborations}
               </h2>
             </div>
           </div>
 
-          <div data-testid="collaboration-gallery" className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {orderedCollaborations.map((item) => (
+          <div
+            data-testid="collaboration-gallery"
+            className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {orderedCollaborations.map(item => (
               <CollaborationVideoCard
                 key={item.slug}
                 brand={item.brand}

@@ -59,6 +59,12 @@ describe("Home language switching", () => {
       expect(normalizedMarkup).toContain(
         `dir="${language === "ar" ? "rtl" : "ltr"}"`
       );
+      expect(normalizedMarkup).toContain(
+        '<section id="about" class="py-20 px-6 bg-gray-50">'
+      );
+      expect(normalizedMarkup).toContain(
+        'class="mx-auto max-w-3xl text-center text-lg leading-relaxed text-gray-700"'
+      );
 
       const galleryStart = normalizedMarkup.indexOf(
         'data-testid="collaboration-gallery"'
