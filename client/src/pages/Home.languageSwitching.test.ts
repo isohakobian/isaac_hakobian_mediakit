@@ -65,6 +65,7 @@ describe("Home language switching", () => {
       expect(normalizedMarkup).toContain(
         'class="mx-auto max-w-3xl text-center text-lg leading-relaxed text-gray-700"'
       );
+      expect(normalizedMarkup).toContain('data-testid="stats-about-divider"');
 
       const galleryStart = normalizedMarkup.indexOf(
         'data-testid="collaboration-gallery"'

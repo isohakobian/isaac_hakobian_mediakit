@@ -1093,6 +1093,15 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div
+          data-testid="stats-about-divider"
+          aria-hidden="true"
+          className="mx-auto flex max-w-6xl items-center justify-center gap-4 pt-2"
+        >
+          <span className="h-px w-16 bg-[#d8d0c6] sm:w-28" />
+          <span className="h-1.5 w-1.5 rotate-45 bg-[#aa7942]" />
+          <span className="h-px w-16 bg-[#d8d0c6] sm:w-28" />
+        </div>
       </section>
 
       {/* About Section */}
