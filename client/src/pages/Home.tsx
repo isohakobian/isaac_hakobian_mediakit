@@ -2,19 +2,12 @@ import { Mail, Instagram, ArrowRight, Youtube, Send } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import Testimonials from "@/components/Testimonials";
+import ShowreelSection from "@/components/ShowreelSection";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import CollaborationVideoCard from "@/components/CollaborationVideoCard";
 import ConciergeRobot from "@/components/ConciergeRobot";
 
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { sortCollaborationsNewestFirst } from "@shared/collaborationOrder";
-import {
-  collaborationLanguages,
-  type CollaborationLanguage,
-  type ManagedCollaboration,
-} from "@shared/collaborations";
-import { trpc } from "@/lib/trpc";
 
 /**
  * Editorial Minimalism Design System
@@ -23,24 +16,6 @@ import { trpc } from "@/lib/trpc";
  * - Layout: Full-width image sections with text overlays
  * - Vibe: High-end editorial, cinematic, premium
  */
-
-function getManagedTranslation(
-  item: ManagedCollaboration,
-  language: CollaborationLanguage
-) {
-  const fallback = item.translations.en;
-  return { ...fallback, ...(item.translations[language] ?? {}) };
-}
-
-type CollaborationDisplayItem = {
-  slug: string;
-  brand: string;
-  collaborationTitle: string;
-  partnershipType: string;
-  videoUrl: string;
-  posterUrl?: string;
-  publishedAt: string | null;
-};
 
 export const translations = {
   en: {
@@ -62,6 +37,13 @@ export const translations = {
     everydayCarry: "High-quality everyday carry",
     performanceBrands: "Performance and personal development brands",
     recentCollaborations: "Recent Collaborations",
+    showreelEyebrow: "Showreel",
+    showreelTitle: "Isaac Hakobian — built for brand stories",
+    showreelDescription:
+      "A 36-second cut of real lifestyle, fashion, fitness, grooming and travel integrations — made for partners who value a premium, natural fit.",
+    showreelPlay: "Play showreel",
+    showreelCta: "Let's create together",
+    showreelNoScript: "Watch the Isaac Hakobian showreel",
     collaborationPackages: "Collaboration Packages",
     getInTouch: "Get in Touch",
     linkInBio: "Traffic Push",
@@ -205,6 +187,13 @@ export const translations = {
     everydayCarry: "Премиум эверидей",
     performanceBrands: "Бренды развития и производительности",
     recentCollaborations: "Недавние сотрудничества",
+    showreelEyebrow: "Шоурил",
+    showreelTitle: "Исаак Акобян — для историй брендов",
+    showreelDescription:
+      "36-секундная подборка реальных lifestyle-, fashion-, fitness-, grooming- и travel-интеграций для партнёров, которым важны премиальная подача и естественный fit.",
+    showreelPlay: "Смотреть шоурил",
+    showreelCta: "Давайте создадим вместе",
+    showreelNoScript: "Открыть шоурил Исаака Акобяна",
     collaborationPackages: "Пакеты сотрудничества",
     collaborationProof: "Результаты кампании",
     campaignType: "Тип кампании",
@@ -351,6 +340,13 @@ export const translations = {
     performanceBrands:
       "Marques liées à la performance et au développement personnel",
     recentCollaborations: "Collaborations récentes",
+    showreelEyebrow: "Showreel",
+    showreelTitle: "Isaac Hakobian — des histoires de marque qui se vivent",
+    showreelDescription:
+      "36 secondes d'intégrations lifestyle, mode, fitness, grooming et voyage — pensées pour les partenaires qui recherchent une présence premium et naturelle.",
+    showreelPlay: "Voir le showreel",
+    showreelCta: "Créons ensemble",
+    showreelNoScript: "Voir le showreel d'Isaac Hakobian",
     collaborationPackages: "Packages de collaboration",
     getInTouch: "Prendre contact",
     linkInBio: "Traffic Push",
@@ -501,6 +497,13 @@ export const translations = {
     everydayCarry: "Productos everyday carry de alta calidad",
     performanceBrands: "Marcas de desempeño y desarrollo personal",
     recentCollaborations: "Colaboraciones recientes",
+    showreelEyebrow: "Showreel",
+    showreelTitle: "Isaac Hakobian — historias de marca con estilo",
+    showreelDescription:
+      "36 segundos de integraciones reales de lifestyle, moda, fitness, grooming y viajes — creadas para partners que buscan una presencia premium y natural.",
+    showreelPlay: "Ver showreel",
+    showreelCta: "Creemos juntos",
+    showreelNoScript: "Ver el showreel de Isaac Hakobian",
     collaborationPackages: "Paquetes de colaboración",
     getInTouch: "Ponte en contacto",
     linkInBio: "Traffic Push",
@@ -645,6 +648,13 @@ export const translations = {
     everydayCarry: "منتجات الحمل اليومي عالية الجودة",
     performanceBrands: "علامات الأداء والتطور الشخصي",
     recentCollaborations: "التعاونات الأخيرة",
+    showreelEyebrow: "Showreel",
+    showreelTitle: "إسحاق هاكوبيان — قصص للعلامات التجارية",
+    showreelDescription:
+      "36 ثانية من الدمج الحقيقي في أسلوب الحياة والموضة واللياقة والعناية والسفر — لشركاء يبحثون عن حضور راقٍ وطبيعي.",
+    showreelPlay: "مشاهدة الشو ريل",
+    showreelCta: "لنبتكر معًا",
+    showreelNoScript: "مشاهدة شو ريل إسحاق هاكوبيان",
     collaborationPackages: "حزم التعاون",
     getInTouch: "تواصل معنا",
     linkInBio: "Traffic Push",
@@ -791,8 +801,6 @@ export const socialLinks = {
 export default function Home() {
   const { user } = useAuth();
   const { trackClick, trackFormSubmit, language, setLanguage } = useAnalytics();
-  const { data: managedCollaborations } =
-    trpc.collaborations.publicList.useQuery();
   const [formState, setFormState] = useState({
     name: "",
     email: "",
@@ -801,128 +809,6 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false);
   const t =
     translations[language as keyof typeof translations] || translations.en;
-
-  // Keep Recent Collaborations in newest-first order. Add each new collaboration above the existing entries.
-  const collaborations: CollaborationDisplayItem[] = [
-    {
-      slug: "karen-petrosyan",
-      brand: t.karenPetrosyan,
-      collaborationTitle: t.karenPetrosyanProject,
-      partnershipType: t.karenPetrosyanCampaign,
-      videoUrl: "/manus-storage/karen_331b6faf.mp4",
-      posterUrl: "/manus-storage/karen_db3c4b71.jpg",
-      publishedAt: "2026-09-15",
-    },
-    {
-      slug: "maqoor",
-      brand: t.maqoor,
-      collaborationTitle: t.maqoorProject,
-      partnershipType: t.maqoorCampaign,
-      videoUrl: "/manus-storage/maqoor_ec053bc5.mp4",
-      posterUrl: "/manus-storage/maqoor_6ea7da9a.jpg",
-      publishedAt: "2026-09-06",
-    },
-    {
-      slug: "orsis-arms",
-      brand: t.orsisArms,
-      collaborationTitle: t.orsisArmsProject,
-      partnershipType: t.orsisArmsCampaign,
-      videoUrl: "/manus-storage/orsis_51d66c59.mp4",
-      posterUrl: "/manus-storage/orsis_c62dcfc2.jpg",
-      publishedAt: "2026-08-22",
-    },
-    {
-      slug: "aura-cleaning",
-      brand: t.auraCleaning,
-      collaborationTitle: t.auraCleaningProject,
-      partnershipType: t.auraCleaningCampaign,
-      videoUrl: "/manus-storage/aura_66b43742.mp4",
-      posterUrl: "/manus-storage/aura_aa912bf5.jpg",
-      publishedAt: "2026-08-17",
-    },
-    {
-      slug: "marina-travel",
-      brand: t.marinaTravel,
-      collaborationTitle: t.marinaTravelProject,
-      partnershipType: t.marinaTravelCampaign,
-      videoUrl: "/manus-storage/marina_3adfbf7d.mp4",
-      posterUrl: "/manus-storage/marina_acf8201f.jpg",
-      publishedAt: "2026-08-17",
-    },
-    {
-      slug: "limber-life-armenia",
-      brand: t.limberLifeArmenia,
-      collaborationTitle: t.limberLifeArmeniaProject,
-      partnershipType: t.limberLifeArmeniaCampaign,
-      videoUrl: "/manus-storage/limber_4e9d4cd4.mp4",
-      posterUrl: "/manus-storage/limber_1987c690.jpg",
-      publishedAt: "2026-08-14",
-    },
-    {
-      slug: "dream-beach-club",
-      brand: t.DreamBeachClub,
-      collaborationTitle: t.dreamBeachClubProject,
-      partnershipType: t.dreamBeachClubCampaign,
-      videoUrl: "/manus-storage/dream_a6816766.mp4",
-      posterUrl: "/manus-storage/dream_dec4f2c1.jpg",
-      publishedAt: null,
-    },
-    {
-      slug: "abib",
-      brand: t.Abib,
-      collaborationTitle: t.abibProject,
-      partnershipType: t.abibCampaign,
-      videoUrl: "/manus-storage/abib_45613a61.mp4",
-      posterUrl: "/manus-storage/abib_20444ba1.jpg",
-      publishedAt: null,
-    },
-    {
-      slug: "ya-kapitan",
-      brand: t.Yakapitan,
-      collaborationTitle: t.yakapitanProject,
-      partnershipType: t.yakapitanCampaign,
-      videoUrl: "/manus-storage/yakapitan_73790604.mp4",
-      posterUrl: "/manus-storage/yakapitan_e4b68830.jpg",
-      publishedAt: null,
-    },
-    {
-      slug: "swdr",
-      brand: t.Swdr,
-      collaborationTitle: t.swdrProject,
-      partnershipType: t.swdrCampaign,
-      videoUrl: "/manus-storage/swdr_1a75350f.mp4",
-      posterUrl: "/manus-storage/swdr_d2a60799.jpg",
-      publishedAt: null,
-    },
-  ];
-
-  const currentLocale: CollaborationLanguage = collaborationLanguages.includes(
-    language as CollaborationLanguage
-  )
-    ? (language as CollaborationLanguage)
-    : "en";
-  const managedItems: CollaborationDisplayItem[] = (managedCollaborations ?? [])
-    .filter(
-      item =>
-        item.mediaUrl.startsWith("/manus-storage/") ||
-        /\.mp4(?:$|\?)/i.test(item.mediaUrl)
-    )
-    .map(item => {
-      const content = getManagedTranslation(item, currentLocale);
-      return {
-        slug: `managed-${item.id}`,
-        brand: content.name,
-        collaborationTitle: item.mediaTitle,
-        partnershipType: content.campaign,
-        videoUrl: item.mediaUrl,
-        publishedAt: item.publishedAt,
-      };
-    });
-
-  const orderedCollaborations = sortCollaborationsNewestFirst([
-    ...managedItems,
-    ...collaborations,
-  ]);
 
   const handleInstagramDM = () => {
     window.open(socialLinks.instagramDirect, "_blank");
@@ -1121,43 +1007,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Recent Collaborations — native inline video, no external post UI */}
-      <section id="collaboration" className="bg-[#f4f1ec] px-6 py-20 sm:py-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 border-b border-[#d8d0c6] pb-8 sm:mb-14">
-            <div>
-              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#aa7942]">
-                {t.mediaLabel}
-              </p>
-              <h2
-                className="max-w-2xl text-4xl font-normal leading-[0.98] text-[#211d19] sm:text-6xl"
-                style={{ fontFamily: "Playfair Display, serif" }}
-              >
-                {t.recentCollaborations}
-              </h2>
-            </div>
-          </div>
-
-          <div
-            data-testid="collaboration-gallery"
-            className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {orderedCollaborations.map(item => (
-              <CollaborationVideoCard
-                key={item.slug}
-                brand={item.brand}
-                projectTitle={item.collaborationTitle}
-                partnershipType={item.partnershipType}
-                videoUrl={item.videoUrl}
-                posterUrl={item.posterUrl}
-                collaborationLabel={t.collaboration}
-                formatLabel={t.campaignType}
-                onPlay={() => trackClick(`collaboration-play-${item.slug}`)}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Showreel — verified real brand integrations */}
+      <ShowreelSection
+        eyebrow={t.showreelEyebrow}
+        title={t.showreelTitle}
+        description={t.showreelDescription}
+        playLabel={t.showreelPlay}
+        ctaLabel={t.showreelCta}
+        ctaHref="#contact"
+        fallbackLabel={t.showreelNoScript}
+        onPlay={() => trackClick("showreel-play")}
+      />
 
       {/* Testimonials Section */}
       <Testimonials language={language} />
