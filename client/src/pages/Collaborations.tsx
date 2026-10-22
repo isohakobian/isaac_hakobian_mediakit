@@ -30,6 +30,7 @@ function loadFilterPresets(): CollaborationFilterPreset[] {
       .filter((item): item is CollaborationFilterPreset => Boolean(item?.id && item?.name))
       .map((item) => ({
         ...item,
+        language: item.language === "all" || collaborationLanguages.includes(item.language) ? item.language : "all",
         category: typeof item.category === "string" ? item.category : "",
         sortMode: item.sortMode === "oldest" || item.sortMode === "brand-asc" || item.sortMode === "brand-desc" ? item.sortMode : "newest",
       }));
@@ -41,9 +42,7 @@ function loadFilterPresets(): CollaborationFilterPreset[] {
 const languageLabels: Record<CollaborationLanguage, string> = {
   en: "English",
   ru: "Русский",
-  es: "Español",
-  ar: "العربية",
-  fr: "Français",
+  hy: "Հայերեն",
 };
 
 const createEmptyTranslation = (): CollaborationTranslation => ({
@@ -59,9 +58,7 @@ const createEmptyTranslation = (): CollaborationTranslation => ({
 const createEmptyTranslations = (): CollaborationTranslations => ({
   en: createEmptyTranslation(),
   ru: createEmptyTranslation(),
-  es: createEmptyTranslation(),
-  ar: createEmptyTranslation(),
-  fr: createEmptyTranslation(),
+  hy: createEmptyTranslation(),
 });
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -82,7 +79,7 @@ function isTranslationComplete(translation: CollaborationTranslation) {
 
 function formFromCollaboration(item: ManagedCollaboration): CollaborationForm {
   return {
-    translations: item.translations,
+    translations: { ...createEmptyTranslations(), ...item.translations },
     mediaUrl: item.mediaUrl,
     mediaTitle: item.mediaTitle,
     publishedAt: item.publishedAt ?? "",

@@ -2,7 +2,7 @@ import { eq, and, asc, count, desc, gt, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { sql } from "drizzle-orm";
 import { Collaboration, InsertCollaboration, InsertUser, collaborations, users, testimonials, analytics, InsertAnalytics, InsertTestimonial, backupOperations, InsertBackupOperation } from "../drizzle/schema";
-import type { CollaborationTranslations, ManagedCollaboration } from "@shared/collaborations";
+import { normalizeCollaborationTranslations, type ManagedCollaboration } from "@shared/collaborations";
 import { buildBackupImportDiff } from "@shared/backupImport";
 import { ENV } from './_core/env';
 import { storagePut } from "./storage";
@@ -177,7 +177,7 @@ function serializeCollaboration(row: Collaboration): ManagedCollaboration | null
   try {
     return {
       id: row.id,
-      translations: JSON.parse(row.translations) as CollaborationTranslations,
+      translations: normalizeCollaborationTranslations(JSON.parse(row.translations)),
       mediaUrl: row.mediaUrl,
       mediaTitle: row.mediaTitle,
       publishedAt: row.publishedAt ? row.publishedAt.toISOString().slice(0, 10) : null,

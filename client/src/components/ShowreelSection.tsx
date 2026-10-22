@@ -1,7 +1,9 @@
 import { ArrowRight, Play } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { getPromoAssets } from "@/lib/promoAssets";
 
 type ShowreelSectionProps = {
+  language: string;
   eyebrow: string;
   title: string;
   description: string;
@@ -12,11 +14,14 @@ type ShowreelSectionProps = {
   onPlay?: () => void;
 };
 
-const videoSrc = "/media/isaac-promo-v2.mp4";
-const posterSrc = "/media/isaac-promo-v2-poster.jpg";
-const captionsSrc = "/showreel-captions.vtt";
+export default function ShowreelSection(props: ShowreelSectionProps) {
+  const assets = getPromoAssets(props.language);
+  // A language change stops the old film and returns to the new localized poster.
+  return <LocalizedShowreel key={assets.locale} {...props} />;
+}
 
-export default function ShowreelSection({
+function LocalizedShowreel({
+  language,
   eyebrow,
   title,
   description,
@@ -26,12 +31,16 @@ export default function ShowreelSection({
   fallbackLabel,
   onPlay,
 }: ShowreelSectionProps) {
+  const { locale, videoSrc, posterSrc, captionsSrc, captionLabel } =
+    getPromoAssets(language);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasError, setHasError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (isPlaying) videoRef.current?.focus();
+    const video = videoRef.current;
+    if (isPlaying) video?.focus();
+    return () => video?.pause();
   }, [isPlaying]);
 
   const handlePlay = () => {
@@ -43,6 +52,7 @@ export default function ShowreelSection({
     <section
       id="collaboration"
       data-testid="showreel-section"
+      data-promo-language={locale}
       aria-labelledby="showreel-title"
       className="bg-[#f4f1ec] px-6 py-20 sm:py-24"
     >
@@ -76,6 +86,7 @@ export default function ShowreelSection({
               {isPlaying ? (
                 <video
                   ref={videoRef}
+                  lang={locale}
                   tabIndex={0}
                   width={1920}
                   height={1080}
@@ -92,8 +103,8 @@ export default function ShowreelSection({
                   <track
                     kind="captions"
                     src={captionsSrc}
-                    srcLang="ru"
-                    label="Русский"
+                    srcLang={locale}
+                    label={captionLabel}
                   />
                   <a href={videoSrc}>{fallbackLabel}</a>
                 </video>

@@ -1,4 +1,6 @@
-export const collaborationLanguages = ["en", "ru", "es", "ar", "fr"] as const;
+import { siteLanguages } from "./siteLanguages";
+
+export const collaborationLanguages = siteLanguages;
 
 export type CollaborationLanguage = (typeof collaborationLanguages)[number];
 
@@ -12,7 +14,15 @@ export type CollaborationTranslation = {
   quoteLabel?: string;
 };
 
-export type CollaborationTranslations = Record<CollaborationLanguage, CollaborationTranslation>;
+export type CollaborationTranslations = Record<CollaborationLanguage, CollaborationTranslation> & Record<string, CollaborationTranslation>;
+
+export function normalizeCollaborationTranslations(raw: Record<string, CollaborationTranslation>): CollaborationTranslations {
+  const result = { ...raw };
+  for (const language of collaborationLanguages) {
+    result[language] ??= { name: "", category: "", description: "", campaign: "", results: "", quote: "" };
+  }
+  return result as CollaborationTranslations;
+}
 
 export type ManagedCollaboration = {
   id: number;
@@ -36,7 +46,8 @@ export type CollaborationListFilters = {
 
 export type CollaborationSortMode = "newest" | "oldest" | "brand-asc" | "brand-desc";
 
-export function isCollaborationTranslationComplete(translation: CollaborationTranslation) {
+export function isCollaborationTranslationComplete(translation: CollaborationTranslation | undefined) {
+  if (!translation) return false;
   return [translation.name, translation.category, translation.description, translation.campaign, translation.results, translation.quote]
     .every((value) => value.trim().length > 0);
 }

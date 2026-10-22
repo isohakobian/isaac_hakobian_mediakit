@@ -1,7 +1,7 @@
 import Foundation
 import AVFoundation
 
-let root="scratch/promo-v2/"
+let root=(CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "scratch/promo-v2").trimmingCharacters(in:CharacterSet(charactersIn:"/"))+"/"
 let asset=AVURLAsset(url:URL(fileURLWithPath:root+"isaac-promo-v2-master.mp4"))
 let sourceVideo=asset.tracks(withMediaType:.video).first!
 let sourceAudio=asset.tracks(withMediaType:.audio).first!

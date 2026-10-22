@@ -1,7 +1,10 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import { CollaborationSelector, selectorTranslations } from "./CollaborationSelector";
+import {
+  CollaborationSelector,
+  selectorTranslations,
+} from "./CollaborationSelector";
 
 vi.mock("@/lib/trpc", () => ({
   trpc: {
@@ -18,8 +21,10 @@ vi.mock("@/lib/trpc", () => ({
 
 describe("CollaborationSelector rendered language switching", () => {
   it("renders the selector and brief labels from the active language", () => {
-    for (const language of ["en", "ru", "es", "ar", "fr"] as const) {
-      const markup = renderToStaticMarkup(React.createElement(CollaborationSelector, { language }));
+    for (const language of ["en", "ru", "hy"] as const) {
+      const markup = renderToStaticMarkup(
+        React.createElement(CollaborationSelector, { language })
+      );
       const copy = selectorTranslations[language];
 
       expect(markup).toContain(copy.badge);
@@ -27,7 +32,7 @@ describe("CollaborationSelector rendered language switching", () => {
       expect(markup).toContain(copy.step1);
       expect(markup).toContain(copy.step2);
       expect(markup).toContain(copy.cta);
-      expect(markup).toContain(`dir="${language === "ar" ? "rtl" : "ltr"}"`);
+      expect(markup).toContain('dir="ltr"');
     }
   });
 });

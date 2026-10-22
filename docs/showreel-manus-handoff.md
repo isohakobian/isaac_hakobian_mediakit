@@ -1,51 +1,62 @@
-# Isaac Hakobian — promo v2
+# Media Kit — единый пакет EN / RU / HY
 
-36-second landscape promo with animated typography, masked title reveals,
-moving portrait panels, editorial split screens and an original synthesized score.
+Ветка: `feat/isaac-showreel`. PR: https://github.com/isohakobian/isaac_hakobian_mediakit/pull/1
 
-## Files included in this PR
+## Что входит
 
-- `client/public/media/isaac-promo-v2.mp4` — 1280×720, H.264/AAC, approximately 9.2 MiB.
-- `client/public/media/isaac-promo-v2-poster.jpg` — 1920×1080 JPEG poster.
-- `client/public/showreel-captions.vtt` — Russian on-screen text and music captions.
-- `client/src/components/ShowreelSection.tsx` — responsive 16:9 poster-first player.
-- `tools/promo/` — editable render and original-score sources for macOS.
+Сайт поддерживает только English, Русский и Հայերեն. Испанский, арабский и французский
+убраны из выбора и активных словарей. Старая сохранённая настройка неподдерживаемого
+языка переводится на английский. Документ получает правильный атрибут `lang`.
 
-The web MP4 and poster are committed with the code. Manus storage upload is no
-longer required. The 1920×1080 master remains a local review artifact.
+| Язык | Видео | Постер | Субтитры |
+| --- | --- | --- | --- |
+| English | `/media/promo/en.mp4` | `/media/promo/en.jpg` | `/media/promo/en.vtt` |
+| Русский | `/media/promo/ru.mp4` | `/media/promo/ru.jpg` | `/media/promo/ru.vtt` |
+| Հայերեն | `/media/promo/hy.mp4` | `/media/promo/hy.jpg` | `/media/promo/hy.vtt` |
 
-## Portfolio footage
+Все девять файлов уже находятся в `client/public/media/promo/`.
+Загружать материалы вручную в Manus Storage не требуется.
 
-The edit uses existing Media Kit integrations: SWDR.BY, Maqoor, Abib,
-Limber Life Armenia × Pravilo, Ya Kapitan and Dream Beach Club. The film
-does not introduce new partnerships, testimonials or performance claims.
-Original clip audio is removed; the score and transitions are synthesized
-from scratch without music samples. Apple is a motion-design reference only;
-no Apple footage, logos or soundtrack are included.
+У роликов одинаковые монтаж, музыка и хронометраж: 36 секунд, 16:9, H.264/AAC,
+1280×720, около 9.2 MiB каждый. Русская версия сохранена; английские и армянские
+титры адаптированы по смыслу и длине. Музыкальная дорожка оригинальная, без заимствованных
+сэмплов и без озвучки.
 
-## Verification
+При смене языка старое видео ставится на паузу, отображается постер выбранной версии.
+MP4 запрашивается только после Play. Подключается соответствующий файл субтитров.
+Армянская версия включает основной текст, форму, навигацию, помощника и переводы
+точных опубликованных английских отзывов. Исторические переводы в базе не удаляются.
+В редакторе сотрудничеств активны три языка; записи без армянского текста открываются
+с пустой армянской вкладкой, а не с выдуманным переводом.
 
-- TypeScript check and frontend production build.
-- Homepage language-switching and native-video regression tests.
-- Local Chrome: no MP4 request before Play; playback, duration, dimensions,
-  captions loading and mobile overflow.
-- No merge or production deployment performed.
+## Проверка перед публикацией
 
-## Manus instructions after Isaac approves
+- `pnpm check`
+- `pnpm exec vitest run client/src server/collaborations.test.ts`
+- `pnpm build`
+- Через переключатель выбрать EN → RU → HY: проверить титры, постеры, субтитры,
+  остановку старого видео и переход CTA к `#contact`.
+- Проверить мобильный экран 390 px и сохранение языка после обновления страницы.
 
-1. Check out the latest `feat/isaac-showreel` branch from PR #1.
-2. Install with the project lockfile, run `pnpm check`, the affected tests and `pnpm build`.
-3. Create a preview using the committed media files. Preserve `/media/isaac-promo-v2.mp4`,
-   `/media/isaac-promo-v2-poster.jpg` and `/showreel-captions.vtt` paths.
-4. Verify desktop/mobile, full-screen playback, captions, playback controls and the
-   CTA to `#contact`. Keep analytics and storage environment settings from the host.
-5. Show Isaac the preview. Merge and production publication require his explicit approval.
+Параметры авторизации, аналитики и существующего хранилища брать из окружения проекта.
+Для публикации этих изменений не нужны миграции базы или повторный рендер видео.
 
-## Rebuilding the promo on macOS
+## Готовая задача для Manus после утверждения
 
-Download the six source MP4s from the existing Media Kit into `scratch/`, preserving
-their filenames listed in `sources.json`. From the repository root, compile and run
-`render.swift` with argument `render`; run `score.swift`; encode `original-score.wav`
-to `score-final.m4a` with `afconvert -f m4af -d aac -b 192000`; then run `mux.swift`
-and `web.swift`. Outputs go to `scratch/promo-v2/`. Use a fresh output directory
-for a rebuild; renderers refuse to overwrite an existing final MP4.
+Возьми последнюю версию ветки `feat/isaac-showreel` из PR #1 целиком.
+Обнови Media Kit одним пакетом: только EN/RU/HY, три соответствующих ролика, постеры
+и субтитры уже в GitHub. Выполни проверки выше и создай preview.
+Покажи preview Исааку. Merge и production-публикация — только после его отдельного подтверждения.
+
+## Исходники промо
+
+`tools/promo/render.swift`, `locales.json`, `score.swift`, `mux.swift` и `web.swift`
+содержат анимацию, переводы и оригинальный звук. Реальные исходные интеграции:
+SWDR.BY, Maqoor, Abib, Limber Life Armenia × Pravilo, Ya Kapitan и Dream Beach Club.
+Источники перечислены в `tools/promo/sources.json`; исходное аудио клипов в промо не используется.
+
+Повторная сборка на macOS: исходные MP4 положить в `scratch/`, запустить `score.swift`,
+конвертировать WAV в `scratch/promo-v2/score-final.m4a` через `afconvert`.
+Для каждой версии запустить `render.swift render en` или `render.swift render hy`,
+затем `mux.swift scratch/promo-v3/en` и `web.swift scratch/promo-v3/en`
+(для армянской заменить `en` на `hy`). Для повторного рендера использовать новую выходную папку.

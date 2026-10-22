@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowUpRight, ChevronDown, X } from "lucide-react";
 
-type ConciergeLanguage = "en" | "ru" | "es" | "ar" | "fr";
+type ConciergeLanguage = "en" | "ru" | "hy";
 
 type ConciergeRobotProps = {
   language: string;
@@ -40,33 +40,14 @@ const copy: Record<
     close: "Закрыть консьержа",
     open: "Открыть AI-консьержа",
   },
-  es: {
-    greeting: "Conserje AI de Isaac",
-    intro: "¿Buscas una colaboración con estilo? Te llevaré al lugar adecuado.",
-    collaboration: "Quiero colaborar",
-    formats: "Ver formatos de colaboración",
-    contact: "Hacer una pregunta",
-    close: "Cerrar conserje",
-    open: "Abrir conserje AI",
-  },
-  ar: {
-    greeting: "مساعد Isaac الذكي",
-    intro: "هل تبحث عن تعاون أنيق؟ سأوصلك مباشرة إلى القسم المناسب.",
-    collaboration: "أرغب في التعاون",
-    formats: "عرض صيغ التعاون",
-    contact: "طرح سؤال",
-    close: "إغلاق المساعد",
-    open: "فتح المساعد الذكي",
-  },
-  fr: {
-    greeting: "Concierge IA d'Isaac",
-    intro:
-      "Vous cherchez une collaboration élégante ? Je vous guide au bon endroit.",
-    collaboration: "Je veux collaborer",
-    formats: "Voir les formats de collaboration",
-    contact: "Poser une question",
-    close: "Fermer le concierge",
-    open: "Ouvrir le concierge IA",
+  hy: {
+    greeting: "Իսահակի AI օգնականը",
+    intro: "Ցանկանո՞ւմ եք համագործակցել։ Կօգնեմ գտնել անհրաժեշտ բաժինը։",
+    collaboration: "Քննարկել համագործակցությունը",
+    formats: "Տեսնել համագործակցության ձևաչափերը",
+    contact: "Հարց տալ",
+    close: "Փակել օգնականը",
+    open: "Բացել AI օգնականը",
   },
 };
 
@@ -99,7 +80,7 @@ export default function ConciergeRobot({
   return (
     <aside
       className={`concierge-robot fixed bottom-5 right-5 z-[60] transition-opacity duration-300 sm:bottom-8 sm:right-8 ${open ? "concierge-robot--open" : "concierge-robot--closed"} ${visible ? "opacity-100" : "pointer-events-none opacity-0"}`}
-      dir={language === "ar" ? "rtl" : "ltr"}
+      dir="ltr"
       aria-label={text.greeting}
     >
       {open && (

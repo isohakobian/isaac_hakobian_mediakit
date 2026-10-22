@@ -9,8 +9,14 @@ import UniformTypeIdentifiers
 let W: CGFloat = 1920, H: CGFloat = 1080
 let fps: Int32 = 30
 let duration = 36.0
-let outputDir = "scratch/promo-v2"
 let mode = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "stills"
+let language = CommandLine.arguments.count > 2 ? CommandLine.arguments[2] : "ru"
+guard ["ru","en","hy"].contains(language) else {fatalError("Unsupported promo language")}
+let outputDir = CommandLine.arguments.count > 3 ? CommandLine.arguments[3] : "scratch/promo-v3/"+language
+let localePath = CommandLine.arguments.count > 4 ? CommandLine.arguments[4] : (FileManager.default.fileExists(atPath:"tools/promo/locales.json") ? "tools/promo/locales.json" : "scratch/promo-locales.json")
+let dictionaries = try JSONDecoder().decode([String:[String:String]].self,from:Data(contentsOf:URL(fileURLWithPath:localePath)))
+let localized = dictionaries[language] ?? [:]
+var measuredWidths:[String:CGFloat]=[:]
 try FileManager.default.createDirectory(atPath:outputDir,withIntermediateDirectories:true)
 let colorSpace = CGColorSpaceCreateDeviceRGB()
 let ciContext = CIContext(options:[.useSoftwareRenderer:false])
@@ -97,15 +103,39 @@ func source(_ id:String,_ t:Double)->CGImage? {
 
 var typeCache:[String:CTLine]=[:]
 func text(_ ctx:CGContext,_ value:String,_ x:CGFloat,_ y:CGFloat,_ size:CGFloat,_ color:CGColor,_ weight:String="Bold",_ tracking:CGFloat = -2,_ alpha:CGFloat=1) {
-  let key=value+"|\(size)|\(weight)|\(tracking)|\(color.components ?? [])"
+  let translated = localized[value] ?? value
+  if language != "ru", value.range(of:"[А-Яа-яЁё]",options:.regularExpression) != nil, localized[value] == nil {fatalError("Missing translation: "+value)}
+  let isArmenian = translated.range(of:"[Ա-Ֆա-ֆ]",options:.regularExpression) != nil
+  let fontName = isArmenian ? "NotoSansArmenian" : "HelveticaNeue-"+weight
+  func font(_ s:CGFloat)->CTFont {
+    let base=CTFontCreateWithName(fontName as CFString,s,nil)
+    return isArmenian && weight == "Bold" ? (CTFontCreateCopyWithSymbolicTraits(base,s,nil,.traitBold,.traitBold) ?? base) : base
+  }
+  let kern:CGFloat = isArmenian ? max(-0.6,tracking*0.25):tracking
+  func makeLine(_ s:CGFloat)->CTLine {
+    let attr=NSAttributedString(string:translated,attributes:[NSAttributedString.Key(kCTFontAttributeName as String):font(s),NSAttributedString.Key(kCTForegroundColorAttributeName as String):color,NSAttributedString.Key(kCTKernAttributeName as String):kern])
+    return CTLineCreateWithAttributedString(attr)
+  }
+  var maxWidth=W-x-80
+  if size>=90 {
+    if x>=1100 {maxWidth=700}
+    else if ["Реальные","истории."].contains(value) {maxWidth=970}
+    else if ["Энергия,","которую","видно."].contains(value) {maxWidth=815}
+    else if ["Всё","в деталях.","Исаак","Акобян."].contains(value) {maxWidth=1050}
+    else if ["Создадим","вместе."].contains(value) {maxWidth=1120}
+    else if ["Жить.","Создавать."].contains(value) {maxWidth=1050}
+  }
+  let initial=makeLine(size)
+  let width=CGFloat(CTLineGetTypographicBounds(initial,nil,nil,nil))
+  let fitSize=width>maxWidth ? floor(size*maxWidth/width):size
+  measuredWidths[value]=min(width,maxWidth)
+  let key=translated+"|\(fitSize)|\(weight)|\(kern)|\(color.components ?? [])"
   let line:CTLine
   if let cached=typeCache[key] {line=cached} else {
-    let font=CTFontCreateWithName(("HelveticaNeue-"+weight) as CFString,size,nil)
-    let attr=NSAttributedString(string:value,attributes:[NSAttributedString.Key(kCTFontAttributeName as String):font,NSAttributedString.Key(kCTForegroundColorAttributeName as String):color,NSAttributedString.Key(kCTKernAttributeName as String):tracking])
-    line=CTLineCreateWithAttributedString(attr);typeCache[key]=line
+    line=makeLine(fitSize);typeCache[key]=line
   }
-  let ascent=CTFontGetAscent(CTFontCreateWithName(("HelveticaNeue-"+weight) as CFString,size,nil))
-  ctx.saveGState();ctx.setAlpha(alpha);ctx.translateBy(x:x,y:y+ascent);ctx.scaleBy(x:1,y:-1);ctx.textPosition = .zero;CTLineDraw(line,ctx);ctx.restoreGState()
+  let ascent=CTFontGetAscent(font(fitSize))
+  ctx.saveGState();ctx.setAlpha(alpha);ctx.translateBy(x:x,y:y+(size-fitSize)*0.35+ascent);ctx.scaleBy(x:1,y:-1);ctx.textPosition = .zero;CTLineDraw(line,ctx);ctx.restoreGState()
 }
 func reveal(_ ctx:CGContext,_ value:String,_ x:CGFloat,_ y:CGFloat,_ size:CGFloat,_ color:CGColor,_ p:Double,_ weight:String="Bold",_ tracking:CGFloat = -3) {
   let e=ease(p)

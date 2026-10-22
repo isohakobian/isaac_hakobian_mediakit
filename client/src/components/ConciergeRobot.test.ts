@@ -27,6 +27,15 @@ describe("ConciergeRobot", () => {
     expect(markup).not.toContain("Show collaboration formats");
   });
 
+  it("shows Armenian prompts instead of an English fallback", () => {
+    const markup = renderToStaticMarkup(
+      createElement(ConciergeRobot, { language: "hy", initiallyOpen: true })
+    );
+    expect(markup).toContain("Իսահակի AI օգնականը");
+    expect(markup).toContain("Քննարկել համագործակցությունը");
+    expect(markup).not.toContain("I want to collaborate");
+  });
+
   it("falls back to English for an unsupported language", () => {
     const markup = renderToStaticMarkup(
       createElement(ConciergeRobot, { language: "de", initiallyOpen: true })

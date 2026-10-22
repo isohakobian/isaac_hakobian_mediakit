@@ -1,9 +1,9 @@
 import Foundation
 import AVFoundation
 
-let root="scratch/promo-v2/"
+let root=(CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "scratch/promo-v2").trimmingCharacters(in:CharacterSet(charactersIn:"/"))+"/"
 let video=AVURLAsset(url:URL(fileURLWithPath:root+"isaac-promo-v2-silent.mp4"))
-let audio=AVURLAsset(url:URL(fileURLWithPath:root+"score-final.m4a"))
+let audio=AVURLAsset(url:URL(fileURLWithPath:"scratch/promo-v2/score-final.m4a"))
 let mix=AVMutableComposition()
 let range=CMTimeRange(start:.zero,duration:CMTime(seconds:36,preferredTimescale:600))
 try mix.addMutableTrack(withMediaType:.video,preferredTrackID:kCMPersistentTrackID_Invalid)!.insertTimeRange(range,of:video.tracks(withMediaType:.video).first!,at:.zero)

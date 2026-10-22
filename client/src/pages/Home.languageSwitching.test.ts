@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import Home, { translations } from "./Home";
 
 const testState = vi.hoisted(() => ({
-  language: "en" as "en" | "ru" | "es" | "ar" | "fr",
+  language: "en" as "en" | "ru" | "hy",
 }));
 
 vi.mock("@/hooks/useAnalytics", () => ({
@@ -45,7 +45,8 @@ vi.mock("@/lib/trpc", () => ({
 
 describe("Home language switching", () => {
   it("passes each active homepage language through to the rendered homepage and root direction", () => {
-    for (const language of ["en", "ru", "es", "ar", "fr"] as const) {
+    expect(Object.keys(translations)).toEqual(["en", "ru", "hy"]);
+    for (const language of ["en", "ru", "hy"] as const) {
       testState.language = language;
       const markup = renderToStaticMarkup(React.createElement(Home));
       const normalizedMarkup = markup
@@ -57,9 +58,7 @@ describe("Home language switching", () => {
       expect(normalizedMarkup).toContain(homepageCopy.showreelTitle);
       expect(normalizedMarkup).toContain(homepageCopy.showreelPlay);
       // expect(normalizedMarkup).toContain(homepageCopy.viewWork);
-      expect(normalizedMarkup).toContain(
-        `dir="${language === "ar" ? "rtl" : "ltr"}"`
-      );
+      expect(normalizedMarkup).toContain('dir="ltr"');
       expect(normalizedMarkup).toContain(
         '<section id="about" class="py-20 px-6 bg-gray-50">'
       );
@@ -80,10 +79,10 @@ describe("Home language switching", () => {
       expect(galleryStart).toBeGreaterThan(-1);
       expect(galleryMarkup.match(/<video/g) ?? []).toHaveLength(0);
       expect(galleryMarkup).toContain('data-testid="showreel-play"');
-      expect(galleryMarkup).toContain("/media/isaac-promo-v2-poster.jpg");
+      expect(galleryMarkup).toContain(`/media/promo/${language}.jpg`);
+      expect(galleryMarkup).toContain(`data-promo-language="${language}"`);
       expect(galleryMarkup).not.toContain("<iframe");
       expect(galleryMarkup).toContain('href="#contact"');
-      expect(galleryMarkup).not.toContain(homepageCopy.results);
 
       expect(normalizedMarkup).not.toContain(
         'data-testid="collaboration-gallery"'

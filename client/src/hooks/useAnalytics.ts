@@ -1,8 +1,27 @@
 import { trpc } from "@/lib/trpc";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import {
+  normalizeSiteLanguage,
+  type SiteLanguage,
+} from "@shared/siteLanguages";
+
+function initialLanguage(): SiteLanguage {
+  if (typeof window === "undefined") return "en";
+  try {
+    return normalizeSiteLanguage(
+      localStorage.getItem("language") || navigator.language
+    );
+  } catch {
+    return normalizeSiteLanguage(navigator.language);
+  }
+}
 
 export function useAnalytics() {
-  const [language, setLanguage] = useState("en");
+  const [language, setCurrentLanguage] =
+    useState<SiteLanguage>(initialLanguage);
+  const setLanguage = useCallback((value: string) => {
+    setCurrentLanguage(normalizeSiteLanguage(value));
+  }, []);
   const trackEvent = trpc.analytics.track.useMutation();
   const hasTrackedPageView = useRef(false);
 
@@ -11,18 +30,24 @@ export function useAnalytics() {
     if (hasTrackedPageView.current) return;
     hasTrackedPageView.current = true;
 
-    // Detect language from localStorage or navigator
-    const savedLang = localStorage.getItem("language") || navigator.language.split("-")[0];
-    setLanguage(savedLang);
-
     // Track page view
     trackEvent.mutate({
       eventType: "page_view",
       eventData: {},
       referrer: document.referrer,
-      language: savedLang,
+      language,
     });
   }, []); // Empty dependency array - run only once on mount
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dir = "ltr";
+    try {
+      localStorage.setItem("language", language);
+    } catch {
+      /* Storage may be disabled. */
+    }
+  }, [language]);
 
   const trackClick = (elementId: string, elementName?: string) => {
     trackEvent.mutate({

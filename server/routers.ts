@@ -29,10 +29,8 @@ const collaborationTranslationSchema = z.object({
 const collaborationTranslationsSchema = z.object({
   en: collaborationTranslationSchema,
   ru: collaborationTranslationSchema,
-  es: collaborationTranslationSchema,
-  ar: collaborationTranslationSchema,
-  fr: collaborationTranslationSchema,
-});
+  hy: collaborationTranslationSchema,
+}).passthrough(); // Preserve historical translations when an existing record is edited.
 
 const collaborationInputSchema = z.object({
   translations: collaborationTranslationsSchema,

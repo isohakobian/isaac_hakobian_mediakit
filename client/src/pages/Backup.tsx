@@ -16,6 +16,7 @@ import { useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { translations, socialLinks } from "./Home";
+import { siteLanguages } from "@shared/siteLanguages";
 
 const HERO_IMAGE_URL = "/manus-storage/80DC245D-61F0-4786-B87F-DC079CB4BB2C_f4659d04.JPEG";
 
@@ -207,7 +208,7 @@ export function Backup() {
           translations,
           socialLinks,
           siteConfig: {
-            languages: ["en", "ru", "es", "ar", "fr"],
+            languages: [...siteLanguages],
             defaultLanguage: "en",
             designSystem: "Quiet Luxury / Editorial Minimalism",
             analyticsEvents: ["page_view", "click", "form_submit", "section_time", "language_change"],
