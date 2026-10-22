@@ -54,7 +54,8 @@ describe("Home language switching", () => {
       const homepageCopy = translations[language];
 
       expect(normalizedMarkup).toContain(homepageCopy.tagline);
-      expect(normalizedMarkup).toContain(homepageCopy.mediaLabel);
+      expect(normalizedMarkup).toContain(homepageCopy.showreelTitle);
+      expect(normalizedMarkup).toContain(homepageCopy.showreelPlay);
       // expect(normalizedMarkup).toContain(homepageCopy.viewWork);
       expect(normalizedMarkup).toContain(
         `dir="${language === "ar" ? "rtl" : "ltr"}"`
@@ -68,7 +69,7 @@ describe("Home language switching", () => {
       expect(normalizedMarkup).toContain('data-testid="stats-about-divider"');
 
       const galleryStart = normalizedMarkup.indexOf(
-        'data-testid="collaboration-gallery"'
+        'data-testid="showreel-section"'
       );
       const galleryEnd = normalizedMarkup.indexOf(
         homepageCopy.collaborationPackages,
@@ -77,19 +78,16 @@ describe("Home language switching", () => {
       const galleryMarkup = normalizedMarkup.slice(galleryStart, galleryEnd);
 
       expect(galleryStart).toBeGreaterThan(-1);
-      expect(galleryMarkup.match(/<video/g) ?? []).toHaveLength(10);
+      expect(galleryMarkup.match(/<video/g) ?? []).toHaveLength(0);
+      expect(galleryMarkup).toContain('data-testid="showreel-play"');
+      expect(galleryMarkup).toContain("/media/isaac-promo-v2-poster.jpg");
       expect(galleryMarkup).not.toContain("<iframe");
-      expect(galleryMarkup).not.toContain("<a ");
+      expect(galleryMarkup).toContain('href="#contact"');
       expect(galleryMarkup).not.toContain(homepageCopy.results);
 
-      if (language === "en") {
-        expect(normalizedMarkup).toContain("Marina Traveling Agency");
-        expect(normalizedMarkup).toContain("Aura Cleaning");
-        expect(normalizedMarkup).toContain("Orsis Arms");
-        expect(normalizedMarkup).toContain("Maqoor");
-        expect(normalizedMarkup).toContain("Dr. Karen Petrosyan");
-        expect(normalizedMarkup).not.toContain("Rooms Project");
-      }
+      expect(normalizedMarkup).not.toContain(
+        'data-testid="collaboration-gallery"'
+      );
     }
   });
 });

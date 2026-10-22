@@ -1,5 +1,5 @@
 import { ArrowRight, Play } from "lucide-react";
-import { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type ShowreelSectionProps = {
   eyebrow: string;
@@ -12,8 +12,8 @@ type ShowreelSectionProps = {
   onPlay?: () => void;
 };
 
-const videoSrc = "/manus-storage/isaac-showreel.mp4";
-const posterSrc = "/manus-storage/isaac-showreel-poster.jpg";
+const videoSrc = "/media/isaac-promo-v2.mp4";
+const posterSrc = "/media/isaac-promo-v2-poster.jpg";
 const captionsSrc = "/showreel-captions.vtt";
 
 export default function ShowreelSection({
@@ -27,6 +27,12 @@ export default function ShowreelSection({
   onPlay,
 }: ShowreelSectionProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (isPlaying) videoRef.current?.focus();
+  }, [isPlaying]);
 
   const handlePlay = () => {
     setIsPlaying(true);
@@ -41,8 +47,8 @@ export default function ShowreelSection({
       className="bg-[#f4f1ec] px-6 py-20 sm:py-24"
     >
       <div className="mx-auto max-w-6xl">
-        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,440px)] lg:gap-20">
-          <div className="max-w-2xl">
+        <div className="space-y-9">
+          <div className="max-w-3xl">
             <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#aa7942]">
               {eyebrow}
             </p>
@@ -65,52 +71,54 @@ export default function ShowreelSection({
             </a>
           </div>
 
-          <div className="w-full max-w-[440px] justify-self-center lg:justify-self-end">
-            <div className="overflow-hidden border border-[#d8d0c6] bg-[#171512] shadow-[0_18px_60px_rgba(33,29,25,0.16)]">
+          <div className="w-full">
+            <div className="overflow-hidden rounded-2xl border border-[#d8d0c6] bg-[#101011] shadow-[0_18px_60px_rgba(33,29,25,0.16)] sm:rounded-3xl">
               {isPlaying ? (
                 <video
-                  className="aspect-[9/16] w-full bg-[#171512] object-cover"
+                  ref={videoRef}
+                  tabIndex={0}
+                  width={1920}
+                  height={1080}
+                  className="aspect-video w-full bg-[#101011] object-contain focus-visible:outline-2 focus-visible:outline-[#aa7942]"
                   autoPlay
                   controls
-                  controlsList="nodownload noremoteplayback"
-                  disablePictureInPicture
                   playsInline
                   preload="metadata"
                   poster={posterSrc}
                   aria-label={title}
+                  onError={() => setHasError(true)}
                 >
                   <source src={videoSrc} type="video/mp4" />
                   <track
                     kind="captions"
                     src={captionsSrc}
-                    srcLang="en"
-                    label="English"
-                    default
+                    srcLang="ru"
+                    label="Русский"
                   />
-                  {fallbackLabel}
+                  <a href={videoSrc}>{fallbackLabel}</a>
                 </video>
               ) : (
                 <button
                   type="button"
                   data-testid="showreel-play"
                   onClick={handlePlay}
-                  className="group relative block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#aa7942] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f4f1ec]"
+                  className="group relative block aspect-video w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#aa7942]"
                   aria-label={title + ": " + playLabel}
                 >
                   <img
                     src={posterSrc}
                     alt=""
-                    width={1080}
-                    height={1920}
+                    width={1920}
+                    height={1080}
                     loading="lazy"
                     decoding="async"
-                    className="aspect-[9/16] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                    className="aspect-video w-full object-contain transition-transform duration-500 group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
                   />
-                  <span className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/15 text-white transition-colors group-hover:bg-black/25">
-                    <span className="flex h-16 w-16 items-center justify-center rounded-full border border-white/80 bg-black/25 backdrop-blur-sm">
+                  <span className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-white">
+                    <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/80 bg-black/50 backdrop-blur-sm transition-colors group-hover:bg-black/70 sm:h-20 sm:w-20">
                       <Play size={24} fill="currentColor" aria-hidden="true" />
                     </span>
-                    <span className="text-xs font-semibold uppercase tracking-[0.2em]">
+                    <span className="rounded-full bg-black/60 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] sm:text-xs">
                       {playLabel}
                     </span>
                   </span>
@@ -118,9 +126,13 @@ export default function ShowreelSection({
               )}
             </div>
 
-            <p className="mt-3 text-xs leading-relaxed text-[#8a8178]">
-              36.5 sec · 1080×1920 · captions available
-            </p>
+            {hasError && (
+              <p role="alert" className="mt-4 text-sm text-[#615b55]">
+                <a href={videoSrc} className="underline">
+                  {fallbackLabel}
+                </a>
+              </p>
+            )}
           </div>
         </div>
 

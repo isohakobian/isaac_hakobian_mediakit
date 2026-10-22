@@ -188,10 +188,10 @@ export const translations = {
     performanceBrands: "Бренды развития и производительности",
     recentCollaborations: "Недавние сотрудничества",
     showreelEyebrow: "Шоурил",
-    showreelTitle: "Исаак Акобян — для историй брендов",
+    showreelTitle: "Свой взгляд. В каждом кадре.",
     showreelDescription:
-      "36-секундная подборка реальных lifestyle-, fashion-, fitness-, grooming- и travel-интеграций для партнёров, которым важны премиальная подача и естественный fit.",
-    showreelPlay: "Смотреть шоурил",
+      "Мода, движение, уход и путешествия — через мой взгляд и реальные истории брендов. 36 секунд, чтобы познакомиться.",
+    showreelPlay: "Смотреть промо · 36 сек",
     showreelCta: "Давайте создадим вместе",
     showreelNoScript: "Открыть шоурил Исаака Акобяна",
     collaborationPackages: "Пакеты сотрудничества",
