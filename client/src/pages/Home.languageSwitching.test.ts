@@ -20,7 +20,6 @@ vi.mock("@/hooks/useAnalytics", () => ({
 vi.mock("@/_core/hooks/useAuth", () => ({
   useAuth: () => ({ user: null, loading: false }),
 }));
-vi.mock("@/components/Testimonials", () => ({ default: () => null }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 vi.mock("@/lib/trpc", () => ({
   trpc: {
@@ -77,6 +76,15 @@ describe("Media Kit homepage", () => {
         expect(html).toContain('href="#main"');
         expect(html.match(/<h1/g)).toHaveLength(1);
         expect(html.match(/<form/g)).toHaveLength(1);
+        expect(html).not.toContain("mk-testimonials");
+        expect(html).not.toContain('id="testimonials-title"');
+        for (const title of [
+          "Brand testimonials",
+          "Отзывы брендов",
+          "Բրենդների կարծիքները",
+        ]) {
+          expect(html).not.toContain(title);
+        }
         const order = [
           'id="collaboration"',
           'id="about"',

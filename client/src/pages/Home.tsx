@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
-import Testimonials from "@/components/Testimonials";
 import ShowreelSection from "@/components/ShowreelSection";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ConciergeRobot from "@/components/ConciergeRobot";
@@ -324,8 +323,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        <Testimonials language={locale} />
 
         <section
           id="contact"
