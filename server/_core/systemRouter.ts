@@ -39,11 +39,11 @@ export const systemRouter = router({
     .mutation(async ({ input }) => {
       try {
         // Notify owner about new inquiry
-        await notifyOwner({
+        const delivered = await notifyOwner({
           title: `New Collaboration Inquiry: ${input.subject}`,
           content: `From: ${input.senderEmail}\n\nMessage:\n${input.message}`,
         });
-        return { success: true };
+        return { success: delivered };
       } catch (error) {
         console.error("Email sending failed:", error);
         return { success: false };

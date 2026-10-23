@@ -9,7 +9,7 @@ describe("ConciergeRobot", () => {
       createElement(ConciergeRobot, { language: "ru", initiallyOpen: true })
     );
 
-    expect(markup).toContain("AI-консьерж Isaac");
+    expect(markup).toContain("Помощник");
     expect(markup).toContain("Хочу обсудить сотрудничество");
     expect(markup).toContain("Показать форматы сотрудничества");
     expect(markup).toContain("Задать вопрос");
@@ -22,8 +22,9 @@ describe("ConciergeRobot", () => {
       createElement(ConciergeRobot, { language: "en" })
     );
 
-    expect(markup).toContain("bottom-5 right-5");
-    expect(markup).toContain("Open AI concierge");
+    expect(markup).toContain('class="mk-help"');
+    expect(markup).toContain('aria-expanded="false"');
+    expect(markup).toContain("Open help");
     expect(markup).not.toContain("Show collaboration formats");
   });
 
@@ -31,7 +32,7 @@ describe("ConciergeRobot", () => {
     const markup = renderToStaticMarkup(
       createElement(ConciergeRobot, { language: "hy", initiallyOpen: true })
     );
-    expect(markup).toContain("Իսահակի AI օգնականը");
+    expect(markup).toContain("Օգնական");
     expect(markup).toContain("Քննարկել համագործակցությունը");
     expect(markup).not.toContain("I want to collaborate");
   });
@@ -41,7 +42,7 @@ describe("ConciergeRobot", () => {
       createElement(ConciergeRobot, { language: "de", initiallyOpen: true })
     );
 
-    expect(markup).toContain("AI concierge");
+    expect(markup).toContain("Quick help");
     expect(markup).toContain("I want to collaborate");
   });
 });

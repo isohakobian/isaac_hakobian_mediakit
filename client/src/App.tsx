@@ -5,10 +5,15 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
-import { Analytics } from "./pages/Analytics";
-import Collaborations from "./pages/Collaborations";
-import BrandRequests from "./pages/BrandRequests";
-import Backup from "./pages/Backup";
+import { lazy, Suspense } from "react";
+
+// Keep charts, backup tools and admin editors out of the public landing bundle.
+const Analytics = lazy(() =>
+  import("./pages/Analytics").then(module => ({ default: module.Analytics }))
+);
+const Collaborations = lazy(() => import("./pages/Collaborations"));
+const BrandRequests = lazy(() => import("./pages/BrandRequests"));
+const Backup = lazy(() => import("./pages/Backup"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -40,7 +45,17 @@ function App() {
       >
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <Suspense
+            fallback={
+              <div
+                role="status"
+                aria-label="Loading"
+                className="min-h-screen bg-white"
+              />
+            }
+          >
+            <Router />
+          </Suspense>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

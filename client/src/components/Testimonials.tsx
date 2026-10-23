@@ -2,98 +2,50 @@ import React from "react";
 import { trpc } from "@/lib/trpc";
 import { normalizeSiteLanguage } from "@shared/siteLanguages";
 import { localizeTestimonial } from "@/lib/testimonialCopy";
-import { Star } from "lucide-react";
+import MotionReveal from "./MotionReveal";
 
-interface TestimonialsProps {
+export default function Testimonials({
+  language = "en",
+}: {
   language?: string;
-}
-
-export default function Testimonials({ language = "en" }: TestimonialsProps) {
+}) {
   const locale = normalizeSiteLanguage(language);
   const { data: testimonials, isLoading } =
-    trpc.testimonials.getByLanguage.useQuery({
-      language: locale,
-    });
-
-  const testimonialTitle =
+    trpc.testimonials.getByLanguage.useQuery({ language: locale });
+  const title =
     locale === "ru"
       ? "Отзывы брендов"
       : locale === "hy"
         ? "Բրենդների կարծիքները"
-        : "Brand Testimonials";
-
-  if (isLoading) {
-    return (
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2
-            className="text-5xl font-bold mb-16"
-            style={{ fontFamily: "Playfair Display, serif" }}
-          >
-            {testimonialTitle}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[1, 2, 3, 4].map(i => (
-              <div
-                key={i}
-                className="bg-gray-100 p-8 rounded-lg h-48 animate-pulse"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (!testimonials || testimonials.length === 0) {
-    return null;
-  }
-
+        : "Brand testimonials";
+  if (isLoading) return null;
+  if (!testimonials?.length) return null;
   return (
-    <section className="py-20 px-6 bg-white">
-      <div className="max-w-6xl mx-auto">
-        <h2
-          className="text-5xl font-bold mb-16"
-          style={{ fontFamily: "Playfair Display, serif" }}
-        >
-          {testimonialTitle}
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <section
+      className="mk-section mk-testimonials"
+      aria-labelledby="testimonials-title"
+    >
+      <div className="mk-wrap">
+        <MotionReveal>
+          <h2 id="testimonials-title">
+            {title}
+            <span className="mk-dot">.</span>
+          </h2>
+        </MotionReveal>
+        <div className="mk-testimonial-grid">
           {testimonials
             .map(item => localizeTestimonial(item, locale))
-            .map(testimonial => (
-              <div
-                key={testimonial.id}
-                className="border border-gray-300 p-8 rounded-lg hover:shadow-lg transition-shadow"
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating || 5)].map((_, i) => (
-                    <Star key={i} size={16} fill="#8B4513" stroke="#8B4513" />
-                  ))}
-                </div>
-
-                <p
-                  lang={testimonial.language}
-                  className="text-gray-700 mb-6 italic leading-relaxed"
-                >
-                  "{testimonial.quote}"
-                </p>
-
-                <div className="border-t border-gray-300 pt-4">
-                  <p className="font-semibold text-gray-900">
-                    {testimonial.authorName}
-                  </p>
-                  {testimonial.authorRole && (
-                    <p className="text-sm text-gray-600">
-                      {testimonial.authorRole}
-                    </p>
-                  )}
-                  <p className="text-sm font-medium text-accent mt-2">
-                    {testimonial.brandName}
-                  </p>
-                </div>
-              </div>
+            .map(item => (
+              <MotionReveal key={item.id} className="mk-quote">
+                <blockquote lang={item.language}>
+                  <p>“{item.quote}”</p>
+                </blockquote>
+                <footer>
+                  <strong>{item.authorName}</strong>
+                  {item.authorRole && <span>{item.authorRole}</span>}
+                  <span className="mk-quote-brand">{item.brandName}</span>
+                </footer>
+              </MotionReveal>
             ))}
         </div>
       </div>

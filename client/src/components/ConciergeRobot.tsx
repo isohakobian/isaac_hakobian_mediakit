@@ -1,67 +1,41 @@
-import React, { useEffect, useState } from "react";
-import { ArrowUpRight, ChevronDown, X } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { ArrowUpRight, MessageCircle, X } from "lucide-react";
 
 type ConciergeLanguage = "en" | "ru" | "hy";
-
 type ConciergeRobotProps = {
   language: string;
   onAction?: (action: string) => void;
   initiallyOpen?: boolean;
 };
-
-const copy: Record<
-  ConciergeLanguage,
-  {
-    greeting: string;
-    intro: string;
-    collaboration: string;
-    formats: string;
-    contact: string;
-    close: string;
-    open: string;
-  }
-> = {
+const copy = {
   en: {
-    greeting: "Isaac's AI concierge",
-    intro:
-      "Looking for a refined collaboration? I can take you to the right place.",
+    greeting: "Quick help",
+    intro: "Find the film, collaboration formats or contact details.",
     collaboration: "I want to collaborate",
     formats: "Show collaboration formats",
     contact: "Ask a question",
-    close: "Close concierge",
-    open: "Open AI concierge",
+    close: "Close help",
+    open: "Open help",
   },
   ru: {
-    greeting: "AI-консьерж Isaac",
-    intro: "Ищете стильное сотрудничество? Я сразу покажу нужный раздел.",
+    greeting: "Помощник",
+    intro: "Помогу найти ролик, форматы сотрудничества и контакты.",
     collaboration: "Хочу обсудить сотрудничество",
     formats: "Показать форматы сотрудничества",
     contact: "Задать вопрос",
-    close: "Закрыть консьержа",
-    open: "Открыть AI-консьержа",
+    close: "Закрыть помощника",
+    open: "Открыть помощника",
   },
   hy: {
-    greeting: "Իսահակի AI օգնականը",
-    intro: "Ցանկանո՞ւմ եք համագործակցել։ Կօգնեմ գտնել անհրաժեշտ բաժինը։",
+    greeting: "Օգնական",
+    intro: "Կօգնեմ գտնել հոլովակը, համագործակցության ձևաչափերն ու կոնտակտները։",
     collaboration: "Քննարկել համագործակցությունը",
     formats: "Տեսնել համագործակցության ձևաչափերը",
     contact: "Հարց տալ",
     close: "Փակել օգնականը",
-    open: "Բացել AI օգնականը",
+    open: "Բացել օգնականը",
   },
-};
-
-function scrollToContact(action: string, onAction?: (value: string) => void) {
-  onAction?.(action);
-  document
-    .getElementById("contact")
-    ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  window.setTimeout(() => {
-    document
-      .querySelector<HTMLInputElement>("#contact input")
-      ?.focus({ preventScroll: true });
-  }, 550);
-}
+} satisfies Record<ConciergeLanguage, Record<string, string>>;
 
 export default function ConciergeRobot({
   language,
@@ -69,100 +43,89 @@ export default function ConciergeRobot({
   initiallyOpen = false,
 }: ConciergeRobotProps) {
   const [open, setOpen] = useState(initiallyOpen);
-  const [visible, setVisible] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
   const text = copy[(language in copy ? language : "en") as ConciergeLanguage];
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setVisible(true), 650);
-    return () => window.clearTimeout(timer);
-  }, []);
-
+  function navigate(id: string, action: string) {
+    onAction?.(action);
+    setOpen(false);
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    document
+      .getElementById(id)
+      ?.scrollIntoView({
+        behavior: reduced ? "auto" : "smooth",
+        block: "start",
+      });
+    if (id === "contact")
+      document.getElementById("contact-name")?.focus({ preventScroll: true });
+  }
   return (
     <aside
-      className={`concierge-robot fixed bottom-5 right-5 z-[60] transition-opacity duration-300 sm:bottom-8 sm:right-8 ${open ? "concierge-robot--open" : "concierge-robot--closed"} ${visible ? "opacity-100" : "pointer-events-none opacity-0"}`}
+      className="mk-help"
       dir="ltr"
       aria-label={text.greeting}
+      onKeyDown={event => {
+        if (event.key === "Escape") {
+          setOpen(false);
+          trigger.current?.focus();
+        }
+      }}
     >
       {open && (
-        <div className="concierge-panel mb-3 w-[min(20rem,calc(100vw-2.5rem))] rounded-2xl border border-white/15 bg-[#171818]/95 p-4 text-white shadow-2xl backdrop-blur-xl sm:p-5">
-          <div className="mb-4 flex items-start justify-between gap-3">
-            <div>
-              <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#c7a074]">
-                {text.greeting}
-              </p>
-              <p className="text-sm leading-relaxed text-white/75">
-                {text.intro}
-              </p>
-            </div>
+        <div id="mk-help-panel" className="mk-help-panel">
+          <div className="mk-help-heading">
+            <strong>{text.greeting}</strong>
             <button
               type="button"
-              onClick={() => setOpen(false)}
-              className="rounded-full p-1 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
               aria-label={text.close}
+              onClick={() => {
+                setOpen(false);
+                trigger.current?.focus();
+              }}
             >
-              <X size={16} />
+              <X size={18} aria-hidden="true" />
             </button>
           </div>
-          <div className="grid gap-2">
+          <p>{text.intro}</p>
+          {[
+            {
+              id: "contact",
+              action: "concierge-collaboration",
+              label: text.collaboration,
+            },
+            { id: "formats", action: "concierge-formats", label: text.formats },
+            {
+              id: "contact",
+              action: "concierge-question",
+              label: text.contact,
+            },
+          ].map(item => (
             <button
+              key={item.action}
               type="button"
-              data-concierge-action="concierge-collaboration"
-              onClick={() =>
-                scrollToContact("concierge-collaboration", onAction)
-              }
-              className="group flex items-center justify-between rounded-xl border border-[#c7a074]/35 bg-[#c7a074]/10 px-3 py-2.5 text-left text-xs font-medium text-white transition-all hover:border-[#c7a074] hover:bg-[#c7a074]/20 active:scale-[0.98]"
+              data-concierge-action={item.action}
+              onClick={() => navigate(item.id, item.action)}
             >
-              <span>{text.collaboration}</span>
-              <ArrowUpRight
-                size={15}
-                className="text-[#c7a074] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
+              {item.label}
+              <ArrowUpRight size={15} aria-hidden="true" />
             </button>
-            <button
-              type="button"
-              data-concierge-action="concierge-formats"
-              onClick={() => scrollToContact("concierge-formats", onAction)}
-              className="flex items-center justify-between rounded-xl border border-white/10 px-3 py-2.5 text-left text-xs text-white/75 transition-all hover:border-white/25 hover:bg-white/10 active:scale-[0.98]"
-            >
-              <span>{text.formats}</span>
-              <ArrowUpRight size={15} className="text-white/45" />
-            </button>
-            <button
-              type="button"
-              data-concierge-action="concierge-question"
-              onClick={() => scrollToContact("concierge-question", onAction)}
-              className="flex items-center justify-between rounded-xl border border-white/10 px-3 py-2.5 text-left text-xs text-white/75 transition-all hover:border-white/25 hover:bg-white/10 active:scale-[0.98]"
-            >
-              <span>{text.contact}</span>
-              <ArrowUpRight size={15} className="text-white/45" />
-            </button>
-          </div>
+          ))}
         </div>
       )}
-
       <button
+        ref={trigger}
         type="button"
-        onClick={() => setOpen(value => !value)}
-        className="concierge-orb group relative ml-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/70 bg-gradient-to-br from-[#f4f5f4] via-[#aeb4b5] to-[#404648] shadow-[0_12px_35px_rgba(0,0,0,0.28)] transition-transform hover:scale-105 active:scale-95"
+        className="mk-help-trigger"
         aria-label={open ? text.close : text.open}
+        aria-expanded={open}
+        aria-controls={open ? "mk-help-panel" : undefined}
+        onClick={() => setOpen(value => !value)}
       >
-        <span className="concierge-orb__shine" aria-hidden="true" />
-        <span
-          className={`concierge-robot-face ${open ? "concierge-robot-face--happy" : "concierge-robot-face--idle"}`}
-          aria-hidden="true"
-        >
-          <span className="concierge-robot-eye concierge-robot-eye--left" />
-          <span className="concierge-robot-eye concierge-robot-eye--right" />
-          <span className="concierge-robot-mouth" />
-        </span>
-        <span className="concierge-antenna" aria-hidden="true" />
         {open ? (
-          <ChevronDown
-            size={14}
-            className="absolute bottom-1.5 text-[#1a1d1e]/60"
-          />
+          <X size={20} aria-hidden="true" />
         ) : (
-          <span className="concierge-ping" aria-hidden="true" />
+          <MessageCircle size={20} aria-hidden="true" />
         )}
       </button>
     </aside>

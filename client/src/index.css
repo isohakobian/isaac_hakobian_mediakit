@@ -5,13 +5,7 @@ html[lang="hy"] body,
 html[lang="hy"] h1,
 html[lang="hy"] h2,
 html[lang="hy"] h3 {
-  font-family: "Noto Sans Armenian", Inter, sans-serif !important;
-}
-@media (max-width: 639px) {
-  html[lang="hy"] h2 {
-    font-size: clamp(1.5rem, 7.15vw, 1.75rem);
-    overflow-wrap: anywhere;
-  }
+  font-family: Inter, "Noto Sans Armenian", sans-serif !important;
 }
 
 @keyframes editorial-drift {

@@ -1,92 +1,103 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import Home, { translations } from "./Home";
+import { mediaKitCopy } from "@/lib/mediaKitCopy";
 
-const testState = vi.hoisted(() => ({
+const state = vi.hoisted(() => ({
   language: "en" as "en" | "ru" | "hy",
+  trackFormSubmit: vi.fn(),
+  onSuccess: undefined as undefined | ((result: { success: boolean }) => void),
 }));
-
 vi.mock("@/hooks/useAnalytics", () => ({
   useAnalytics: () => ({
     trackClick: vi.fn(),
-    trackFormSubmit: vi.fn(),
-    language: testState.language,
+    trackFormSubmit: state.trackFormSubmit,
+    language: state.language,
     setLanguage: vi.fn(),
   }),
 }));
-
 vi.mock("@/_core/hooks/useAuth", () => ({
   useAuth: () => ({ user: null, loading: false }),
 }));
-
-vi.mock("@/components/Testimonials", () => ({
-  default: () => null,
-}));
-
-vi.mock("@/components/LanguageSwitcher", () => ({
-  default: () => null,
-}));
-
+vi.mock("@/components/Testimonials", () => ({ default: () => null }));
+vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 vi.mock("@/lib/trpc", () => ({
   trpc: {
-    collaborations: {
-      publicList: {
-        useQuery: () => ({ data: [] }),
-      },
-    },
-    brandRequests: {
-      submit: {
-        useMutation: () => ({ isPending: false, mutate: vi.fn() }),
+    system: {
+      sendEmail: {
+        useMutation: (options: { onSuccess: typeof state.onSuccess }) => {
+          state.onSuccess = options.onSuccess;
+          return { isPending: false, mutate: vi.fn() };
+        },
       },
     },
   },
 }));
+const render = () =>
+  renderToStaticMarkup(React.createElement(Home))
+    .replace(/&#x27;/g, "'")
+    .replace(/&amp;/g, "&");
 
-describe("Home language switching", () => {
-  it("passes each active homepage language through to the rendered homepage and root direction", () => {
-    expect(Object.keys(translations)).toEqual(["en", "ru", "hy"]);
-    for (const language of ["en", "ru", "hy"] as const) {
-      testState.language = language;
-      const markup = renderToStaticMarkup(React.createElement(Home));
-      const normalizedMarkup = markup
-        .replace(/&#x27;/g, "'")
-        .replace(/&amp;/g, "&");
-      const homepageCopy = translations[language];
-
-      expect(normalizedMarkup).toContain(homepageCopy.tagline);
-      expect(normalizedMarkup).toContain(homepageCopy.showreelTitle);
-      expect(normalizedMarkup).toContain(homepageCopy.showreelPlay);
-      // expect(normalizedMarkup).toContain(homepageCopy.viewWork);
-      expect(normalizedMarkup).toContain('dir="ltr"');
-      expect(normalizedMarkup).toContain(
-        '<section id="about" class="py-20 px-6 bg-gray-50">'
-      );
-      expect(normalizedMarkup).toContain(
-        'class="mx-auto max-w-3xl text-center text-lg leading-relaxed text-gray-700"'
-      );
-      expect(normalizedMarkup).toContain('data-testid="stats-about-divider"');
-
-      const galleryStart = normalizedMarkup.indexOf(
-        'data-testid="showreel-section"'
-      );
-      const galleryEnd = normalizedMarkup.indexOf(
-        homepageCopy.collaborationPackages,
-        galleryStart
-      );
-      const galleryMarkup = normalizedMarkup.slice(galleryStart, galleryEnd);
-
-      expect(galleryStart).toBeGreaterThan(-1);
-      expect(galleryMarkup.match(/<video/g) ?? []).toHaveLength(0);
-      expect(galleryMarkup).toContain('data-testid="showreel-play"');
-      expect(galleryMarkup).toContain(`/media/promo/${language}.jpg`);
-      expect(galleryMarkup).toContain(`data-promo-language="${language}"`);
-      expect(galleryMarkup).not.toContain("<iframe");
-      expect(galleryMarkup).toContain('href="#contact"');
-
-      expect(normalizedMarkup).not.toContain(
-        'data-testid="collaboration-gallery"'
-      );
-    }
+describe("Media Kit homepage", () => {
+  beforeEach(() => {
+    state.language = "en";
+    vi.clearAllMocks();
+  });
+  for (const language of ["en", "ru", "hy"] as const) {
+    it(
+      "renders localized UI, lazy storage video and accessible fields: " +
+        language,
+      () => {
+        state.language = language;
+        const html = render();
+        expect(Object.keys(translations)).toEqual(["en", "ru", "hy"]);
+        expect(html).toContain(mediaKitCopy[language].intro);
+        expect(html).toContain(translations[language].showreelTitle);
+        expect(html).toContain(translations[language].month);
+        expect(html).toContain(translations[language].reel);
+        expect(html).toContain('data-promo-language="' + language + '"');
+        expect(html).toContain("/media/promo/" + language + ".jpg");
+        expect(html).toContain("/media/promo/mobile-cover.jpg");
+        expect(html).toContain('data-testid="showreel-play"');
+        expect(html).not.toContain("<video");
+        expect(html).not.toContain("<iframe");
+        for (const id of [
+          "contact-name",
+          "contact-email",
+          "contact-format",
+          "contact-message",
+        ]) {
+          expect(html).toContain('for="' + id + '"');
+          expect(html).toContain('id="' + id + '"');
+        }
+        expect(html).toContain('autoComplete="name"');
+        expect(html).toContain('autoComplete="email"');
+        expect(html).toContain('aria-live="polite"');
+        expect(html).toContain('href="#main"');
+        expect(html.match(/<h1/g)).toHaveLength(1);
+        expect(html.match(/<form/g)).toHaveLength(1);
+        const order = [
+          'id="collaboration"',
+          'id="about"',
+          'id="formats"',
+          'id="contact"',
+        ].map(id => html.indexOf(id));
+        expect(order.every(index => index > 0)).toBe(true);
+        expect(order).toEqual([...order].sort((a, b) => a - b));
+      }
+    );
+  }
+  it("does not track a successful inquiry if delivery failed", () => {
+    render();
+    state.onSuccess?.({ success: false });
+    expect(state.trackFormSubmit).not.toHaveBeenCalled();
+  });
+  it("tracks success without sending visitor identity into analytics", () => {
+    render();
+    state.onSuccess?.({ success: true });
+    expect(state.trackFormSubmit).toHaveBeenCalledWith("contact-form", {
+      format: "general",
+    });
   });
 });
