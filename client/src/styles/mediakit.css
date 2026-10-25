@@ -282,7 +282,8 @@
 }
 .mk-hero-portrait-subject {
   z-index: 1;
-  animation: mk-subject-emerge 9s cubic-bezier(0.35, 0, 0.2, 1) infinite;
+  animation: mk-subject-emerge 12s cubic-bezier(0.35, 0, 0.2, 1) infinite;
+  will-change: transform;
 }
 .mk-portrait-caption {
   position: absolute;
@@ -877,7 +878,7 @@
   }
   48%,
   64% {
-    transform: translateY(-10px) scale(1.035);
+    transform: translateY(-6px);
   }
 }
 @keyframes mk-spin {

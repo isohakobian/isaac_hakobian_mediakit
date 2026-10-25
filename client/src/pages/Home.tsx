@@ -209,7 +209,7 @@ export default function Home() {
           </div>
           <div className="mk-hero-portrait mk-intro">
             <img
-              src="/manus-storage/80DC245D-61F0-4786-B87F-DC079CB4BB2C_f4659d04.JPEG"
+              src="/manus-storage/isaac-hero-background-clean_de598255.png"
               alt={ui.portrait}
               className="mk-hero-portrait-base"
               width={1200}
