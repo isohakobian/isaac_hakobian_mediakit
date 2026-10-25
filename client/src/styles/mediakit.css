@@ -275,8 +275,14 @@
   object-position: 66% 20%;
   filter: grayscale(1);
   border-radius: inherit;
-  animation: mk-portrait-emerge 9s cubic-bezier(0.35, 0, 0.2, 1) infinite;
   transform-origin: 66% 20%;
+}
+.mk-hero-portrait-base {
+  z-index: 0;
+}
+.mk-hero-portrait-subject {
+  z-index: 1;
+  animation: mk-subject-emerge 9s cubic-bezier(0.35, 0, 0.2, 1) infinite;
 }
 .mk-portrait-caption {
   position: absolute;
@@ -862,7 +868,7 @@
     transform: none;
   }
 }
-@keyframes mk-portrait-emerge {
+@keyframes mk-subject-emerge {
   0%,
   18%,
   82%,

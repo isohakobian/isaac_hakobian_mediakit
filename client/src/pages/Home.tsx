@@ -211,9 +211,19 @@ export default function Home() {
             <img
               src="/manus-storage/80DC245D-61F0-4786-B87F-DC079CB4BB2C_f4659d04.JPEG"
               alt={ui.portrait}
+              className="mk-hero-portrait-base"
               width={1200}
               height={1600}
               fetchPriority="high"
+              decoding="async"
+            />
+            <img
+              src="/manus-storage/isaac-hero-cutout_9650f17b.png"
+              alt=""
+              aria-hidden="true"
+              className="mk-hero-portrait-subject"
+              width={1060}
+              height={1484}
               decoding="async"
             />
             <div className="mk-portrait-caption" aria-hidden="true">
