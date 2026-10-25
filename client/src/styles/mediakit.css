@@ -262,6 +262,8 @@
   object-fit: cover;
   object-position: 66% 20%;
   filter: grayscale(1);
+  animation: mk-portrait-breathe 18s ease-in-out infinite alternate;
+  transform-origin: 66% 20%;
 }
 .mk-portrait-caption {
   position: absolute;
@@ -470,6 +472,15 @@
   border-radius: 24px;
   padding: 30px;
   background: #fafbf8;
+  transition:
+    transform 360ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    border-color 360ms ease,
+    box-shadow 360ms ease;
+}
+.mk-package:hover {
+  transform: translateY(-4px);
+  border-color: #cbd2bf;
+  box-shadow: 0 14px 32px #17240b0d;
 }
 .mk-package-featured {
   background: #e9ecdf;
@@ -740,15 +751,18 @@
 [data-reveal] {
   transition:
     opacity 600ms ease,
-    transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform 650ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 650ms ease;
 }
 [data-reveal-state="pending"] {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(14px);
+  filter: blur(2px);
 }
 [data-reveal-state="visible"] {
   opacity: 1;
   transform: none;
+  filter: none;
 }
 .mk-help {
   position: fixed;
@@ -832,6 +846,14 @@
   to {
     opacity: 1;
     transform: none;
+  }
+}
+@keyframes mk-portrait-breathe {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.025);
   }
 }
 @keyframes mk-spin {
