@@ -218,7 +218,7 @@ export default function Home() {
               decoding="async"
             />
             <img
-              src="/manus-storage/isaac-hero-cutout_9650f17b.png"
+              src="/manus-storage/isaac-hero-cutout-isnet_8ff402b2.png"
               alt=""
               aria-hidden="true"
               className="mk-hero-portrait-subject"
