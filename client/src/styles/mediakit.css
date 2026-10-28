@@ -875,10 +875,12 @@
   82%,
   100% {
     transform: translateY(0) scale(1);
+    filter: grayscale(1) drop-shadow(0 3px 5px rgb(0 0 0 / 8%));
   }
   48%,
   64% {
     transform: translateY(-6px);
+    filter: grayscale(1) drop-shadow(0 8px 10px rgb(0 0 0 / 16%));
   }
 }
 @keyframes mk-spin {
